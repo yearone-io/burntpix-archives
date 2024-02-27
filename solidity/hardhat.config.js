@@ -1,31 +1,60 @@
-require('@nomicfoundation/hardhat-toolbox');
-require('dotenv').config()
+import { HardhatUserConfig } from "hardhat/config";
+import "@nomicfoundation/hardhat-verify";
+import "@nomicfoundation/hardhat-toolbox";
+import * as dotenv from 'dotenv';
 
-module.exports = {
-	solidity: {
-		version: "0.8.9",
-		settings: {
-			optimizer: {
-				enabled: true
-			}
-		}
-	},
-	allowUnlimitedContractSize: true,
+// load env vars
+dotenv.config();
+
+const config: HardhatUserConfig = {
+	solidity: "0.8.17",
+	// public LUKSO Testnet
 	networks: {
-		hardhat: {},
-		ETH_MAINNET: {
-			accounts: [`${process.env.PRIVATE_KEY}`],
-			url: `https://eth-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`
+		luksoTestnet: {
+			url: "https://lukso-testnet.rpc.thirdweb.com",
+			chainId: 4201,
+			accounts: [process.env.EOA_PRIVATE_KEY as string] // your private key here
 		},
-		ETH_GOERLI: {
-			accounts: [`${process.env.PRIVATE_KEY}`],
-			url: `https://eth-goerli.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`
-		}
+		luksoMain: {
+			url: "https://lukso.rpc.thirdweb.com",
+			chainId: 42,
+			accounts: [process.env.EOA_PRIVATE_KEY as string] // your private key here
+		},
+	},
+	sourcify: {
+		enabled: false,
 	},
 	etherscan: {
-		apiKey: `${process.env.ETHERSCAN_API_KEY}`
+		// no API is required to verify contracts
+		// via the Blockscout instance of LUKSO Testnet
+		apiKey: "no-api-key-needed",
+		customChains: [
+			{
+				network: "luksoTestnet",
+				chainId: 4201,
+				urls: {
+					apiURL: "https://api.explorer.execution.testnet.lukso.network/api",
+					browserURL: "https://explorer.execution.testnet.lukso.network",
+				},
+			},
+			{
+				network: "luksoMain",
+				chainId: 42,
+				urls: {
+					apiURL: "https://api.explorer.execution.mainnet.lukso.network/api",
+					browserURL: "https://explorer.execution.mainnet.lukso.network",
+				},
+			},
+		],
 	},
+
 	paths: {
-		artifacts: '../fronted/artifacts'
-	}
-}
+		sources: "./contracts",
+		tests: "./test",
+		cache: "./cache",
+		artifacts: "./artifacts",
+		external: "./node_modules/[npm-package]/contracts"
+	},
+};
+
+export default config;
