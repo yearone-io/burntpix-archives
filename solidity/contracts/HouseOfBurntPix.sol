@@ -8,14 +8,24 @@ interface IBurntPixContract {
 }
 
 contract HouseOfBurntPix {
-    // Address of the target contract on Lukso testnet
-    address public targetContractAddress = 0x12167f1c2713aC4f740B4700c4C72bC2de6C686f;
+    address public targetContractAddress;
+    address public targetTokenId;
+
+    constructor(
+        address _targetContractAddress,
+        address _targetTokenId
+    ) {
+        require(_targetContractAddress != address(0), "Invalid target contract address");
+        require(_targetTokenId != address(0), "Invalid target token ID");
+        targetContractAddress = _targetContractAddress;
+        targetTokenId = _targetTokenId;
+    }
 
     // Mapping to keep track of refinement calls per address
     mapping(address => uint256) public refinementCount;
 
     // Function to refine on the target contract, with simplified name
-    function refine(bytes32 tokenId, uint256 iters) public {
+    function refine(uint256 iters) public {
         // Increase the caller's refinement count
         refinementCount[msg.sender]++;
 
@@ -23,6 +33,6 @@ contract HouseOfBurntPix {
         IBurntPixContract target = IBurntPixContract(targetContractAddress);
         
         // Call the `refine` function of the target contract with specified parameters
-        target.refine(tokenId, iters);
+        target.refine(targetTokenId, iters);
     }
 }
