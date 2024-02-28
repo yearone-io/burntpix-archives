@@ -69,7 +69,7 @@ contract HouseOfBurntPix is LSP8Mintable {
     }
 
     // Function to refine on the target contract, with simplified name
-    function refineToMint(uint256 iters, address refiner) public  {
+    function refineToMint(uint256 iters, address refiner) public  returns (string memory){
         if(totalSupply() + 1 > maxArchiveSupply) revert HouseOfBurntPixMintedOut();
         // Increase the caller's refinement count
         contributedIterations[refiner] = contributedIterations[refiner] + iters;
@@ -81,7 +81,12 @@ contract HouseOfBurntPix is LSP8Mintable {
         // Call the `refine` function of the target contract with specified parameters
         //targetFractal.getData(_LSP4_METADATA_KEY);
         targetBurntPic.refine(burntPicId, iters);
-        getLatestImage();
+
+        
+
+        /// temporal
+        return getLatestImage();
+        ///
         /*
         if (iters > 0) {
             // Get current burntpic snapshot
