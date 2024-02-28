@@ -89,8 +89,8 @@ describe("MyContract", function () {
 
     const latestImage = await houseDeployTx.refineToMint(1, UP_ADDR, {gasLimit: 400_000});
     console.log('latestImage:', latestImage);
-    const image = await latestImage.deployed();
-    console.log("waiting transaction Image:", latestImage);
+    // const image = await latestImage.deployed();
+    // console.log("waiting transaction Image:", latestImage);
     // expect(latestImage).to.be.a('string');
   });
   
