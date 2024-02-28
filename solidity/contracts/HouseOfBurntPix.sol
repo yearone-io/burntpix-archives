@@ -15,6 +15,9 @@ import {
 interface IBurntPixContract is ILSP8Mintable {
     // Function signature for `refine`
     function refine(bytes32 tokenId, uint256 iters) external;
+    function image() external view returns (string memory);
+    function iterations() external view returns (uint256);
+    
 }
 
 bytes32 constant _BURNTPIX_IMAGE_KEY = 0xef285b02a4f711ad84793f73cc8ed6fea8af7013ece8132dacb7b33f6bce93da;
@@ -60,6 +63,11 @@ contract HouseOfBurntPix is LSP8Mintable {
         revert("This function is disabled.");
     }
 
+    function getLatestImage() public view returns (string memory) {
+        IBurntPixContract targetFractal = IBurntPixContract(0x4E8BA475570385e3CC35A0e40293035cD45B9BE9);
+        return targetFractal.image();
+    }
+
     // Function to refine on the target contract, with simplified name
     function refineToMint(uint256 iters, address refiner) public  {
         if(totalSupply() + 1 > maxArchiveSupply) revert HouseOfBurntPixMintedOut();
@@ -68,14 +76,18 @@ contract HouseOfBurntPix is LSP8Mintable {
 
         // Cast the target address to the interface
         IBurntPixContract targetBurntPic = IBurntPixContract(burntPixContract);
+        IBurntPixContract targetFractal = IBurntPixContract(0x4E8BA475570385e3CC35A0e40293035cD45B9BE9);
         
         // Call the `refine` function of the target contract with specified parameters
+        //targetFractal.getData(_LSP4_METADATA_KEY);
         targetBurntPic.refine(burntPicId, iters);
+        getLatestImage();
+        /*
         if (iters > 0) {
             // Get current burntpic snapshot
             
-            bytes memory snapshotImage = targetBurntPic.getDataForTokenId(burntPicId, _LSP4_METADATA_KEY);
-            /*
+            string memory snapshotImage = getLatestImage();
+            
             (bytes memory _metadata, bytes memory _encoded) = getArchiveMetadataBytes(snapshotImage, refiner);
             bytes memory verfiableURI = bytes.concat(
                 hex'00006f357c6a0020', // todo: figure out what this is
@@ -83,12 +95,13 @@ contract HouseOfBurntPix is LSP8Mintable {
                 _encoded
             );
             // Mint the refined token to the caller
-            */
+            
             bytes32 tokenId = bytes32(totalSupply() + 1);
             //setDataForTokenId(tokenId, _LSP4_METADATA_KEY, verfiableURI);
             
             super._mint(refiner, tokenId, false, "");
         }
+        */
     }
 
     function getArchiveMetadataBytes(bytes memory encodedImage, address refiner) internal view returns (bytes memory, bytes memory) {
