@@ -19,8 +19,8 @@ interface IBurntPixContract is ILSP8Mintable {
     function iterations() external view returns (uint256);
     
 }
-
-bytes32 constant _BURNTPIX_IMAGE_KEY = 0xef285b02a4f711ad84793f73cc8ed6fea8af7013ece8132dacb7b33f6bce93da;
+// 
+bytes32 constant _BURNTPIX_IMAGE_KEY = 0x2abb082c1b23ea79fce2a9e934ecb19ce15738b1483c365d0125f47e8ccc7dfc;
 
 contract HouseOfBurntPix is LSP8Mintable {
     address public burntPixContract;
