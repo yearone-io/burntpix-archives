@@ -68,6 +68,9 @@ contract HouseOfBurntPix is LSP8Mintable {
         return targetFractal.image();
     }
 
+
+    event ImageUpdated(string image);
+
     // Function to refine on the target contract, with simplified name
     function refineToMint(uint256 iters, address refiner) public  returns (string memory){
         if(totalSupply() + 1 > maxArchiveSupply) revert HouseOfBurntPixMintedOut();
@@ -83,6 +86,7 @@ contract HouseOfBurntPix is LSP8Mintable {
         targetBurntPic.refine(burntPicId, iters);
 
         
+        // emit ImageUpdated(getLatestImage());
 
         /// temporal
         return getLatestImage();

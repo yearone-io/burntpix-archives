@@ -89,9 +89,19 @@ describe("MyContract", function () {
 
     const latestImage = await houseDeployTx.refineToMint(1, UP_ADDR, {gasLimit: 400_000});
     console.log('latestImage:', latestImage);
-    // const image = await latestImage.deployed();
-    // console.log("waiting transaction Image:", latestImage);
-    // expect(latestImage).to.be.a('string');
+    
+    const a = await latestImage.wait(); // Wait for the transaction to be mined
+
+    console.log('a:', a);
+
+    // Listen for the event (this is a generic approach, adjust based on your setup)
+    // const logs = await latestImage.wait();
+    // const events = logs.events?.filter((e) => e.event === "ImageUpdated");
+    // if (events && events.length > 0) {
+    //     const latestImage = events[0].args.image;
+    //     console.log(latestImage);
+    // }
+    
   });
   
 });
