@@ -11,9 +11,6 @@ const { EOA_PRIVATE_KEY, UP_ADDR } = process.env;
 
 describe("MyContract", function () {
   it("Should return the latest image successfully", async function () {
-    // const MyContract = await ethers.getContractFactory("HouseOfBurntPix");
-    // const myContract = await MyContract.deploy();
-    // await myContract.deployed();
     const provider = new ethers.JsonRpcProvider('https://rpc.testnet.lukso.network');
     const signer = new ethers.Wallet(EOA_PRIVATE_KEY as string, provider);
     // deployment config
@@ -51,6 +48,6 @@ describe("MyContract", function () {
 
     const latestImage = await houseDeployTx.getLatestImage();
     console.log("Latest Image:", latestImage);
-    expect(latestImage).to.be.a('string'); // Adjust this based on your expected result
+    expect(latestImage).to.be.a('string');
   });
 });
