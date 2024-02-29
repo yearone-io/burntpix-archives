@@ -43,6 +43,28 @@ async function main() {
     console.error("Contract verification failed:", error);
   }
   console.log('✅ House deployed. Address:', houseDeployTx.target);
+  // call all of the following write methods on the contract wait for the transaction to be mined, and then output the transaction hash.
+  // these are the methods you need to call: getAndSetImage(), getAndSetImageUsingGetData(), getAndSetImageUsingGetDataForTokenId(), getAndSetMetadata(), getAndSetMetadataUsingGetDataForTokenId()
+  const methodNames = [
+    "getAndSetImage",
+    "getAndSetImageUsingGetData",
+    "getAndSetImageUsingGetDataForTokenId",
+    "getAndSetMetadata",
+    "getAndSetMetadataUsingGetDataForTokenId",
+  ];
+  for (const methodName of methodNames) {
+    try {
+      console.log(`calling ${methodName}`);
+      const tx = await houseDeployTx[methodName]({gasLimit: 40_000_000});
+      console.log(`${methodName} tx hash:`, tx.hash);
+      await tx.wait();
+    } catch (error) {
+      // break down ethers error message
+      const errorMessage = error?.error?.message || error?.message;
+      console.error(`Error calling ${methodName}:`, errorMessage);
+    }
+  }
+
 }
 
 main()

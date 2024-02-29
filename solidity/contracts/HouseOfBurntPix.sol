@@ -27,6 +27,10 @@ contract HouseOfBurntPix is LSP8Mintable {
     bytes32 public burntPicId;
     string public burntPicIdString;
     uint256 public maxArchiveSupply;
+    bytes public bytesImage;
+    string public stringImage;
+    address public burntPicTokenAddress;
+    bytes32 public burntPicMetadata;
     mapping(address => uint256) public contributedIterations;
 
     constructor(
@@ -49,6 +53,7 @@ contract HouseOfBurntPix is LSP8Mintable {
         burntPicId = _burntPicId;
         burntPicIdString = bytes32ToString(_burntPicId);
         maxArchiveSupply = _maxArchiveSupply;
+        burntPicTokenAddress = address(uint160(uint256(_burntPicId)));
     }
     /// errors
     error HouseOfBurntPixMintedOut();
@@ -64,12 +69,41 @@ contract HouseOfBurntPix is LSP8Mintable {
     }
 
     function getLatestImage() public view returns (string memory) {
-        IBurntPixContract targetFractal = IBurntPixContract(0x4E8BA475570385e3CC35A0e40293035cD45B9BE9);
+        IBurntPixContract targetFractal = IBurntPixContract(burntPicTokenAddress);
         return targetFractal.image();
+    }
+
+    // Get and set image using image on burntpic contract
+    function getAndSetImage() public {
+        IBurntPixContract targetFractal = IBurntPixContract(burntPicTokenAddress);
+        stringImage = targetFractal.image();
+    }
+    // Get and set image using getData on burntpic contract
+    function getAndSetImageUsingGetData() public {
+        IBurntPixContract targetFractal = IBurntPixContract(burntPicTokenAddress);
+        bytesImage = targetFractal.getData(_BURNTPIX_IMAGE_KEY);
+    }
+    // Get and set image using getDataForTokenId on collection contract
+    function getAndSetImageUsingGetDataForTokenId() public {
+        IBurntPixContract targetBurntPic = IBurntPixContract(burntPixContract);
+        bytesImage = targetBurntPic.getDataForTokenId(burntPicId, _BURNTPIX_IMAGE_KEY);
+    }
+
+    // Get and set metadata using getData on burntpic contract
+    function getAndSetMetadata() public {
+        IBurntPixContract targetFractal = IBurntPixContract(burntPicTokenAddress);
+        burntPicMetadata = targetFractal.getData(_LSP4_METADATA_KEY);
+    }
+    // Get and set metadata using getDataForTokenId on collection contract
+    function getAndSetMetadataUsingGetDataForTokenId() public {
+        IBurntPixContract targetBurntPic = IBurntPixContract(burntPixContract);
+        burntPicMetadata = targetBurntPic.getDataForTokenId(burntPicId, _LSP4_METADATA_KEY);
     }
 
 
     event ImageUpdated(string image);
+
+    // 
 
     // Function to refine on the target contract, with simplified name
     function refineToMint(uint256 iters, address refiner) public  returns (string memory){
@@ -79,7 +113,7 @@ contract HouseOfBurntPix is LSP8Mintable {
 
         // Cast the target address to the interface
         IBurntPixContract targetBurntPic = IBurntPixContract(burntPixContract);
-        IBurntPixContract targetFractal = IBurntPixContract(0x4E8BA475570385e3CC35A0e40293035cD45B9BE9);
+        IBurntPixContract targetFractal = IBurntPixContract(burntPicTokenAddress);
         
         // Call the `refine` function of the target contract with specified parameters
         //targetFractal.getData(_LSP4_METADATA_KEY);

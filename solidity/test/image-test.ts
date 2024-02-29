@@ -103,5 +103,11 @@ describe("MyContract", function () {
     // }
     
   });
+
+  // next we add tests for all the functions from HouseOfBurntPix.sol that fetch and set image as well as the metadata
+  // the functions in question are getAndSetImage(), getAndSetImageUsingGetData(), getAndSetImageUsingGetDataForTokenId(), getAndSetMetadata(), getAndSetMetadataUsingGetDataForTokenId()
+  it("getAndSetImage should work", async function () {
+    
+    
   
 });
