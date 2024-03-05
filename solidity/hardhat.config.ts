@@ -7,7 +7,7 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 const config: HardhatUserConfig = {
-	solidity: "0.8.17",
+	solidity: "0.8.24",
 	// public LUKSO Testnet
 	networks: {
 		luksoTestnet: {

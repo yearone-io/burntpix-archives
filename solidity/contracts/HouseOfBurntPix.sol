@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.24;
 import { Base64 } from "@openzeppelin/contracts/utils/Base64.sol";
 import {
     LSP8Mintable, ILSP8Mintable
@@ -73,6 +73,7 @@ contract HouseOfBurntPix is LSP8Mintable {
         return targetFractal.image();
     }
 
+/*
     // Get and set image using image on burntpic contract
     function getAndSetImage() public {
         IBurntPixContract targetFractal = IBurntPixContract(burntPicTokenAddress);
@@ -99,6 +100,7 @@ contract HouseOfBurntPix is LSP8Mintable {
         IBurntPixContract targetBurntPic = IBurntPixContract(burntPixContract);
         burntPicMetadata = targetBurntPic.getDataForTokenId(burntPicId, _LSP4_METADATA_KEY);
     }
+    */
 
 
     event ImageUpdated(string image);
