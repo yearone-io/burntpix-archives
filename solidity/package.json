@@ -18,6 +18,7 @@
 		"@openzeppelin/contracts": "^4.9.3",
 		"dotenv": "^16.3.1",
 		"hardhat": "^2.19.1",
+		"pngjs": "^7.0.0",
 		"prettier": "^3.1.0"
 	},
 	"devDependencies": {

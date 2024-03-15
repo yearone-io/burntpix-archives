@@ -24,7 +24,8 @@ interface IBurntPixFractal is IERC725Y {
     function iterations() external view returns (uint256);
 }
 
-bytes32 constant _BURNTPIX_IMAGE_KEY = 0x2abb082c1b23ea79fce2a9e934ecb19ce15738b1483c365d0125f47e8ccc7dfc;
+bytes32 constant _BURNTPIX_IMAGE_KEY = keccak256("image");
+bytes32 constant _BURNTPIX_PIXELS_KEY = keccak256("pixels");
 
 contract BurntPixClone is LSP8Mintable {
     address public burntPixContract;
@@ -59,7 +60,13 @@ contract BurntPixClone is LSP8Mintable {
         return IBurntPixFractal(burntPicTokenAddress).getData(_BURNTPIX_IMAGE_KEY);
     }
 
+    function getPixels() view public returns (bytes memory) {
+        return IBurntPixFractal(burntPicTokenAddress).getData(_BURNTPIX_IMAGE_KEY);
+    }
+
     function getAndSetImage() public {
         bytesImage = IBurntPixFractal(burntPicTokenAddress).getData(_BURNTPIX_IMAGE_KEY);
     }
+
+    
 }

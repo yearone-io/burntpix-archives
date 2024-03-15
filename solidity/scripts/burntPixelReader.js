@@ -12,7 +12,7 @@ function getElementIndexInStorage(arrayStartingIndexHexValue, arrayElementIndex)
 async function readPixelData(pixelsArrayLengthSlot) {
     // Read the length of the pixels array
     const pixelsDataSlotStartIndex = ethers.solidityPackedKeccak256(['uint256'], [pixelsArrayLengthSlot]);
-    console.log('pixelsDataSlotStartIndex:', pixelsDataSlotStartIndex);
+    //console.log('pixelsDataSlotStartIndex:', pixelsDataSlotStartIndex);
 
     const pixelsArrayLengthHex = await provider.getStorage(contractAddress, pixelsArrayLengthSlot);
     const pixelsArrayLength = Number(pixelsArrayLengthHex);
