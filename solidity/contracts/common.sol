@@ -37,3 +37,12 @@ struct State {
     uint256 g; // Green color component in the [0, 1) space
     uint256 b; // Blue color component in the [0, 1) space
 }
+
+struct ArchiveData {
+    Canvas     canvas; // In-progress rendering state and image dimensions
+
+    uint256 iterations; // Amount of iterations done cumulatively on the fractal
+    uint256 gasused;    // Amount of gas used cumulatively on refining the fractal
+    uint256 feesburnt;  // Amount of 1559 fees burns cumulatively on refining the fractal
+    uint256 tipspaid;   // Amount of miner tips paid cumulatively on refining the fractal
+}

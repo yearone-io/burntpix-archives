@@ -16,11 +16,9 @@ async function main() {
   const registry = "0x12167f1c2713aC4f740B4700c4C72bC2de6C686f";
   const codehub = "0x9F2B09E9A9628DC8430C7c39BD0Bf74b18b7b397";
   const burntpicId = "0x0000000000000000000000004e8ba475570385e3cc35a0e40293035cd45b9be9";
-  const maxArchiveSupply = 100;
-  const collectionName = "RegistryClone";
-  const symbol = "HOP";
-  const contractOwner = UP_ADDR;
-  const constructorArguments = [contractOwner, codehub, registry, burntpicId];
+  const archiveFactory = "0xA3bE02B895953e54F3a16089E2f4F2227d244630";
+  const cloneFactory = "0x0A251E94be3CE171417Eb584407E58b0e53Fd916";
+  const constructorArguments = [cloneFactory, codehub, registry, burntpicId];
   const RegistryCloneFactory = new ethers.ContractFactory(
     RegistryClone.abi,
     RegistryClone.bytecode,
