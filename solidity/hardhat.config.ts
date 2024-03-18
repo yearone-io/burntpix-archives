@@ -1,6 +1,7 @@
 import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-verify";
 import "@nomicfoundation/hardhat-toolbox";
+require('hardhat-contract-sizer');
 import * as dotenv from 'dotenv';
 
 // load env vars
@@ -8,6 +9,11 @@ dotenv.config();
 
 const config: HardhatUserConfig = {
 	solidity: "0.8.24",
+	contractSizer: {
+		alphaSort: true,
+		runOnCompile: true,
+		disambiguatePaths: false,
+	  },
 	// public LUKSO Testnet
 	networks: {
 		luksoTestnet: {

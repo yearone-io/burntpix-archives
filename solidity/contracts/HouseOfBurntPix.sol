@@ -1,196 +1,123 @@
-// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.24;
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity >=0.8.24;
 import { Base64 } from "@openzeppelin/contracts/utils/Base64.sol";
 import {
-    LSP8Mintable, ILSP8Mintable
-} from "@lukso/lsp-smart-contracts/contracts/LSP8IdentifiableDigitalAsset/presets/LSP8Mintable.sol";
-import {
-    _LSP8_TOKENID_FORMAT_NUMBER
-} from "@lukso/lsp-smart-contracts/contracts/LSP8IdentifiableDigitalAsset/LSP8Constants.sol";
-import {
-    _LSP4_TOKEN_TYPE_COLLECTION, _LSP4_METADATA_KEY, _LSP4_TOKEN_NAME_KEY
-} from "@lukso/lsp-smart-contracts/contracts/LSP4DigitalAssetMetadata/LSP4Constants.sol";
+    LSP8IdentifiableDigitalAsset
+} from "@lukso/lsp-smart-contracts/contracts/LSP8IdentifiableDigitalAsset/LSP8IdentifiableDigitalAsset.sol";
+import {_LSP8_TOKENID_FORMAT_NUMBER}  from "@lukso/lsp-smart-contracts/contracts/LSP8IdentifiableDigitalAsset/LSP8Constants.sol";
+import {_LSP4_TOKEN_TYPE_COLLECTION, _LSP4_METADATA_KEY, _LSP4_CREATORS_ARRAY_KEY, _LSP4_CREATORS_MAP_KEY_PREFIX} from "@lukso/lsp-smart-contracts/contracts/LSP4DigitalAssetMetadata/LSP4Constants.sol";
 
-// Interface for the target contract with the `refine` function
-interface IBurntPixContract is ILSP8Mintable {
-    // Function signature for `refine`
+
+import "./common.sol";
+import {FractalClone} from "./FractalClone.sol";
+
+interface IRegistry {
     function refine(bytes32 tokenId, uint256 iters) external;
-    function image() external view returns (string memory);
-    function iterations() external view returns (uint256);
-    
+    function seeds(address fractal) external view returns (uint32);
 }
-// 
-bytes32 constant _BURNTPIX_IMAGE_KEY = 0x2abb082c1b23ea79fce2a9e934ecb19ce15738b1483c365d0125f47e8ccc7dfc;
 
-contract HouseOfBurntPix is LSP8Mintable {
-    address public burntPixContract;
+interface IFractal {
+    function iterations() external view returns (uint256);
+}
+
+// Registry implements the NFT existence and ownership tracking.
+contract HouseOfBurntPix is LSP8IdentifiableDigitalAsset {
+    address public originalRegistryAddr;
     bytes32 public burntPicId;
-    string public burntPicIdString;
-    uint256 public maxArchiveSupply;
-    bytes public bytesImage;
-    string public stringImage;
-    address public burntPicTokenAddress;
-    bytes32 public burntPicMetadata;
-    mapping(address => uint256) public contributedIterations;
+    FractalClone public fractalClone;
+    // change this to struct that includes image, iterations, gasused, feesburnt, tipspaid
+    mapping(uint256 => bytes) public burntArchives;
+    // todo: change this to map address to an array of archives unlocked, mirroring levels achieved
+    //       mapping(address => uint256[]) public archiveCreator;
+    mapping(uint256 => address) public archiveCreator;
 
-    constructor(
-        string memory nftCollectionName,
-        string memory nftCollectionSymbol,
-        address contractOwner,
-        uint256 _maxArchiveSupply,
-        address _burntPixContract,
-        bytes32 _burntPicId
-    ) LSP8Mintable(
-        nftCollectionName,
-        nftCollectionSymbol,
-        contractOwner,
-        _LSP4_TOKEN_TYPE_COLLECTION,
-        _LSP8_TOKENID_FORMAT_NUMBER
-    ){
-        require(_burntPixContract != address(0), "Invalid target contract address");
-        require(_burntPicId != bytes32(0), "Invalid target token ID");
-        burntPixContract = _burntPixContract;
-        burntPicId = _burntPicId;
-        burntPicIdString = bytes32ToString(_burntPicId);
-        maxArchiveSupply = _maxArchiveSupply;
-        burntPicTokenAddress = address(uint160(uint256(_burntPicId)));
-    }
-    /// errors
-    error HouseOfBurntPixMintedOut();
+    // Construct a new NFT registry, keeping mostly everything standard and just
+    // delegating it to Lukso's base contracts.
+    constructor(address creator, address _codehub, address _originalRegistry, bytes32 _burntPicId)
+        LSP8IdentifiableDigitalAsset(
+            'House Of Burnt Pix',
+            'HOPIX',
+            msg.sender,
+            _LSP4_TOKEN_TYPE_COLLECTION,
+            _LSP8_TOKENID_FORMAT_NUMBER
+        ) {
+            require(_burntPicId != bytes32(0), "Invalid target token ID");
+            burntPicId = _burntPicId;
+            address fractal = address(uint160(uint256(_burntPicId)));
+            originalRegistryAddr = _originalRegistry;
+            uint32 seed = IRegistry(originalRegistryAddr).seeds(fractal);
+            fractalClone = new FractalClone(address(_codehub), uint256(seed));
 
-    // Disable direct minting
-    function mint(
-        address,
-        bytes32,
-        bool,
-        bytes memory
-    ) public virtual override(LSP8Mintable) {
-        revert("This function is disabled.");
+            _setData(_LSP4_CREATORS_ARRAY_KEY, hex"00000000000000000000000000000001");
+            _setData(0x114bd03b3a46d48759680d81ebb2b41400000000000000000000000000000000, abi.encodePacked(creator));
+            _setData(bytes32(abi.encodePacked(_LSP4_CREATORS_MAP_KEY_PREFIX, hex"0000", creator)) , hex"24871b3d00000000000000000000000000000000");
     }
 
-    function getLatestImage() public view returns (string memory) {
-        IBurntPixContract targetFractal = IBurntPixContract(burntPicTokenAddress);
-        return targetFractal.image();
+    // todo: implement refinements balancer that ensures that clone is always in sync with original before contributing to clone
+    //      what happens if someone pushes the original very far ahead of the clone? => special "rare" property when clone is archived :)?
+    //          and also becomes cheaper to refine clone because dont have to cover cost of refining original
+    function refineToMint(uint256 iters) public {
+        fractalClone.refineClone(iters);
+        IRegistry(originalRegistryAddr).refine(burntPicId, iters);
+        burntArchives[fractalClone.iterations()] = fractalClone.getData(keccak256("image"));
+        archiveCreator[fractalClone.iterations()] = msg.sender;
     }
 
-/*
-    // Get and set image using image on burntpic contract
-    function getAndSetImage() public {
-        IBurntPixContract targetFractal = IBurntPixContract(burntPicTokenAddress);
-        stringImage = targetFractal.image();
-    }
-    // Get and set image using getData on burntpic contract
-    function getAndSetImageUsingGetData() public {
-        IBurntPixContract targetFractal = IBurntPixContract(burntPicTokenAddress);
-        bytesImage = targetFractal.getData(_BURNTPIX_IMAGE_KEY);
-    }
-    // Get and set image using getDataForTokenId on collection contract
-    function getAndSetImageUsingGetDataForTokenId() public {
-        IBurntPixContract targetBurntPic = IBurntPixContract(burntPixContract);
-        bytesImage = targetBurntPic.getDataForTokenId(burntPicId, _BURNTPIX_IMAGE_KEY);
+    // todo: given a user address need to be able to return all the archives they have minted or are eligible to mint
+    function mintArchive(uint256 archiveId, address to) external {
+        require(archiveCreator[archiveId] == msg.sender, "Only the creator of the archive can mint it");
+        bytes32 tokenId = bytes32(archiveId);
+        _mint(to, tokenId, true, "");
     }
 
-    // Get and set metadata using getData on burntpic contract
-    function getAndSetMetadata() public {
-        IBurntPixContract targetFractal = IBurntPixContract(burntPicTokenAddress);
-        burntPicMetadata = targetFractal.getData(_LSP4_METADATA_KEY);
-    }
-    // Get and set metadata using getDataForTokenId on collection contract
-    function getAndSetMetadataUsingGetDataForTokenId() public {
-        IBurntPixContract targetBurntPic = IBurntPixContract(burntPixContract);
-        burntPicMetadata = targetBurntPic.getDataForTokenId(burntPicId, _LSP4_METADATA_KEY);
-    }
-    */
-
-
-    event ImageUpdated(string image);
-
-    // 
-
-    // Function to refine on the target contract, with simplified name
-    function refineToMint(uint256 iters, address refiner) public  returns (string memory){
-        if(totalSupply() + 1 > maxArchiveSupply) revert HouseOfBurntPixMintedOut();
-        // Increase the caller's refinement count
-        contributedIterations[refiner] = contributedIterations[refiner] + iters;
-
-        // Cast the target address to the interface
-        IBurntPixContract targetBurntPic = IBurntPixContract(burntPixContract);
-        IBurntPixContract targetFractal = IBurntPixContract(burntPicTokenAddress);
-        
-        // Call the `refine` function of the target contract with specified parameters
-        //targetFractal.getData(_LSP4_METADATA_KEY);
-        targetBurntPic.refine(burntPicId, iters);
-
-        
-        // emit ImageUpdated(getLatestImage());
-
-        /// temporal
-        return getLatestImage();
-        ///
-        /*
-        if (iters > 0) {
-            // Get current burntpic snapshot
-            
-            string memory snapshotImage = getLatestImage();
-            
-            (bytes memory _metadata, bytes memory _encoded) = getArchiveMetadataBytes(snapshotImage, refiner);
-            bytes memory verfiableURI = bytes.concat(
-                hex'00006f357c6a0020', // todo: figure out what this is
-                keccak256(_metadata),
-                _encoded
-            );
-            // Mint the refined token to the caller
-            
-            bytes32 tokenId = bytes32(totalSupply() + 1);
-            //setDataForTokenId(tokenId, _LSP4_METADATA_KEY, verfiableURI);
-            
-            super._mint(refiner, tokenId, false, "");
+    function _getData(bytes32 key) internal view override returns (bytes memory) {
+        if (key == _LSP4_METADATA_KEY) {
+            return fractalClone.getData(keccak256("LSP4MetadataStripped"));
         }
-        */
+        return super._getData(key);
     }
 
-    function getArchiveMetadataBytes(bytes memory encodedImage, address refiner) internal view returns (bytes memory, bytes memory) {
-        bytes memory _encodedSVG = abi.encodePacked(
+    function _generateMetadataBytes(bytes32 tokenId) internal view returns (bytes memory, bytes memory) {
+        // todo: fetch iterations, gasused, feesburnt, tipspaid
+        // todo: fetch iteration contributions totals that enabled this mint
+        // todo: move description and name to higher level?
+        bytes memory _image = burntArchives[uint256(tokenId)];
+        bytes memory encodedImage = abi.encodePacked(
             'data:image/svg+xml;base64,',
-            Base64.encode(encodedImage)
+            Base64.encode(_image)
         );
-
-        bytes memory collectionName = getData(_LSP4_TOKEN_NAME_KEY);
-
-        // level needs to represent fibinacci level rather than iterations
-        uint256 level = contributedIterations[refiner];
-        // todo: need to figure out wtf encoded is supposed to be
-        string memory encodedMetadata;
-        // todo: figure out how to get parent burnt pic attributes at time of archive and include them here as well
         bytes memory _rawMetadata = abi.encodePacked(
-            '{"LSP4Metadata": {"name": "',string(collectionName),'","description": "House of Burnt Pix. A community built archive of Burnt Pic: ',burntPicId,'","links": [],"icon":[],"images": [[{"width": 600,"height": 600,',
-            '"url": "',_encodedSVG,'","verification": {"method": "keccak256(bytes)","data": "',encodedMetadata,'"}}]],',
-            '"attributes":[{"key": "Type","value": "',level,'","type": "number"}]}}'
+            '{"LSP4Metadata": {"name": "House of Burnt Pix", "description": "We burn together, we rise together. A community built archive of Burnt Pix #blahblahblah.",',
+                '"images": [[{"height": 768, "width": 768, "url": "',encodedImage,'", "verification": {"method": "keccak256(bytes)", "data": "',_toHexString(keccak256(_image)),'"}}]],',
+                '"attributes": [{"key": "Iterations", "type": "number", "value": 1}, {"key": "Contributed Iterations", "type": "number", "value": 1}]}}'
         );
         return (_rawMetadata, abi.encodePacked(
-            "data:application/json;base64,",
-            Base64.encode(_rawMetadata)
+            "data:application/json;charset=UTF-8,",
+            _rawMetadata
         ));
     }
 
-    function bytes32ToString(bytes32 _bytes) public pure returns (string memory) {
-        // Characters for conversion
-        bytes memory alphabet = "0123456789abcdef";
-
-        // Initialize an empty string with enough space for "0x", 32 bytes, and 2 characters per byte
-        bytes memory str = new bytes(2 + 64); // "0x" prefix + 64 hex chars
-        str[0] = '0';
-        str[1] = 'x';
-        
-        for (uint256 i = 0; i < 32; i++) {
-            // Process each byte
-            bytes1 b = _bytes[i];
-            // Upper 4 bits to hex
-            str[2 + i * 2] = alphabet[uint8(b) >> 4];
-            // Lower 4 bits to hex
-            str[3 + i * 2] = alphabet[uint8(b) & 0x0f];
+    function _getDataForTokenId(bytes32 tokenId, bytes32 key) internal view override returns (bytes memory) {
+        require(_exists(tokenId));
+        if (key == _LSP4_METADATA_KEY) {
+            (bytes memory _metadata, bytes memory _encoded) = _generateMetadataBytes(tokenId);
+            bytes memory verfiableURI = bytes.concat(
+                hex'00006f357c6a0020',
+                keccak256(_metadata),
+                _encoded
+            );
+            return verfiableURI;
         }
+        return super._getData(key);
+    }
 
+    function _toHexString(bytes32 data) internal pure returns (string memory) {
+        bytes memory alphabet = "0123456789abcdef";
+        bytes memory str = new bytes(64);
+        for (uint256 i = 0; i < 32; i++) {
+            str[i*2] = alphabet[uint8(data[i] >> 4)];
+            str[1+i*2] = alphabet[uint8(data[i] & 0x0f)];
+        }
         return string(str);
     }
 }
