@@ -4,24 +4,26 @@
 	"private": true,
 	"scripts": {
 		"build": "npx hardhat compile",
-		"deploy-testnet": "npx hardhat run ./scripts/HouseOfBurntPix_deploy.ts --network luksoTestnet",
-		"deploy": "npx hardhat run ./scripts/HouseOfBurntPix_deploy.ts --network ETH_MAINNET",
+		"deploy-testnet": "npx hardhat run ./scripts/BurntPixArchives_deploy.ts --network luksoTestnet",
+		"deploy": "npx hardhat run ./scripts/BurntPixArchives_deploy.ts --network luksoTestnet",
 		"node": "npx hardhat node",
 		"test": "npx hardhat test",
-		"deploy-local": "npx hardhat run ./scripts/HouseOfBurntPix_deploy.ts --network localhost",
+		"deploy-local": "npx hardhat run ./scripts/BurntPixArchives_deploy.ts --network localhost",
 		"typechain": "typechain --target ethers-v6 --out-dir typechain-types ./node_modules/@lukso/lsp-smart-contracts/artifacts/*.json"
 	},
 	"dependencies": {
-		"dotenv": "^16.0.2",
-		"@openzeppelin/contracts": "^4.7.3",
 		"@erc725/erc725.js": "^0.22.0",
 		"@lukso/lsp-factory.js": "^3.2.1",
 		"@lukso/lsp-smart-contracts": "^0.14.0",
+		"@openzeppelin/contracts": "^4.9.3",
+		"dotenv": "^16.3.1",
 		"hardhat": "^2.19.1",
+		"pngjs": "^7.0.0",
 		"prettier": "^3.1.0"
 	},
 	"devDependencies": {
 		"@nomicfoundation/hardhat-toolbox": "^4.0.0",
-		"@nomicfoundation/hardhat-verify": "^2.0.1"
+		"@nomicfoundation/hardhat-verify": "^2.0.1",
+		"hardhat-contract-sizer": "^2.10.0"
 	}
 }
