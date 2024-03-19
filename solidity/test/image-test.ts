@@ -1,7 +1,7 @@
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
 import * as dotenv from 'dotenv';
-import HouseOfBurntPix from "../artifacts/contracts/HouseOfBurntPix.sol/HouseOfBurntPix.json";
+import BurntPixArchives from "../artifacts/contracts/BurntPixArchives.sol/BurntPixArchives.json";
 
 // load env vars
 dotenv.config();
@@ -14,18 +14,18 @@ describe("MyContract", function () {
     const provider = new ethers.JsonRpcProvider('https://rpc.testnet.lukso.network');
     const signer = new ethers.Wallet(EOA_PRIVATE_KEY as string, provider);
     // deployment config
-    const collectionName = "HouseOfBurntPix";
+    const collectionName = "BurntPixArchives";
     const symbol = "HOP";
     const contractOwner = UP_ADDR;
     const maxArchiveNFTs = 100;
     const burntpixCollection = "0x12167f1c2713aC4f740B4700c4C72bC2de6C686f";
     const burntpicId = "0x0000000000000000000000004e8ba475570385e3cc35a0e40293035cd45b9be9";
     const constructorArguments = [collectionName, symbol, contractOwner, maxArchiveNFTs, burntpixCollection, burntpicId];
-    const HouseOfBurntPixFactory = new ethers.ContractFactory(
-      HouseOfBurntPix.abi,
-      HouseOfBurntPix.bytecode,
+    const BurntPixArchivesFactory = new ethers.ContractFactory(
+      BurntPixArchives.abi,
+      BurntPixArchives.bytecode,
     );
-    const houseDeployTx = await HouseOfBurntPixFactory.connect(signer).deploy(
+    const houseDeployTx = await BurntPixArchivesFactory.connect(signer).deploy(
       ...constructorArguments,
     );
     await houseDeployTx.waitForDeployment();
@@ -55,18 +55,18 @@ describe("MyContract", function () {
     const provider = new ethers.JsonRpcProvider('https://rpc.testnet.lukso.network');
     const signer = new ethers.Wallet(EOA_PRIVATE_KEY as string, provider);
     // deployment config
-    const collectionName = "HouseOfBurntPix";
+    const collectionName = "BurntPixArchives";
     const symbol = "HOP";
     const contractOwner = UP_ADDR;
     const maxArchiveNFTs = 100;
     const burntpixCollection = "0x12167f1c2713aC4f740B4700c4C72bC2de6C686f";
     const burntpicId = "0x0000000000000000000000004e8ba475570385e3cc35a0e40293035cd45b9be9";
     const constructorArguments = [collectionName, symbol, contractOwner, maxArchiveNFTs, burntpixCollection, burntpicId];
-    const HouseOfBurntPixFactory = new ethers.ContractFactory(
-      HouseOfBurntPix.abi,
-      HouseOfBurntPix.bytecode,
+    const BurntPixArchivesFactory = new ethers.ContractFactory(
+      BurntPixArchives.abi,
+      BurntPixArchives.bytecode,
     );
-    const houseDeployTx = await HouseOfBurntPixFactory.connect(signer).deploy(
+    const houseDeployTx = await BurntPixArchivesFactory.connect(signer).deploy(
       ...constructorArguments,
     );
     await houseDeployTx.waitForDeployment();
@@ -104,7 +104,7 @@ describe("MyContract", function () {
     
   });
 
-  // next we add tests for all the functions from HouseOfBurntPix.sol that fetch and set image as well as the metadata
+  // next we add tests for all the functions from BurntPixArchives.sol that fetch and set image as well as the metadata
   // the functions in question are getAndSetImage(), getAndSetImageUsingGetData(), getAndSetImageUsingGetDataForTokenId(), getAndSetMetadata(), getAndSetMetadataUsingGetDataForTokenId()
   it("getAndSetImage should work", async function () {
     

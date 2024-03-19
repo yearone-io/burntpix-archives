@@ -33,7 +33,6 @@ contract FractalClone is IERC165, IERC725Y {
     uint256 public gasused;    // Amount of gas used cumulatively on refining the fractal
     uint256 public feesburnt;  // Amount of 1559 fees burns cumulatively on refining the fractal
     uint256 public tipspaid;   // Amount of miner tips paid cumulatively on refining the fractal
-    mapping(uint256 => Canvas) public burntPicArchives;
 
     // create a new fractal that can be iterated and rendered.
     constructor(
@@ -73,69 +72,9 @@ contract FractalClone is IERC165, IERC725Y {
     }
 
     // image retrieves the current look of the fractal.
-    function latestCloneImage() public view returns (string memory) {
+    function image() public view returns (string memory) {
         return string(getData(keccak256("image")));
     }
-
-    function getLatestPixels() public view returns (uint256[] memory) {
-        return canvas.pixels;
-    }
-
-    /// errors
-    /*
-    error HouseOfBurntPixMintedOut();
-
-    
-
-    // todo: write refinement balancer that ensures that clone is always in sync with original
-
-    // refine runs a number of refinement iterations on the fractal.
-    function _refineClone(uint256 iters) internal {
-        // Retrieve the amount of gas provided for stats tracking
-        uint256 start = gasleft();
-
-        // Run the fractal refinement
-        (bool ok, ) = CodeHub(codehub).attractor().delegatecall(
-            abi.encodeWithSignature("refine(uint256)", iters)
-        );
-        require(ok);
-
-        // Update the gas trackers with the refinement stats
-        uint256 end = gasleft();
-
-        unchecked {
-            iterations += iters;
-            gasused    += start - end;
-            feesburnt  += (start - end) * block.basefee;
-            tipspaid   += (start - end) * (tx.gasprice - block.basefee);
-        }
-    }
-
-    
-
-    // gets metadata for the archive
-    function getArchiveMetadataBytes(bytes memory encodedImage, address refiner) internal view returns (bytes memory, bytes memory) {
-        bytes memory _encodedSVG = abi.encodePacked(
-            'data:image/svg+xml;base64,',
-            Base64.encode(encodedImage)
-        );
-        bytes memory collectionName = getData(_LSP4_TOKEN_NAME_KEY);
-        // level needs to represent fibinacci level rather than iterations
-        uint256 level = contributedIterations[refiner];
-        // todo: need to figure out wtf encoded is supposed to be
-        string memory encodedMetadata;
-        // todo: figure out how to get parent burnt pic attributes at time of archive and include them here as well
-        bytes memory _rawMetadata = abi.encodePacked(
-            '{"LSP4Metadata": {"name": "',string(collectionName),'","description": "House of Burnt Pix. A community built archive of Burnt Pic: ',burntPicId,'","links": [],"icon":[],"images": [[{"width": 600,"height": 600,',
-            '"url": "',_encodedSVG,'","verification": {"method": "keccak256(bytes)","data": "',encodedMetadata,'"}}]],',
-            '"attributes":[{"key": "Type","value": "',level,'","type": "number"}]}}'
-        );
-        return (_rawMetadata, abi.encodePacked(
-            "data:application/json;base64,",
-            Base64.encode(_rawMetadata)
-        ));
-    }
-    */
 
     // ------------------------------------------------------------------------
     // ORIGINAL FRACTAL CODE
@@ -148,28 +87,6 @@ contract FractalClone is IERC165, IERC725Y {
         return
             interfaceID == type(IERC165).interfaceId ||
             interfaceID == type(IERC725Y).interfaceId;
-    }
-
-    // createArchive creates a new archive of the current state of the fractal.
-    function createArchive() public {
-        // Only allow refinements through the registry to allow enforcing fun limits
-        require(msg.sender == registry);
-
-        // Create a new archive of the current state of the fractal
-        burntPicArchives[iterations] = canvas;
-    }
-
-    //
-    function getDataForArchiveId(uint256 archiveId, bytes32 key) public returns (bytes memory) {
-        Canvas memory currentCanvas = canvas;
-        canvas = burntPicArchives[archiveId];
-        bytes memory result = getData(key);
-        canvas = currentCanvas;
-        return result;
-    }
-
-    function getImageForArchiveId(uint256 archiveId) public returns (string memory) {
-        return string(getDataForArchiveId(archiveId, keccak256("image")));
     }
 
     // getData implements IERC725Y.

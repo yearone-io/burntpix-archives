@@ -4,11 +4,11 @@
 	"private": true,
 	"scripts": {
 		"build": "npx hardhat compile",
-		"deploy-testnet": "npx hardhat run ./scripts/HouseOfBurntPix_deploy.ts --network luksoTestnet",
-		"deploy": "npx hardhat run ./scripts/HouseOfBurntPix_deploy.ts --network luksoTestnet",
+		"deploy-testnet": "npx hardhat run ./scripts/BurntPixArchives_deploy.ts --network luksoTestnet",
+		"deploy": "npx hardhat run ./scripts/BurntPixArchives_deploy.ts --network luksoTestnet",
 		"node": "npx hardhat node",
 		"test": "npx hardhat test",
-		"deploy-local": "npx hardhat run ./scripts/HouseOfBurntPix_deploy.ts --network localhost",
+		"deploy-local": "npx hardhat run ./scripts/BurntPixArchives_deploy.ts --network localhost",
 		"typechain": "typechain --target ethers-v6 --out-dir typechain-types ./node_modules/@lukso/lsp-smart-contracts/artifacts/*.json"
 	},
 	"dependencies": {

@@ -1,6 +1,6 @@
 const { ethers } = require("hardhat");
 import * as dotenv from 'dotenv';
-import HouseOfBurntPix from "../artifacts/contracts/HouseOfBurntPix.sol/HouseOfBurntPix.json";
+import BurntPixArchives from "../artifacts/contracts/BurntPixArchives.sol/BurntPixArchives.json";
 
 // load env vars
 dotenv.config();
@@ -17,15 +17,15 @@ async function main() {
   const codehub = "0x9F2B09E9A9628DC8430C7c39BD0Bf74b18b7b397";
   const burntpicId = "0x0000000000000000000000004e8ba475570385e3cc35a0e40293035cd45b9be9";
   const maxArchiveSupply = 100;
-  const collectionName = "HouseOfBurntPix";
+  const collectionName = "BurntPixArchives";
   const symbol = "HOP";
   const contractOwner = UP_ADDR;
   const constructorArguments = [contractOwner, codehub, registry, burntpicId];
-  const HouseOfBurntPixFactory = new ethers.ContractFactory(
-    HouseOfBurntPix.abi,
-    HouseOfBurntPix.bytecode,
+  const BurntPixArchivesFactory = new ethers.ContractFactory(
+    BurntPixArchives.abi,
+    BurntPixArchives.bytecode,
   );
-  const onchainHouse = await HouseOfBurntPixFactory.connect(signer).deploy(
+  const onchainHouse = await BurntPixArchivesFactory.connect(signer).deploy(
     ...constructorArguments,{
       gasLimit: 41_000_000n,
     }
