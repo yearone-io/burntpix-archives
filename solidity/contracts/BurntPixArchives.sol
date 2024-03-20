@@ -27,15 +27,12 @@ interface IArchiveHelpers {
 }
 
 struct Archive {
+    bytes image;
+    uint256 iterations;
     uint256 level;
     uint256 blockNumber;
     address creator;
     bytes32 archiveId;
-    bytes image;
-    uint256 iterations;
-    uint256 gasused;
-    uint256 feesburnt;
-    uint256 tipspaid; 
 }
 
 struct Contribution {
@@ -87,9 +84,6 @@ contract BurntPixArchives is LSP8IdentifiableDigitalAsset {
                 image: IFractal(fractalClone).getData(keccak256("image")),
                 iterations: IFractal(fractalClone).iterations(),
                 level: contributions[msg.sender].archiveIds.length + 1,
-                gasused: IFractal(fractalClone).gasused(),
-                feesburnt: IFractal(fractalClone).feesburnt(),
-                tipspaid: IFractal(fractalClone).tipspaid(),
                 blockNumber: block.number,
                 creator: msg.sender,
                 archiveId: archiveId
