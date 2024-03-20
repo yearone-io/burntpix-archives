@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.24;
-import { Base64 } from "@openzeppelin/contracts/utils/Base64.sol";
 import {
     LSP8IdentifiableDigitalAsset
 } from "@lukso/lsp-smart-contracts/contracts/LSP8IdentifiableDigitalAsset/LSP8IdentifiableDigitalAsset.sol";
@@ -13,6 +12,8 @@ interface IRegistry {
 }
 
 interface IFractal {
+    function refineClone(uint256 iters) external;
+    function getData(bytes32 dataKey) external view returns (bytes memory);
     function iterations() external view returns (uint256);
 }
 
@@ -27,11 +28,7 @@ contract BurntPixArchives is LSP8IdentifiableDigitalAsset {
     address public fractalClone;
     address public archiveHelpers;
     bytes32 public burntPicId;
-    FractalClone public fractalClone;
-    // todo: change this to struct that includes image, iterations, gasused, feesburnt, tipspaid
     mapping(uint256 => bytes) public burntArchives;
-    // todo: change this to map address to an array of archives unlocked, mirroring levels achieved
-    //       mapping(address => uint256[]) public archiveCreator;
     mapping(uint256 => address) public archiveCreator;
 
     // Construct a new NFT registry, keeping mostly everything standard and just
@@ -51,23 +48,17 @@ contract BurntPixArchives is LSP8IdentifiableDigitalAsset {
             uint32 seed = IRegistry(registry).seeds(fractal);
             fractalClone = IArchiveHelpers(_archiveHelpers).createFractalClone(address(_codehub), uint256(seed));
             _setData(_LSP4_CREATORS_ARRAY_KEY, hex"00000000000000000000000000000001");
-            _setData(0x114bd03b3a46d48759680d81ebb2b41400000000000000000000000000000000, abi.encodePacked(creator));
-            _setData(bytes32(abi.encodePacked(_LSP4_CREATORS_MAP_KEY_PREFIX, hex"0000", creator)) , hex"24871b3d00000000000000000000000000000000");
+            _setData(0x114bd03b3a46d48759680d81ebb2b41400000000000000000000000000000000, abi.encodePacked(_creator));
+            _setData(bytes32(abi.encodePacked(_LSP4_CREATORS_MAP_KEY_PREFIX, hex"0000", _creator)) , hex"24871b3d00000000000000000000000000000000");
     }
 
-    // todo: implement refinements balancer that ensures that clone is always in sync with original before contributing to clone
-    //      what happens if someone pushes the original very far ahead of the clone? => special "rare" property when clone is archived :)?
-    //          and also becomes cheaper to refine clone because dont have to cover cost of refining original
     function refineToMint(uint256 iters) public {
-        fractalClone.refineClone(iters);
+        IFractal(fractalClone).refineClone(iters);
         IRegistry(registry).refine(burntPicId, iters);
-        // todo: unlock archiving only when new levels are achieved after sufficient iterations
-        burntArchives[fractalClone.iterations()] = fractalClone.getData(keccak256("image"));
-        archiveCreator[fractalClone.iterations()] = msg.sender;
+        burntArchives[IFractal(fractalClone).iterations()] = IFractal(fractalClone).getData(keccak256("image"));
+        archiveCreator[IFractal(fractalClone).iterations()] = msg.sender;
     }
 
-    // todo: do we need to disable default mint functionality? 
-    // todo: given a user address need to be able to return all the archives they have minted or are eligible to mint
     function mintArchive(uint256 archiveId, address to) external {
         require(archiveCreator[archiveId] == msg.sender, "Only the creator of the archive can mint it");
         bytes32 tokenId = bytes32(archiveId);
