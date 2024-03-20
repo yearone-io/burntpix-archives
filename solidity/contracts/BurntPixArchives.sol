@@ -27,7 +27,7 @@ interface IArchiveHelpers {
 }
 
 struct Archive {
-    uint256 contributedIterations;
+    uint256 level;
     uint256 blockNumber;
     address creator;
     bytes32 archiveId;
@@ -77,22 +77,16 @@ contract BurntPixArchives is LSP8IdentifiableDigitalAsset {
         return contributions[contributor];
     }
 
-    function _isArchiveUnlocked() internal view returns (bool) {
-        return contributions[msg.sender].iterations >= IArchiveHelpers(archiveHelpers).fibonacciIterations(contributions[msg.sender].archiveIds.length + 1);
-    }
-
     function refineToMint(uint256 iters) public {
         IFractal(fractalClone).refine(iters);
         IRegistry(registry).refine(burntPicId, iters);
         contributions[msg.sender].iterations += iters;
-        if(_isArchiveUnlocked()) {
+        if (contributions[msg.sender].iterations >= IArchiveHelpers(archiveHelpers).fibonacciIterations(contributions[msg.sender].archiveIds.length + 1)) {
             bytes32 archiveId = bytes32(IFractal(fractalClone).iterations());
             Archive memory archive = Archive({
                 image: IFractal(fractalClone).getData(keccak256("image")),
                 iterations: IFractal(fractalClone).iterations(),
-                contributedIterations: contributions[msg.sender].archiveIds.length == 0
-                    ? contributions[msg.sender].iterations
-                    : contributions[msg.sender].iterations - burntArchives[contributions[msg.sender].archiveIds[contributions[msg.sender].archiveIds.length - 1]].iterations,
+                level: contributions[msg.sender].archiveIds.length + 1,
                 gasused: IFractal(fractalClone).gasused(),
                 feesburnt: IFractal(fractalClone).feesburnt(),
                 tipspaid: IFractal(fractalClone).tipspaid(),
