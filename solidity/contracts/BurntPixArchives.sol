@@ -12,13 +12,13 @@ interface IRegistry {
 }
 
 interface IFractal {
-    function refineClone(uint256 iters) external;
+    function refine(uint256 iters) external;
     function getData(bytes32 dataKey) external view returns (bytes memory);
     function iterations() external view returns (uint256);
 }
 
 interface IArchiveHelpers {
-    function createFractalClone(address codehub, uint256 seed) external returns (address);
+    function createFractalClone(address registry, address codehub, uint256 seed) external returns (address);
     function generateMetadataBytes(bytes memory _image) external pure returns (bytes memory, bytes memory);
 }
 
@@ -46,14 +46,14 @@ contract BurntPixArchives is LSP8IdentifiableDigitalAsset {
             address fractal = address(uint160(uint256(_burntPicId)));
             registry = _registry;
             uint32 seed = IRegistry(registry).seeds(fractal);
-            fractalClone = IArchiveHelpers(_archiveHelpers).createFractalClone(address(_codehub), uint256(seed));
+            fractalClone = IArchiveHelpers(_archiveHelpers).createFractalClone(address(this), address(_codehub), uint256(seed));
             _setData(_LSP4_CREATORS_ARRAY_KEY, hex"00000000000000000000000000000001");
             _setData(0x114bd03b3a46d48759680d81ebb2b41400000000000000000000000000000000, abi.encodePacked(_creator));
             _setData(bytes32(abi.encodePacked(_LSP4_CREATORS_MAP_KEY_PREFIX, hex"0000", _creator)) , hex"24871b3d00000000000000000000000000000000");
     }
 
     function refineToMint(uint256 iters) public {
-        IFractal(fractalClone).refineClone(iters);
+        IFractal(fractalClone).refine(iters);
         IRegistry(registry).refine(burntPicId, iters);
         burntArchives[IFractal(fractalClone).iterations()] = IFractal(fractalClone).getData(keccak256("image"));
         archiveCreator[IFractal(fractalClone).iterations()] = msg.sender;

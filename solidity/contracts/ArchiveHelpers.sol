@@ -4,8 +4,8 @@ import "@openzeppelin/contracts/utils/Base64.sol";
 import {FractalClone} from "./FractalClone.sol";
 
 contract ArchiveHelpers {
-    function createFractalClone(address codehub, uint256 seed) external returns (address) {
-        FractalClone fractalClone = new FractalClone(codehub, seed);
+    function createFractalClone(address registry, address codehub, uint256 seed) external returns (address) {
+        FractalClone fractalClone = new FractalClone(registry, codehub, seed);
         return address(fractalClone);
     }
 

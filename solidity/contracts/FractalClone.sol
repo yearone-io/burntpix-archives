@@ -17,7 +17,6 @@ interface IRegistry {
     function seeds(address fractal) external view returns (uint32);
 }
 
-
 // Fractal represents a single specific instance of fractal that can used the
 // global singleton attractor to iterate its data.
 contract FractalClone is IERC165, IERC725Y {
@@ -36,10 +35,11 @@ contract FractalClone is IERC165, IERC725Y {
 
     // create a new fractal that can be iterated and rendered.
     constructor(
+        address _registry,
         address _codehub,
         uint256 _seed
     ){
-        registry = msg.sender;
+        registry = _registry;
         codehub  = _codehub;
         (bool ok, ) = CodeHub(codehub).attractor().delegatecall(
             abi.encodeWithSignature("init(uint256,uint256,uint256)", _seed, 16, 16)
@@ -47,7 +47,7 @@ contract FractalClone is IERC165, IERC725Y {
         require(ok);
     }
 
-    function refineClone(uint256 iters) public {
+    function refine(uint256 iters) public {
         // Only allow refinements through the registry to allow enforcing fun limits
         require(msg.sender == registry);
 
