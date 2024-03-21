@@ -22,7 +22,7 @@ interface IFractal {
 
 interface IArchiveHelpers {
     function createFractalClone(address registry, address codehub, uint256 seed) external returns (address);
-    function generateMetadataBytes(bytes memory _image) external pure returns (bytes memory, bytes memory);
+    function generateMetadataBytes(Archive memory archive) external pure returns (bytes memory, bytes memory);
     function fibonacciIterations(uint256 n) external pure returns (uint256);
 }
 
@@ -32,7 +32,6 @@ struct Archive {
     uint256 level;
     uint256 blockNumber;
     address creator;
-    bytes32 archiveId;
 }
 
 struct Contribution {
@@ -46,6 +45,7 @@ contract BurntPixArchives is LSP8IdentifiableDigitalAsset {
     address public fractalClone;
     address public archiveHelpers;
     bytes32 public burntPicId;
+    uint256 public archiveCount;
     mapping(bytes32 => Archive) public burntArchives;
     mapping(address => Contribution) public contributions;
 
@@ -79,14 +79,13 @@ contract BurntPixArchives is LSP8IdentifiableDigitalAsset {
         IRegistry(registry).refine(burntPicId, iters);
         contributions[msg.sender].iterations += iters;
         if (contributions[msg.sender].iterations >= IArchiveHelpers(archiveHelpers).fibonacciIterations(contributions[msg.sender].archiveIds.length + 1)) {
-            bytes32 archiveId = bytes32(IFractal(fractalClone).iterations());
+            bytes32 archiveId = bytes32(++archiveCount);
             Archive memory archive = Archive({
                 image: IFractal(fractalClone).getData(keccak256("image")),
                 iterations: IFractal(fractalClone).iterations(),
                 level: contributions[msg.sender].archiveIds.length + 1,
                 blockNumber: block.number,
-                creator: msg.sender,
-                archiveId: archiveId
+                creator: msg.sender
             });
             burntArchives[archiveId] = archive;
             contributions[msg.sender].archiveIds.push(archiveId);
@@ -110,9 +109,12 @@ contract BurntPixArchives is LSP8IdentifiableDigitalAsset {
     function _getDataForTokenId(bytes32 archiveId, bytes32 key) internal view override returns (bytes memory) {
         require(_exists(archiveId));
         if (key == _LSP4_METADATA_KEY) {
-            (bytes memory _metadata, bytes memory _encoded) = IArchiveHelpers(archiveHelpers).generateMetadataBytes(burntArchives[archiveId].image);
+            (bytes memory _metadata, bytes memory _encoded) = IArchiveHelpers(archiveHelpers).generateMetadataBytes(burntArchives[archiveId]);
+            // 0x0000 (is VerifiableURI identifier) +
+            // 6f357c6a ("keccak256(utf8)": Means the data SHOULD be bytes32 hash of the content of the linked UTF-8 based file of the "Encoded URI") + 
+            // 0020 (32 bytes length of the hash) todo: this is wrong
             bytes memory verfiableURI = bytes.concat(
-                hex'00006f357c6a0020', // todo: what is this? bytes("keccak256(_metadata)")?
+                hex'00006f357c6a0020', 
                 keccak256(_metadata),
                 _encoded
             );
