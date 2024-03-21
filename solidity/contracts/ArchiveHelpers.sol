@@ -9,6 +9,19 @@ contract ArchiveHelpers {
         return address(fractalClone);
     }
 
+    function fibonacciIterations(uint256 n) external pure returns (uint256) {
+        uint256 multiplier = 1000;
+        if (n <= 1) return multiplier;
+        uint256 a = 1;
+        uint256 b = 1;
+        for (uint256 i = 2; i < n; i++) {
+            uint256 c = a + b;
+            a = b;
+            b = c;
+        }
+        return (a + b) * multiplier;
+    }
+
     function toHexString(bytes32 data) internal pure returns (string memory) {
         bytes memory alphabet = "0123456789abcdef";
         bytes memory str = new bytes(64);

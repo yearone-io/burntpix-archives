@@ -7,7 +7,7 @@ import {_LSP8_TOKENID_FORMAT_NUMBER}  from "@lukso/lsp-smart-contracts/contracts
 import {_LSP4_TOKEN_TYPE_COLLECTION, _LSP4_METADATA_KEY, _LSP4_CREATORS_ARRAY_KEY, _LSP4_CREATORS_MAP_KEY_PREFIX} from "@lukso/lsp-smart-contracts/contracts/LSP4DigitalAssetMetadata/LSP4Constants.sol";
 
 interface IRegistry {
-    function refine(bytes32 tokenId, uint256 iters) external;
+    function refine(bytes32 archiveId, uint256 iters) external;
     function seeds(address fractal) external view returns (uint32);
 }
 
@@ -15,11 +15,29 @@ interface IFractal {
     function refine(uint256 iters) external;
     function getData(bytes32 dataKey) external view returns (bytes memory);
     function iterations() external view returns (uint256);
+    function gasused() external view returns (uint256);
+    function feesburnt() external view returns (uint256);
+    function tipspaid() external view returns (uint256);
 }
 
 interface IArchiveHelpers {
     function createFractalClone(address registry, address codehub, uint256 seed) external returns (address);
     function generateMetadataBytes(bytes memory _image) external pure returns (bytes memory, bytes memory);
+    function fibonacciIterations(uint256 n) external pure returns (uint256);
+}
+
+struct Archive {
+    bytes image;
+    uint256 iterations;
+    uint256 level;
+    uint256 blockNumber;
+    address creator;
+    bytes32 archiveId;
+}
+
+struct Contribution {
+    bytes32[] archiveIds;
+    uint256 iterations;
 }
 
 // Registry implements the NFT existence and ownership tracking.
@@ -28,8 +46,8 @@ contract BurntPixArchives is LSP8IdentifiableDigitalAsset {
     address public fractalClone;
     address public archiveHelpers;
     bytes32 public burntPicId;
-    mapping(uint256 => bytes) public burntArchives;
-    mapping(uint256 => address) public archiveCreator;
+    mapping(bytes32 => Archive) public burntArchives;
+    mapping(address => Contribution) public contributions;
 
     // Construct a new NFT registry, keeping mostly everything standard and just
     // delegating it to Lukso's base contracts.
@@ -52,17 +70,34 @@ contract BurntPixArchives is LSP8IdentifiableDigitalAsset {
             _setData(bytes32(abi.encodePacked(_LSP4_CREATORS_MAP_KEY_PREFIX, hex"0000", _creator)) , hex"24871b3d00000000000000000000000000000000");
     }
 
+    function getContribution(address contributor) public view returns (Contribution memory) {
+        return contributions[contributor];
+    }
+
     function refineToMint(uint256 iters) public {
         IFractal(fractalClone).refine(iters);
         IRegistry(registry).refine(burntPicId, iters);
-        burntArchives[IFractal(fractalClone).iterations()] = IFractal(fractalClone).getData(keccak256("image"));
-        archiveCreator[IFractal(fractalClone).iterations()] = msg.sender;
+        contributions[msg.sender].iterations += iters;
+        if (contributions[msg.sender].iterations >= IArchiveHelpers(archiveHelpers).fibonacciIterations(contributions[msg.sender].archiveIds.length + 1)) {
+            bytes32 archiveId = bytes32(IFractal(fractalClone).iterations());
+            Archive memory archive = Archive({
+                image: IFractal(fractalClone).getData(keccak256("image")),
+                iterations: IFractal(fractalClone).iterations(),
+                level: contributions[msg.sender].archiveIds.length + 1,
+                blockNumber: block.number,
+                creator: msg.sender,
+                archiveId: archiveId
+            });
+            burntArchives[archiveId] = archive;
+            contributions[msg.sender].archiveIds.push(archiveId);
+        }
     }
 
-    function mintArchive(uint256 archiveId, address to) external {
-        require(archiveCreator[archiveId] == msg.sender, "Only the creator of the archive can mint it");
-        bytes32 tokenId = bytes32(archiveId);
-        _mint(to, tokenId, true, "");
+    function mintArchive(bytes32 archiveId, address to) external {
+        _exists(archiveId);
+        Archive memory archive = burntArchives[archiveId];
+        require(archive.creator == msg.sender, "BurntPixArchives: Only the creator can mint the archive");
+        _mint(to, archiveId, true, "");
     }
 
     function _getData(bytes32 key) internal view override returns (bytes memory) {
@@ -72,11 +107,10 @@ contract BurntPixArchives is LSP8IdentifiableDigitalAsset {
         return super._getData(key);
     }
     
-    function _getDataForTokenId(bytes32 tokenId, bytes32 key) internal view override returns (bytes memory) {
-        require(_exists(tokenId));
+    function _getDataForTokenId(bytes32 archiveId, bytes32 key) internal view override returns (bytes memory) {
+        require(_exists(archiveId));
         if (key == _LSP4_METADATA_KEY) {
-            bytes memory _image = burntArchives[uint256(tokenId)];
-            (bytes memory _metadata, bytes memory _encoded) = IArchiveHelpers(archiveHelpers).generateMetadataBytes(_image);
+            (bytes memory _metadata, bytes memory _encoded) = IArchiveHelpers(archiveHelpers).generateMetadataBytes(burntArchives[archiveId].image);
             bytes memory verfiableURI = bytes.concat(
                 hex'00006f357c6a0020', // todo: what is this? bytes("keccak256(_metadata)")?
                 keccak256(_metadata),
