@@ -75,9 +75,16 @@ contract BurntPixArchives is LSP8IdentifiableDigitalAsset {
     }
 
     function refineToMint(uint256 iters) public {
-        IFractal(fractalClone).refine(iters);
-        IRegistry(registry).refine(burntPicId, iters);
         contributions[msg.sender].iterations += iters;
+        uint256 fractalIterations = IFractal(address(uint160(uint256(burntPicId)))).iterations();
+        uint256 cloneIterations = IFractal(fractalClone).iterations();
+        uint256 diff = fractalIterations - cloneIterations;
+        IFractal(fractalClone).refine(iters);
+        if (diff > 0 && iters > diff) {
+            IRegistry(registry).refine(burntPicId, iters - diff);
+        } else if (diff == 0) {
+            IRegistry(registry).refine(burntPicId, iters);
+        }
         if (contributions[msg.sender].iterations >= IArchiveHelpers(archiveHelpers).fibonacciIterations(contributions[msg.sender].archiveIds.length + 1)) {
             bytes32 archiveId = bytes32(++archiveCount);
             Archive memory archive = Archive({
