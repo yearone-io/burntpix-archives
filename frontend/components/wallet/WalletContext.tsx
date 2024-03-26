@@ -1,7 +1,7 @@
-import React from 'react';
-import { getNetworkConfig, Network } from '@/constants/networks';
-import { JsonRpcProvider, Web3Provider } from '@ethersproject/providers';
-import { ethers } from 'ethers';
+import React from "react";
+import { getNetworkConfig, Network } from "@/constants/networks";
+import { JsonRpcProvider, Web3Provider } from "@ethersproject/providers";
+import { ethers } from "ethers";
 
 interface WalletContextType {
   networkConfig: Network;
@@ -15,7 +15,7 @@ interface WalletContextType {
 }
 
 const networkConfig = getNetworkConfig(
-  process.env.NEXT_PUBLIC_DEFAULT_NETWORK!
+  process.env.NEXT_PUBLIC_DEFAULT_NETWORK!,
 );
 
 export const DEFAULT_PROVIDER = new ethers.providers.JsonRpcProvider(
@@ -23,7 +23,7 @@ export const DEFAULT_PROVIDER = new ethers.providers.JsonRpcProvider(
   {
     name: networkConfig.name,
     chainId: networkConfig.chainId,
-  }
+  },
 );
 
 const defaultImplementation: WalletContextType = {
@@ -42,5 +42,5 @@ const defaultImplementation: WalletContextType = {
 };
 
 export const WalletContext = React.createContext<WalletContextType>(
-  defaultImplementation
+  defaultImplementation,
 );

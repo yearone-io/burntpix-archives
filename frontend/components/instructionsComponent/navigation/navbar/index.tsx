@@ -1,5 +1,4 @@
-
-'use client'
+"use client";
 
 import styles from "./Navbar.module.css";
 export default function Navbar() {
@@ -8,6 +7,6 @@ export default function Navbar() {
       <a href="https://alchemy.com/?a=create-web3-dapp" target={"_blank"}>
         <p>create-web3-dapp</p>
       </a>
-        </nav>
+    </nav>
   );
 }

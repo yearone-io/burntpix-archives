@@ -1,6 +1,6 @@
-import React, { useContext } from 'react';
-import { Box, Button, Flex, Image, useToast } from '@chakra-ui/react';
-import { WalletContext } from './wallet/WalletContext';
+import React, { useContext } from "react";
+import { Box, Button, Flex, Image, useToast } from "@chakra-ui/react";
+import { WalletContext } from "./wallet/WalletContext";
 
 const SignInButton: React.FC = () => {
   const walletContext = useContext(WalletContext);
@@ -12,16 +12,16 @@ const SignInButton: React.FC = () => {
     if (connectedChainId !== networkConfig.chainId) {
       try {
         await window.lukso.request({
-          method: 'wallet_switchEthereumChain',
+          method: "wallet_switchEthereumChain",
           params: [
-            { chainId: '0x' + BigInt(networkConfig.chainId).toString(16) },
+            { chainId: "0x" + BigInt(networkConfig.chainId).toString(16) },
           ],
         });
       } catch (error: any) {
         toast({
           title: `Error switching network. ${error.message}`,
-          status: 'error',
-          position: 'bottom-left',
+          status: "error",
+          position: "bottom-left",
           duration: 5000,
           isClosable: true,
         });
@@ -34,7 +34,7 @@ const SignInButton: React.FC = () => {
   return (
     <Button
       onClick={onSignInClick}
-      border={'1px solid var(--chakra-colors-dark-purple-500)'}
+      border={"1px solid var(--chakra-colors-dark-purple-500)"}
     >
       <Flex alignItems="center" justifyContent="space-between">
         <Image src="/images/LYX-logo.svg" alt="Sign In" />
@@ -44,9 +44,9 @@ const SignInButton: React.FC = () => {
           lineHeight="14px"
           fontFamily="Bungee"
           fontWeight="400"
-          color={'dark.purple.500'}
+          color={"dark.purple.500"}
         >
-          {isLoadingAccount ? '...' : 'Sign In'}
+          {isLoadingAccount ? "..." : "Sign In"}
         </Box>
       </Flex>
     </Button>

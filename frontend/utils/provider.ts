@@ -1,5 +1,5 @@
-import { ethers } from 'ethers';
-import { getNetworkConfig, Network } from '@/constants/networks';
+import { ethers } from "ethers";
+import { getNetworkConfig, Network } from "@/constants/networks";
 
 export const getProvider = (networkConfig: Network) => {
   const providerNetworkParams = {
@@ -7,21 +7,21 @@ export const getProvider = (networkConfig: Network) => {
     chainId: networkConfig.chainId,
   };
   const luksoProvider = getLuksoProvider();
-  if (typeof luksoProvider === 'string') {
+  if (typeof luksoProvider === "string") {
     return new ethers.providers.JsonRpcProvider(
       luksoProvider,
-      providerNetworkParams
+      providerNetworkParams,
     );
   }
   return new ethers.providers.Web3Provider(
     luksoProvider,
-    providerNetworkParams
+    providerNetworkParams,
   );
 };
 
 export const getLuksoProvider = () => {
   const networkConfig = getNetworkConfig(
-    process.env.NEXT_PUBLIC_DEFAULT_NETWORK!
+    process.env.NEXT_PUBLIC_DEFAULT_NETWORK!,
   );
   const rpcUrl = networkConfig.rpcUrl;
   if (window.lukso && Number(window.lukso.chainId) !== networkConfig.chainId) {

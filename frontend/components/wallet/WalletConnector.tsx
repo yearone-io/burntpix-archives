@@ -1,4 +1,4 @@
-import SignInButton from '@/components/SignInButton';
+import SignInButton from "@/components/SignInButton";
 
 declare global {
   interface Window {
@@ -6,11 +6,11 @@ declare global {
     ethereum: any;
   }
 }
-import React, { useContext } from 'react';
-import { WalletContext } from './WalletContext';
-import { Button, Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react';
-import { formatAddress } from '@/utils/tokenUtils';
-import { VscDebugDisconnect } from 'react-icons/vsc';
+import React, { useContext } from "react";
+import { WalletContext } from "./WalletContext";
+import { Button, Menu, MenuButton, MenuItem, MenuList } from "@chakra-ui/react";
+import { formatAddress } from "@/utils/tokenUtils";
+import { VscDebugDisconnect } from "react-icons/vsc";
 
 /**
  * The WalletConnector component allows users to connect or disconnect their LUKSO wallets.
@@ -21,7 +21,7 @@ const WalletConnector: React.FC = () => {
 
   // If the context is not available, throw an error. This component must be used within a WalletProvider.
   if (!walletContext) {
-    throw new Error('WalletConnector must be used within a WalletProvider.');
+    throw new Error("WalletConnector must be used within a WalletProvider.");
   }
   const { account, disconnect, isLoadingAccount } = walletContext;
 
@@ -35,8 +35,8 @@ const WalletConnector: React.FC = () => {
         <Menu>
           <MenuButton
             as={Button}
-            color={'dark.purple.500'}
-            border={'1px solid var(--chakra-colors-dark-purple-500)'}
+            color={"dark.purple.500"}
+            border={"1px solid var(--chakra-colors-dark-purple-500)"}
           >
             {formatAddress(account)}
           </MenuButton>
