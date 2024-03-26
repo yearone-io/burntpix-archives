@@ -3,6 +3,9 @@ import { WagmiConfig, createConfig } from "wagmi";
 import { ConnectKitProvider, getDefaultConfig } from "connectkit";
 import Navbar from "@/components/instructionsComponent/navigation/navbar";
 import Footer from "@/components/instructionsComponent/navigation/footer";
+import {ChakraProvider} from "@chakra-ui/react";
+import theme from './theme';
+
 
 const config = createConfig(
   getDefaultConfig({
@@ -29,13 +32,15 @@ export default function RootLayout({
     <html lang="en">
       <WagmiConfig config={config}>
         <ConnectKitProvider mode="dark">
-          <body>
-            <div style={{ display: "flex", flexDirection: "column", minHeight: "105vh" }}>
-              <Navbar />
-              <div style={{flexGrow: 1}}>{children}</div>
-              <Footer />
-            </div>
-          </body>
+              <body>
+                  <ChakraProvider theme={theme}>
+                    <div style={{ display: "flex", flexDirection: "column", minHeight: "105vh" }}>
+                      <Navbar />
+                      <div style={{flexGrow: 1}}>{children}</div>
+                      <Footer />
+                    </div>
+                  </ChakraProvider>
+              </body>
         </ConnectKitProvider>
       </WagmiConfig>
     </html>
