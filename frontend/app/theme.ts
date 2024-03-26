@@ -69,7 +69,16 @@ const foundations = {
 
 const theme = extendTheme({
     ...foundations,
-
+    components: {
+        Divider: {
+            defaultProps: { size: "md" },
+            sizes: {
+                lg: { borderWidth: "4px" },
+                md: { borderWidth: "2px" },
+                sm: { borderWidth: "1px" },
+            },
+        },
+    },
 });
 
 export default theme;
