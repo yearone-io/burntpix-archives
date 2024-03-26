@@ -3,7 +3,7 @@ import Navbar from "@/components/instructionsComponent/navigation/navbar";
 import Footer from "@/components/instructionsComponent/navigation/footer";
 import { WalletProvider } from "@/components/wallet/WalletProvider";
 import Head from 'next/head';
-import SignInButton from "@/components/SignInButton";
+import WalletConnector from "@/components/wallet/WalletConnector";
 
 
 export default function RootLayout({
@@ -15,7 +15,7 @@ export default function RootLayout({
 
   return (
     <html lang="en">
-      <WalletProvider>
+      
       <Head>
           <meta
             name="viewport"
@@ -28,11 +28,12 @@ export default function RootLayout({
           <meta property="og:image" content={`./images/logo-text.png`} />
           <meta name="twitter:card" content="summary"></meta>
         </Head>
+        <WalletProvider>
             <body>
               <div style={{ display: "flex", flexDirection: "column", minHeight: "105vh" }}>
                 <Navbar />
-                <SignInButton />
                 <div style={{flexGrow: 1}}>{children}</div>
+                <WalletConnector />
                 <Footer />
               </div>
             </body>

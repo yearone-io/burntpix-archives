@@ -82,7 +82,9 @@ export const WalletProvider: React.FC<Props> = ({ children }) => {
     if (typeof window !== 'undefined' && window.lukso) {
       // Initialize a new Web3 instance using the LUKSO provider.
       const web3 = new Web3(window.lukso);
-      setConnectedChainId(Number(await web3.eth.getChainId()));
+      const chainId = await web3.eth.getChainId();
+      setConnectedChainId(Number(chainId));
+      console.log('chainId', chainId); 
       let accounts: string[] = [];
       try {
         // Request accounts from the wallet.
