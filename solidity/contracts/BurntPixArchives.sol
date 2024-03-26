@@ -3,6 +3,9 @@ pragma solidity >=0.8.24;
 import {
     LSP8IdentifiableDigitalAsset
 } from "@lukso/lsp-smart-contracts/contracts/LSP8IdentifiableDigitalAsset/LSP8IdentifiableDigitalAsset.sol";
+import {
+    LSP8CappedSupply
+} from "@lukso/lsp-smart-contracts/contracts/LSP8IdentifiableDigitalAsset/extensions/LSP8CappedSupply.sol";
 import {_LSP8_TOKENID_FORMAT_NUMBER}  from "@lukso/lsp-smart-contracts/contracts/LSP8IdentifiableDigitalAsset/LSP8Constants.sol";
 import {_LSP4_TOKEN_TYPE_COLLECTION, _LSP4_METADATA_KEY, _LSP4_CREATORS_ARRAY_KEY, _LSP4_CREATORS_MAP_KEY_PREFIX} from "@lukso/lsp-smart-contracts/contracts/LSP4DigitalAssetMetadata/LSP4Constants.sol";
 
@@ -15,9 +18,6 @@ interface IFractal {
     function refine(uint256 iters) external;
     function getData(bytes32 dataKey) external view returns (bytes memory);
     function iterations() external view returns (uint256);
-    function gasused() external view returns (uint256);
-    function feesburnt() external view returns (uint256);
-    function tipspaid() external view returns (uint256);
 }
 
 interface IArchiveHelpers {
@@ -40,31 +40,30 @@ struct Contribution {
 }
 
 // Registry implements the NFT existence and ownership tracking.
-contract BurntPixArchives is LSP8IdentifiableDigitalAsset {
-    address public registry;
-    address public fractalClone;
-    address public archiveHelpers;
-    bytes32 public burntPicId;
+contract BurntPixArchives is LSP8CappedSupply {
+    address public immutable registry;
+    address public immutable fractalClone;
+    address public immutable archiveHelpers;
+    bytes32 public immutable burntPicId;
     uint256 public archiveCount;
     mapping(bytes32 => Archive) public burntArchives;
     mapping(address => Contribution) public contributions;
 
     // Construct a new NFT registry, keeping mostly everything standard and just
     // delegating it to Lukso's base contracts.
-    constructor(address _creator, address _codehub, address _registry, bytes32 _burntPicId, address _archiveHelpers)
+    constructor(uint256 _maxSupply, address _creator, address _codehub, address _registry, bytes32 _burntPicId, address _archiveHelpers)
+        LSP8CappedSupply(_maxSupply)
         LSP8IdentifiableDigitalAsset(
-            'House Of Burnt Pix',
-            'HOPIX',
+            'Burnt Pix Archives: Season 1',
+            'BURNT1',
             msg.sender,
             _LSP4_TOKEN_TYPE_COLLECTION,
             _LSP8_TOKENID_FORMAT_NUMBER
         ) {
             archiveHelpers = _archiveHelpers;
             burntPicId = _burntPicId;
-            address fractal = address(uint160(uint256(_burntPicId)));
             registry = _registry;
-            uint32 seed = IRegistry(registry).seeds(fractal);
-            fractalClone = IArchiveHelpers(_archiveHelpers).createFractalClone(address(this), address(_codehub), uint256(seed));
+            fractalClone = IArchiveHelpers(_archiveHelpers).createFractalClone(address(this), _codehub, uint256(IRegistry(registry).seeds(address(uint160(uint256(_burntPicId))))));
             _setData(_LSP4_CREATORS_ARRAY_KEY, hex"00000000000000000000000000000001");
             _setData(0x114bd03b3a46d48759680d81ebb2b41400000000000000000000000000000000, abi.encodePacked(_creator));
             _setData(bytes32(abi.encodePacked(_LSP4_CREATORS_MAP_KEY_PREFIX, hex"0000", _creator)) , hex"24871b3d00000000000000000000000000000000");
@@ -75,20 +74,25 @@ contract BurntPixArchives is LSP8IdentifiableDigitalAsset {
     }
 
     function refineToMint(uint256 iters) public {
-        IFractal(fractalClone).refine(iters);
-        IRegistry(registry).refine(burntPicId, iters);
         contributions[msg.sender].iterations += iters;
+        uint256 diff = IFractal(address(uint160(uint256(burntPicId)))).iterations() - IFractal(fractalClone).iterations();
+        IFractal(fractalClone).refine(iters);
+        if (diff > 0 && iters > diff) {
+            IRegistry(registry).refine(burntPicId, iters - diff);
+        } else if (diff == 0) {
+            IRegistry(registry).refine(burntPicId, iters);
+        }
         if (contributions[msg.sender].iterations >= IArchiveHelpers(archiveHelpers).fibonacciIterations(contributions[msg.sender].archiveIds.length + 1)) {
             bytes32 archiveId = bytes32(++archiveCount);
+            contributions[msg.sender].archiveIds.push(archiveId);
             Archive memory archive = Archive({
                 image: IFractal(fractalClone).getData(keccak256("image")),
                 iterations: IFractal(fractalClone).iterations(),
-                level: contributions[msg.sender].archiveIds.length + 1,
+                level: contributions[msg.sender].archiveIds.length,
                 blockNumber: block.number,
                 creator: msg.sender
             });
             burntArchives[archiveId] = archive;
-            contributions[msg.sender].archiveIds.push(archiveId);
         }
     }
 

@@ -11,8 +11,9 @@
     "format-check": "prettier --check ."
   },
   "dependencies": {
-    "@chakra-ui/react": "^2.8.1",
-    "@emotion/react": "^11.11.1",
+    "@chakra-ui/next-js": "^2.2.0",
+    "@chakra-ui/react": "^2.8.2",
+    "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.0",
     "@types/node": "20.2.5",
     "@types/react": "18.2.9",
@@ -22,7 +23,7 @@
     "eslint": "8.42.0",
     "eslint-config-next": "13.4.4",
     "ethers": "^5.7.2",
-    "framer-motion": "^10.16.4",
+    "framer-motion": "^11.0.20",
     "fs": "^0.0.1-security",
     "lokijs": "^1.5.12",
     "next": "13.4.4",

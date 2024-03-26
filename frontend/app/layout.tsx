@@ -3,7 +3,8 @@ import Navbar from "@/components/instructionsComponent/navigation/navbar";
 import Footer from "@/components/instructionsComponent/navigation/footer";
 import { WalletProvider } from "@/components/wallet/WalletProvider";
 import Head from "next/head";
-import WalletConnector from "@/components/wallet/WalletConnector";
+import { ChakraProvider } from "@chakra-ui/react";
+import theme from "./theme";
 
 export default function RootLayout({
   children,
@@ -28,18 +29,19 @@ export default function RootLayout({
       </Head>
       <WalletProvider>
         <body>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              minHeight: "105vh",
-            }}
-          >
-            <Navbar />
-            <div style={{ flexGrow: 1 }}>{children}</div>
-            <WalletConnector />
-            <Footer />
-          </div>
+          <ChakraProvider theme={theme}>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                minHeight: "105vh",
+              }}
+            >
+              <Navbar />
+              <div style={{ flexGrow: 1 }}>{children}</div>
+              <Footer />
+            </div>
+          </ChakraProvider>
         </body>
       </WalletProvider>
     </html>
