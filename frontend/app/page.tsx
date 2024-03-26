@@ -1,5 +1,4 @@
 "use client";
-import InstructionsComponent from "@/components/instructionsComponent";
 import styles from "./page.module.css";
 import "./globals.css";
 import { Box, Divider, Flex, Heading, Text } from "@chakra-ui/react";
