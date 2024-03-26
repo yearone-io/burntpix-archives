@@ -5,6 +5,7 @@ import { useToast } from '@chakra-ui/react';
 import { getNetworkConfig } from '@/constants/networks';
 import { getProvider } from '@/utils/provider';
 import { JsonRpcProvider, Web3Provider } from '@ethersproject/providers';
+import { buildSIWEMessage } from '@/utils/universalProfile';
 
 // Extends the window object to include `lukso`, which will be used to interact with LUKSO blockchain.
 declare global {
@@ -82,9 +83,7 @@ export const WalletProvider: React.FC<Props> = ({ children }) => {
     if (typeof window !== 'undefined' && window.lukso) {
       // Initialize a new Web3 instance using the LUKSO provider.
       const web3 = new Web3(window.lukso);
-      const chainId = await web3.eth.getChainId();
-      setConnectedChainId(Number(chainId));
-      console.log('chainId', chainId); 
+      setConnectedChainId(Number(await web3.eth.getChainId()));
       let accounts: string[] = [];
       try {
         // Request accounts from the wallet.
@@ -94,10 +93,25 @@ export const WalletProvider: React.FC<Props> = ({ children }) => {
         }
         const connectedAccount = accounts[0];
         console.log('Connected with', connectedAccount);
-
+        // To enable the Sign-In With Ethereum (SIWE) screen, you need to prepare a message with a specific format
+        const siweMessage = buildSIWEMessage(connectedAccount);
+        const signature = await web3.eth.personal.sign(
+          siweMessage,
+          connectedAccount,
+          ''
+        );
+        // Request the user to sign the login message with his Universal Profile
+        // The UP Browser Extension will sign the message with the controller key used by the extension (a smart contract can't sign)
+        const signerAddress = web3.eth.accounts.recover(
+          siweMessage,
+          signature as string
+        );
+        console.log("The account's Main Controller address is:", signerAddress);
         // Update state and localStorage with the first account address.
         setAccount(connectedAccount);
+        setMainUPController(signerAddress);
         localStorage.setItem('connectedAccount', connectedAccount);
+        localStorage.setItem('mainUPController', signerAddress);
       } catch (error: any) {
         // Log any connection errors.
         if (accounts.length) {
