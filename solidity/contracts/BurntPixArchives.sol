@@ -12,6 +12,9 @@ import {_LSP4_TOKEN_TYPE_COLLECTION, _LSP4_METADATA_KEY, _LSP4_CREATORS_ARRAY_KE
 interface IRegistry {
     function refine(bytes32 archiveId, uint256 iters) external;
     function seeds(address fractal) external view returns (uint32);
+    function transfer(address from, address to, bytes32 tokenId, bool force, bytes memory data) external;
+    function getOperatorsOf(bytes32 tokenId) external view returns (address[] memory);
+    function tokenOwnerOf(bytes32 tokenId) external view returns (address);
 }
 
 interface IFractal {
@@ -45,13 +48,14 @@ contract BurntPixArchives is LSP8CappedSupply {
     address public immutable fractalClone;
     address public immutable archiveHelpers;
     bytes32 public immutable burntPicId;
+    uint256 public immutable winnerIters;
     uint256 public archiveCount;
     mapping(bytes32 => Archive) public burntArchives;
     mapping(address => Contribution) public contributions;
 
     // Construct a new NFT registry, keeping mostly everything standard and just
     // delegating it to Lukso's base contracts.
-    constructor(uint256 _maxSupply, address _creator, address _codehub, address _registry, bytes32 _burntPicId, address _archiveHelpers)
+    constructor(address _codehub, address _registry, address _archiveHelpers, address _creator, bytes32 _burntPicId, uint256 _maxSupply, uint256 _winnerIters)
         LSP8CappedSupply(_maxSupply)
         LSP8IdentifiableDigitalAsset(
             'Burnt Pix Archives: Season 1',
@@ -63,24 +67,28 @@ contract BurntPixArchives is LSP8CappedSupply {
             archiveHelpers = _archiveHelpers;
             burntPicId = _burntPicId;
             registry = _registry;
+            winnerIters = _winnerIters;
             fractalClone = IArchiveHelpers(_archiveHelpers).createFractalClone(address(this), _codehub, uint256(IRegistry(registry).seeds(address(uint160(uint256(_burntPicId))))));
             _setData(_LSP4_CREATORS_ARRAY_KEY, hex"00000000000000000000000000000001");
             _setData(0x114bd03b3a46d48759680d81ebb2b41400000000000000000000000000000000, abi.encodePacked(_creator));
             _setData(bytes32(abi.encodePacked(_LSP4_CREATORS_MAP_KEY_PREFIX, hex"0000", _creator)) , hex"24871b3d00000000000000000000000000000000");
     }
 
-    function getContribution(address contributor) public view returns (Contribution memory) {
-        return contributions[contributor];
+    function getArchives(address contributor) public view returns (bytes32[] memory) {
+        return contributions[contributor].archiveIds;
     }
 
     function refineToMint(uint256 iters) public {
         contributions[msg.sender].iterations += iters;
         uint256 diff = IFractal(address(uint160(uint256(burntPicId)))).iterations() - IFractal(fractalClone).iterations();
         IFractal(fractalClone).refine(iters);
-        if (diff > 0 && iters > diff) {
-            IRegistry(registry).refine(burntPicId, iters - diff);
-        } else if (diff == 0) {
+        if (diff == 0) {
             IRegistry(registry).refine(burntPicId, iters);
+        } else if (iters > diff) {
+            IRegistry(registry).refine(burntPicId, iters - diff);
+        }
+        if (contributions[msg.sender].iterations >= winnerIters) {
+            IRegistry(registry).transfer(address(this), msg.sender, burntPicId, true, "");
         }
         if (contributions[msg.sender].iterations >= IArchiveHelpers(archiveHelpers).fibonacciIterations(contributions[msg.sender].archiveIds.length + 1)) {
             bytes32 archiveId = bytes32(++archiveCount);
@@ -94,6 +102,10 @@ contract BurntPixArchives is LSP8CappedSupply {
             });
             burntArchives[archiveId] = archive;
         }
+    }
+
+    function isOriginalLocked() view public returns (bool) {
+        return IRegistry(registry).getOperatorsOf(burntPicId).length == 0 && IRegistry(registry).tokenOwnerOf(burntPicId) == address(this) && owner() == address(0);
     }
 
     function mintArchive(bytes32 archiveId, address to) external {
@@ -114,9 +126,6 @@ contract BurntPixArchives is LSP8CappedSupply {
         require(_exists(archiveId));
         if (key == _LSP4_METADATA_KEY) {
             (bytes memory _metadata, bytes memory _encoded) = IArchiveHelpers(archiveHelpers).generateMetadataBytes(burntArchives[archiveId]);
-            // 0x0000 (is VerifiableURI identifier) +
-            // 6f357c6a ("keccak256(utf8)": Means the data SHOULD be bytes32 hash of the content of the linked UTF-8 based file of the "Encoded URI") + 
-            // 0020 (32 bytes length of the hash) todo: this is wrong
             bytes memory verfiableURI = bytes.concat(
                 hex'00006f357c6a0020', 
                 keccak256(_metadata),

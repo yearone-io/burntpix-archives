@@ -17,9 +17,9 @@ async function main() {
   const maxSupply = 10000;
   const codehub = "0x9F2B09E9A9628DC8430C7c39BD0Bf74b18b7b397";
   const registry = "0x12167f1c2713aC4f740B4700c4C72bC2de6C686f";
-  const burntpicId = "0x0000000000000000000000004e8ba475570385e3cc35a0e40293035cd45b9be9";
-  const archiveHelpers = "0xdAfDA5Edf78477900A59Ed9b62864E50F3258645";
-  const constructorArguments = [maxSupply, contractOwner, codehub, registry, burntpicId, archiveHelpers];
+  const burntpicId = "0x000000000000000000000000245f9a8bea516165b45142f8b79ea204f97f8867";
+  const archiveHelpers = "0x7E3C37454456d91672Ab1d7F729AC209844F2a25";
+  const constructorArguments = [codehub, registry, archiveHelpers, contractOwner, burntpicId, maxSupply, 69_000];
   const BurntPixArchivesFactory = new ethers.ContractFactory(
     BurntPixArchives.abi,
     BurntPixArchives.bytecode,
