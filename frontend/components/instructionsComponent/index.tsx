@@ -1,59 +1,43 @@
 import styles from "./instructionsComponent.module.css";
+import {New_Rocker} from "next/font/google";
+import {Box, Divider, Flex, Heading, Text} from "@chakra-ui/react";
+
+const newRockerFont = New_Rocker({
+  weight: ['400'],
+  subsets: ['latin'],
+});
+
 
 export default function InstructionsComponent() {
+  const date = new Date();
+  const formattedDate = date.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
   return (
     <div className={styles.container}>
       <header className={styles.header_container}>
         <div className={styles.header}>
-          <h1>
-            create<span>-web3-dapp</span>
-          </h1>
-          <h3>The ultimate solution to create web3 applications</h3>
+          <Heading as={"h1"} fontFamily={newRockerFont.style.fontFamily}>Burnt Pix Archives</Heading>
+          <Box pl={32}>
+            <Heading fontSize={"m"} as={"h3"}>ON THE <Heading fontSize={"m"} as={"span"} color={"lukso.pink"}>LUKSO</Heading> CHAIN</Heading>
+          </Box>
         </div>
       </header>
 
-      <div className={styles.buttons_container}>
-        <a
-          target={"_blank"}
-          href={"https://createweb3dapp.alchemy.com/#components"}
-        >
-          <div className={styles.button}>
-            {/* <img src="https://static.alchemyapi.io/images/cw3d/Icon%20Medium/lightning-square-contained-m.svg" width={"20px"} height={"20px"} /> */}
-            <p>Add Components</p>
-          </div>
-        </a>
-        <a
-          target={"_blank"}
-          href={"https://createweb3dapp.alchemy.com/#templates"}
-        >
-          <div className={styles.button}>
-            {/* <img src="https://static.alchemyapi.io/images/cw3d/Icon%20Medium/lightning-square-contained-m.svg" width={"20px"} height={"20px"} /> */}
-            <p>Explore Templates</p>
-          </div>
-        </a>
-        <a
-          target={"_blank"}
-          href={"https://docs.alchemy.com/docs/create-web3-dapp"}
-        >
-          <div className={styles.button}>
-            <img
-              src="https://static.alchemyapi.io/images/cw3d/Icon%20Large/file-eye-01-l.svg"
-              width={"20px"}
-              height={"20px"}
-            />
-            <p>Visit Docs</p>
-          </div>
-        </a>
-        <a>
-          <div className={styles.button}>
-            {/* <img src="https://static.alchemyapi.io/images/cw3d/Icon%20Medium/lightning-square-contained-m.svg" width={"20px"} height={"20px"} /> */}
-            <p>Contribute</p>
-          </div>
-        </a>
-      </div>
-      <p className={styles.get_started}>
-        Get started by editing this page in <span>/pages/index.js</span>
-      </p>
+      <Box mt={4} pl={10} pr={10} width={"100%"}>
+        <Divider mb={2} />
+        <Flex>
+          <Box flex="1">
+            <Text pl={10}>
+              All the Pixels, That Are Fit To Burn
+            </Text>
+          </Box>
+          <Text as={"b"}>
+            {formattedDate}
+          </Text>
+          <Text flex="1"></Text>
+        </Flex>
+        <Divider mt={2}/>
+      </Box>
     </div>
   );
 }
