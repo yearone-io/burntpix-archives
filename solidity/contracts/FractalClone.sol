@@ -42,7 +42,7 @@ contract FractalClone is IERC165, IERC725Y {
         registry = _registry;
         codehub  = _codehub;
         (bool ok, ) = CodeHub(codehub).attractor().delegatecall(
-            abi.encodeWithSignature("init(uint256,uint256,uint256)", _seed, 16, 16)
+            abi.encodeWithSignature("init(uint256,uint256,uint256)", _seed, 24, 24)
         );
         require(ok);
     }

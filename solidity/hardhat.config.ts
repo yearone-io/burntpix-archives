@@ -8,7 +8,16 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 const config: HardhatUserConfig = {
-	solidity: "0.8.24",
+	solidity: {
+		version: "0.8.24",
+		settings: {
+		  optimizer: {
+			enabled: true,
+			runs: 1000,
+		  },
+		  viaIR: true
+		},
+	  },
 	contractSizer: {
 		alphaSort: true,
 		runOnCompile: true,
