@@ -1,14 +1,13 @@
+"use client";
 
-'use client'
-
-import { ConnectKitButton } from "connectkit";
+import WalletConnector from "@/components/wallet/WalletConnector";
 import styles from "./Navbar.module.css";
-import {Spacer} from "@chakra-ui/react";
+import { Spacer } from "@chakra-ui/react";
 export default function Navbar() {
   return (
     <nav className={styles.navbar}>
       <Spacer />
-      <ConnectKitButton />
+      <WalletConnector />
     </nav>
   );
 }
