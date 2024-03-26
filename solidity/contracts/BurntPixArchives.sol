@@ -104,8 +104,8 @@ contract BurntPixArchives is LSP8CappedSupply {
         }
     }
 
-    function isOriginalLocked() view public {
-        return IRegistry(registry).getOperatorsOf(burntPicId).length == 0 && IRegistry(registry).tokenOwnerOf(burntPicId) == address(this);
+    function isOriginalLocked() view public returns (bool) {
+        return IRegistry(registry).getOperatorsOf(burntPicId).length == 0 && IRegistry(registry).tokenOwnerOf(burntPicId) == address(this) && owner() == address(0);
     }
 
     function mintArchive(bytes32 archiveId, address to) external {
@@ -126,9 +126,6 @@ contract BurntPixArchives is LSP8CappedSupply {
         require(_exists(archiveId));
         if (key == _LSP4_METADATA_KEY) {
             (bytes memory _metadata, bytes memory _encoded) = IArchiveHelpers(archiveHelpers).generateMetadataBytes(burntArchives[archiveId]);
-            // 0x0000 (is VerifiableURI identifier) +
-            // 6f357c6a ("keccak256(utf8)": Means the data SHOULD be bytes32 hash of the content of the linked UTF-8 based file of the "Encoded URI") + 
-            // 0020 (32 bytes length of the hash) todo: this is wrong
             bytes memory verfiableURI = bytes.concat(
                 hex'00006f357c6a0020', 
                 keccak256(_metadata),
