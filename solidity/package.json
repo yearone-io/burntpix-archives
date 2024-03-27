@@ -12,7 +12,7 @@
 		"typechain": "typechain --target ethers-v6 --out-dir typechain-types ./node_modules/@lukso/lsp-smart-contracts/artifacts/*.json"
 	},
 	"dependencies": {
-		"@erc725/erc725.js": "^0.22.0",
+		"@erc725/erc725.js": "0.23.0",
 		"@lukso/lsp-factory.js": "^3.2.1",
 		"@lukso/lsp-smart-contracts": "^0.15.0-rc.1",
 		"@openzeppelin/contracts": "^4.9.3",
