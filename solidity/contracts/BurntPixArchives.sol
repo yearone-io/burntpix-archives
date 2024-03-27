@@ -122,7 +122,7 @@ contract BurntPixArchives is LSP8CappedSupply {
         return super._getData(key);
     }
     
-    function _getDataForTokenId(bytes32 archiveId, bytes32 key) internal view override returns (bytes memory) {
+    function _getDataForTokenId(bytes32 archiveId, bytes32 key) internal view override returns (bytes memory dataValues) {
         require(_exists(archiveId));
         if (key == _LSP4_METADATA_KEY) {
             (bytes memory _metadata, bytes memory _encoded) = IArchiveHelpers(archiveHelpers).generateMetadataBytes(burntArchives[archiveId]);
