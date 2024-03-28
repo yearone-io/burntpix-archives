@@ -1,5 +1,5 @@
 {
-  "name": "new-app",
+  "name": "burntpix-archives",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "format": "prettier --write .",
-    "format-check": "prettier --check ."
+    "format-check": "prettier --check .",
+    "typechain": "typechain --target ethers-v6 --out-dir contracts ./abis/*.json"
   },
   "dependencies": {
     "@chakra-ui/next-js": "^2.2.0",
@@ -23,7 +24,7 @@
     "encoding": "^0.1.13",
     "eslint": "8.42.0",
     "eslint-config-next": "13.4.4",
-    "ethers": "^5.7.2",
+    "ethers": "^6.11.1",
     "framer-motion": "^11.0.20",
     "fs": "^0.0.1-security",
     "lokijs": "^1.5.12",
@@ -39,6 +40,7 @@
     "web3": "^4.2.2"
   },
   "devDependencies": {
+    "@typechain/ethers-v6": "^0.5.1",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-prettier": "^5.0.1",
     "prettier": "^3.1.0",
