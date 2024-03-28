@@ -1,5 +1,5 @@
 import { JsonRpcProvider, BrowserProvider } from "ethers";
-import { HouseOfBurntPix__factory } from "@/contracts";
+import { BurntPixArchives__factory } from "@/contracts";
 
 export const refineToMint = async (
   iters: number,
@@ -7,5 +7,5 @@ export const refineToMint = async (
   provider: JsonRpcProvider | BrowserProvider,
 ) => {
   const signer = await provider.getSigner();
-  return HouseOfBurntPix__factory.connect(houseOfBurtnPixAddress, signer).refineToMint(iters, signer.address);
+  return BurntPixArchives__factory.connect(houseOfBurtnPixAddress, signer).refineToMint(iters);
 };

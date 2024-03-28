@@ -23,48 +23,50 @@ import type {
   TypedContractMethod,
 } from "./common";
 
-export interface HouseOfBurntPixInterface extends Interface {
+export interface BurntPixArchivesInterface extends Interface {
   getFunction(
     nameOrSignature:
+      | "archiveCount"
+      | "archiveHelpers"
       | "authorizeOperator"
       | "balanceOf"
       | "batchCalls"
+      | "burntArchives"
       | "burntPicId"
-      | "burntPicIdString"
-      | "burntPixContract"
-      | "bytes32ToString"
-      | "contributedIterations"
+      | "contributions"
+      | "fractalClone"
+      | "getArchives"
       | "getData"
       | "getDataBatch"
       | "getDataBatchForTokenIds"
       | "getDataForTokenId"
-      | "getLatestImage"
       | "getOperatorsOf"
       | "isOperatorFor"
-      | "maxArchiveSupply"
-      | "mint"
+      | "isOriginalLocked"
+      | "mintArchive"
       | "owner"
       | "refineToMint"
+      | "registry"
       | "renounceOwnership"
       | "revokeOperator"
       | "setData"
       | "setDataBatch"
       | "setDataBatchForTokenIds"
       | "setDataForTokenId"
-      | "setImage"
       | "supportsInterface"
       | "tokenIdsOf"
       | "tokenOwnerOf"
+      | "tokenSupplyCap"
       | "totalSupply"
       | "transfer"
       | "transferBatch"
       | "transferOwnership"
+      | "winnerIters"
   ): FunctionFragment;
 
   getEvent(
     nameOrSignatureOrTopic:
       | "DataChanged"
-      | "ImageUpdated"
       | "OperatorAuthorizationChanged"
       | "OperatorRevoked"
       | "OwnershipTransferred"
@@ -72,6 +74,14 @@ export interface HouseOfBurntPixInterface extends Interface {
       | "Transfer"
   ): EventFragment;
 
+  encodeFunctionData(
+    functionFragment: "archiveCount",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "archiveHelpers",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "authorizeOperator",
     values: [AddressLike, BytesLike, BytesLike]
@@ -85,23 +95,23 @@ export interface HouseOfBurntPixInterface extends Interface {
     values: [BytesLike[]]
   ): string;
   encodeFunctionData(
+    functionFragment: "burntArchives",
+    values: [BytesLike]
+  ): string;
+  encodeFunctionData(
     functionFragment: "burntPicId",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "burntPicIdString",
+    functionFragment: "contributions",
+    values: [AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "fractalClone",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "burntPixContract",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "bytes32ToString",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "contributedIterations",
+    functionFragment: "getArchives",
     values: [AddressLike]
   ): string;
   encodeFunctionData(functionFragment: "getData", values: [BytesLike]): string;
@@ -118,10 +128,6 @@ export interface HouseOfBurntPixInterface extends Interface {
     values: [BytesLike, BytesLike]
   ): string;
   encodeFunctionData(
-    functionFragment: "getLatestImage",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "getOperatorsOf",
     values: [BytesLike]
   ): string;
@@ -130,18 +136,19 @@ export interface HouseOfBurntPixInterface extends Interface {
     values: [AddressLike, BytesLike]
   ): string;
   encodeFunctionData(
-    functionFragment: "maxArchiveSupply",
+    functionFragment: "isOriginalLocked",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "mint",
-    values: [AddressLike, BytesLike, boolean, BytesLike]
+    functionFragment: "mintArchive",
+    values: [BytesLike, AddressLike]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "refineToMint",
-    values: [BigNumberish, AddressLike]
+    values: [BigNumberish]
   ): string;
+  encodeFunctionData(functionFragment: "registry", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "renounceOwnership",
     values?: undefined
@@ -166,7 +173,6 @@ export interface HouseOfBurntPixInterface extends Interface {
     functionFragment: "setDataForTokenId",
     values: [BytesLike, BytesLike, BytesLike]
   ): string;
-  encodeFunctionData(functionFragment: "setImage", values: [string]): string;
   encodeFunctionData(
     functionFragment: "supportsInterface",
     values: [BytesLike]
@@ -178,6 +184,10 @@ export interface HouseOfBurntPixInterface extends Interface {
   encodeFunctionData(
     functionFragment: "tokenOwnerOf",
     values: [BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "tokenSupplyCap",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "totalSupply",
@@ -195,28 +205,40 @@ export interface HouseOfBurntPixInterface extends Interface {
     functionFragment: "transferOwnership",
     values: [AddressLike]
   ): string;
+  encodeFunctionData(
+    functionFragment: "winnerIters",
+    values?: undefined
+  ): string;
 
+  decodeFunctionResult(
+    functionFragment: "archiveCount",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "archiveHelpers",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "authorizeOperator",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "batchCalls", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "burntArchives",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "burntPicId", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "burntPicIdString",
+    functionFragment: "contributions",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "burntPixContract",
+    functionFragment: "fractalClone",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "bytes32ToString",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "contributedIterations",
+    functionFragment: "getArchives",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getData", data: BytesLike): Result;
@@ -233,10 +255,6 @@ export interface HouseOfBurntPixInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getLatestImage",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "getOperatorsOf",
     data: BytesLike
   ): Result;
@@ -245,15 +263,19 @@ export interface HouseOfBurntPixInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "maxArchiveSupply",
+    functionFragment: "isOriginalLocked",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "mintArchive",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "refineToMint",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "registry", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "renounceOwnership",
     data: BytesLike
@@ -275,7 +297,6 @@ export interface HouseOfBurntPixInterface extends Interface {
     functionFragment: "setDataForTokenId",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "setImage", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "supportsInterface",
     data: BytesLike
@@ -283,6 +304,10 @@ export interface HouseOfBurntPixInterface extends Interface {
   decodeFunctionResult(functionFragment: "tokenIdsOf", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "tokenOwnerOf",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "tokenSupplyCap",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -298,6 +323,10 @@ export interface HouseOfBurntPixInterface extends Interface {
     functionFragment: "transferOwnership",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "winnerIters",
+    data: BytesLike
+  ): Result;
 }
 
 export namespace DataChangedEvent {
@@ -306,18 +335,6 @@ export namespace DataChangedEvent {
   export interface OutputObject {
     dataKey: string;
     dataValue: string;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
-export namespace ImageUpdatedEvent {
-  export type InputTuple = [image: string];
-  export type OutputTuple = [image: string];
-  export interface OutputObject {
-    image: string;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -444,11 +461,11 @@ export namespace TransferEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
-export interface HouseOfBurntPix extends BaseContract {
-  connect(runner?: ContractRunner | null): HouseOfBurntPix;
+export interface BurntPixArchives extends BaseContract {
+  connect(runner?: ContractRunner | null): BurntPixArchives;
   waitForDeployment(): Promise<this>;
 
-  interface: HouseOfBurntPixInterface;
+  interface: BurntPixArchivesInterface;
 
   queryFilter<TCEvent extends TypedContractEvent>(
     event: TCEvent,
@@ -487,6 +504,10 @@ export interface HouseOfBurntPix extends BaseContract {
     event?: TCEvent
   ): Promise<this>;
 
+  archiveCount: TypedContractMethod<[], [bigint], "view">;
+
+  archiveHelpers: TypedContractMethod<[], [string], "view">;
+
   authorizeOperator: TypedContractMethod<
     [
       operator: AddressLike,
@@ -505,17 +526,29 @@ export interface HouseOfBurntPix extends BaseContract {
     "nonpayable"
   >;
 
+  burntArchives: TypedContractMethod<
+    [arg0: BytesLike],
+    [
+      [string, bigint, bigint, bigint, string] & {
+        image: string;
+        iterations: bigint;
+        level: bigint;
+        blockNumber: bigint;
+        creator: string;
+      }
+    ],
+    "view"
+  >;
+
   burntPicId: TypedContractMethod<[], [string], "view">;
 
-  burntPicIdString: TypedContractMethod<[], [string], "view">;
+  contributions: TypedContractMethod<[arg0: AddressLike], [bigint], "view">;
 
-  burntPixContract: TypedContractMethod<[], [string], "view">;
+  fractalClone: TypedContractMethod<[], [string], "view">;
 
-  bytes32ToString: TypedContractMethod<[_bytes: BytesLike], [string], "view">;
-
-  contributedIterations: TypedContractMethod<
-    [arg0: AddressLike],
-    [bigint],
+  getArchives: TypedContractMethod<
+    [contributor: AddressLike],
+    [string[]],
     "view"
   >;
 
@@ -539,8 +572,6 @@ export interface HouseOfBurntPix extends BaseContract {
     "view"
   >;
 
-  getLatestImage: TypedContractMethod<[], [string], "view">;
-
   getOperatorsOf: TypedContractMethod<[tokenId: BytesLike], [string[]], "view">;
 
   isOperatorFor: TypedContractMethod<
@@ -549,10 +580,10 @@ export interface HouseOfBurntPix extends BaseContract {
     "view"
   >;
 
-  maxArchiveSupply: TypedContractMethod<[], [bigint], "view">;
+  isOriginalLocked: TypedContractMethod<[], [boolean], "view">;
 
-  mint: TypedContractMethod<
-    [arg0: AddressLike, arg1: BytesLike, arg2: boolean, arg3: BytesLike],
+  mintArchive: TypedContractMethod<
+    [archiveId: BytesLike, to: AddressLike],
     [void],
     "nonpayable"
   >;
@@ -560,10 +591,12 @@ export interface HouseOfBurntPix extends BaseContract {
   owner: TypedContractMethod<[], [string], "view">;
 
   refineToMint: TypedContractMethod<
-    [iters: BigNumberish, refiner: AddressLike],
-    [string],
+    [iters: BigNumberish],
+    [void],
     "nonpayable"
   >;
+
+  registry: TypedContractMethod<[], [string], "view">;
 
   renounceOwnership: TypedContractMethod<[], [void], "nonpayable">;
 
@@ -602,8 +635,6 @@ export interface HouseOfBurntPix extends BaseContract {
     "nonpayable"
   >;
 
-  setImage: TypedContractMethod<[_image: string], [string], "nonpayable">;
-
   supportsInterface: TypedContractMethod<
     [interfaceId: BytesLike],
     [boolean],
@@ -617,6 +648,8 @@ export interface HouseOfBurntPix extends BaseContract {
   >;
 
   tokenOwnerOf: TypedContractMethod<[tokenId: BytesLike], [string], "view">;
+
+  tokenSupplyCap: TypedContractMethod<[], [bigint], "view">;
 
   totalSupply: TypedContractMethod<[], [bigint], "view">;
 
@@ -650,10 +683,18 @@ export interface HouseOfBurntPix extends BaseContract {
     "nonpayable"
   >;
 
+  winnerIters: TypedContractMethod<[], [bigint], "view">;
+
   getFunction<T extends ContractMethod = ContractMethod>(
     key: string | FunctionFragment
   ): T;
 
+  getFunction(
+    nameOrSignature: "archiveCount"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "archiveHelpers"
+  ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "authorizeOperator"
   ): TypedContractMethod<
@@ -672,20 +713,32 @@ export interface HouseOfBurntPix extends BaseContract {
     nameOrSignature: "batchCalls"
   ): TypedContractMethod<[data: BytesLike[]], [string[]], "nonpayable">;
   getFunction(
+    nameOrSignature: "burntArchives"
+  ): TypedContractMethod<
+    [arg0: BytesLike],
+    [
+      [string, bigint, bigint, bigint, string] & {
+        image: string;
+        iterations: bigint;
+        level: bigint;
+        blockNumber: bigint;
+        creator: string;
+      }
+    ],
+    "view"
+  >;
+  getFunction(
     nameOrSignature: "burntPicId"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
-    nameOrSignature: "burntPicIdString"
-  ): TypedContractMethod<[], [string], "view">;
-  getFunction(
-    nameOrSignature: "burntPixContract"
-  ): TypedContractMethod<[], [string], "view">;
-  getFunction(
-    nameOrSignature: "bytes32ToString"
-  ): TypedContractMethod<[_bytes: BytesLike], [string], "view">;
-  getFunction(
-    nameOrSignature: "contributedIterations"
+    nameOrSignature: "contributions"
   ): TypedContractMethod<[arg0: AddressLike], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "fractalClone"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "getArchives"
+  ): TypedContractMethod<[contributor: AddressLike], [string[]], "view">;
   getFunction(
     nameOrSignature: "getData"
   ): TypedContractMethod<[dataKey: BytesLike], [string], "view">;
@@ -707,9 +760,6 @@ export interface HouseOfBurntPix extends BaseContract {
     "view"
   >;
   getFunction(
-    nameOrSignature: "getLatestImage"
-  ): TypedContractMethod<[], [string], "view">;
-  getFunction(
     nameOrSignature: "getOperatorsOf"
   ): TypedContractMethod<[tokenId: BytesLike], [string[]], "view">;
   getFunction(
@@ -720,12 +770,12 @@ export interface HouseOfBurntPix extends BaseContract {
     "view"
   >;
   getFunction(
-    nameOrSignature: "maxArchiveSupply"
-  ): TypedContractMethod<[], [bigint], "view">;
+    nameOrSignature: "isOriginalLocked"
+  ): TypedContractMethod<[], [boolean], "view">;
   getFunction(
-    nameOrSignature: "mint"
+    nameOrSignature: "mintArchive"
   ): TypedContractMethod<
-    [arg0: AddressLike, arg1: BytesLike, arg2: boolean, arg3: BytesLike],
+    [archiveId: BytesLike, to: AddressLike],
     [void],
     "nonpayable"
   >;
@@ -734,11 +784,10 @@ export interface HouseOfBurntPix extends BaseContract {
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "refineToMint"
-  ): TypedContractMethod<
-    [iters: BigNumberish, refiner: AddressLike],
-    [string],
-    "nonpayable"
-  >;
+  ): TypedContractMethod<[iters: BigNumberish], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "registry"
+  ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "renounceOwnership"
   ): TypedContractMethod<[], [void], "nonpayable">;
@@ -783,9 +832,6 @@ export interface HouseOfBurntPix extends BaseContract {
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "setImage"
-  ): TypedContractMethod<[_image: string], [string], "nonpayable">;
-  getFunction(
     nameOrSignature: "supportsInterface"
   ): TypedContractMethod<[interfaceId: BytesLike], [boolean], "view">;
   getFunction(
@@ -794,6 +840,9 @@ export interface HouseOfBurntPix extends BaseContract {
   getFunction(
     nameOrSignature: "tokenOwnerOf"
   ): TypedContractMethod<[tokenId: BytesLike], [string], "view">;
+  getFunction(
+    nameOrSignature: "tokenSupplyCap"
+  ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
     nameOrSignature: "totalSupply"
   ): TypedContractMethod<[], [bigint], "view">;
@@ -826,6 +875,9 @@ export interface HouseOfBurntPix extends BaseContract {
   getFunction(
     nameOrSignature: "transferOwnership"
   ): TypedContractMethod<[newOwner: AddressLike], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "winnerIters"
+  ): TypedContractMethod<[], [bigint], "view">;
 
   getEvent(
     key: "DataChanged"
@@ -833,13 +885,6 @@ export interface HouseOfBurntPix extends BaseContract {
     DataChangedEvent.InputTuple,
     DataChangedEvent.OutputTuple,
     DataChangedEvent.OutputObject
-  >;
-  getEvent(
-    key: "ImageUpdated"
-  ): TypedContractEvent<
-    ImageUpdatedEvent.InputTuple,
-    ImageUpdatedEvent.OutputTuple,
-    ImageUpdatedEvent.OutputObject
   >;
   getEvent(
     key: "OperatorAuthorizationChanged"
@@ -887,17 +932,6 @@ export interface HouseOfBurntPix extends BaseContract {
       DataChangedEvent.InputTuple,
       DataChangedEvent.OutputTuple,
       DataChangedEvent.OutputObject
-    >;
-
-    "ImageUpdated(string)": TypedContractEvent<
-      ImageUpdatedEvent.InputTuple,
-      ImageUpdatedEvent.OutputTuple,
-      ImageUpdatedEvent.OutputObject
-    >;
-    ImageUpdated: TypedContractEvent<
-      ImageUpdatedEvent.InputTuple,
-      ImageUpdatedEvent.OutputTuple,
-      ImageUpdatedEvent.OutputObject
     >;
 
     "OperatorAuthorizationChanged(address,address,bytes32,bytes)": TypedContractEvent<
