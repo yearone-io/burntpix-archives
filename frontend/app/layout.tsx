@@ -55,6 +55,7 @@ export default function RootLayout({
                       totalMints={10000}
                       lyxBurned={1.4}
                     />
+                    
                     <RefineButton />
                   </Box>
                 }
