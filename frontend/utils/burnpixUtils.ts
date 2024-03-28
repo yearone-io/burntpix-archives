@@ -1,17 +1,11 @@
-import { ethers } from "ethers";
-import HouseOfBurntPix from "@/abis/HouseOfBurntPix.json";
-import { JsonRpcProvider, Web3Provider } from "@ethersproject/providers";
+import { JsonRpcProvider, BrowserProvider } from "ethers";
+import { HouseOfBurntPix__factory } from "@/contracts";
 
 export const refineToMint = async (
   iters: number,
   houseOfBurtnPixAddress: string,
-  provider: JsonRpcProvider | Web3Provider,
+  provider: JsonRpcProvider | BrowserProvider,
 ) => {
-  const signer = provider.getSigner();
-  const houseOfBurntPixContract = new ethers.Contract(
-    houseOfBurtnPixAddress,
-    HouseOfBurntPix.abi,
-    provider,
-  );
-  return await houseOfBurntPixContract.connect(signer).refineToMint(iters);
+  const signer = await provider.getSigner();
+  return HouseOfBurntPix__factory.connect(houseOfBurtnPixAddress, signer).refineToMint(iters, signer.address);
 };
