@@ -7,5 +7,8 @@ export const refineToMint = async (
   provider: JsonRpcProvider | BrowserProvider,
 ) => {
   const signer = await provider.getSigner();
-  return BurntPixArchives__factory.connect(houseOfBurtnPixAddress, signer).refineToMint(iters);
+  return BurntPixArchives__factory.connect(
+    houseOfBurtnPixAddress,
+    signer,
+  ).refineToMint(iters);
 };

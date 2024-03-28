@@ -8,15 +8,9 @@ export const getProvider = (networkConfig: Network) => {
   };
   const luksoProvider = getLuksoProvider();
   if (typeof luksoProvider === "string") {
-    return new ethers.JsonRpcProvider(
-      luksoProvider,
-      providerNetworkParams,
-    );
+    return new ethers.JsonRpcProvider(luksoProvider, providerNetworkParams);
   }
-  return new ethers.BrowserProvider(
-    luksoProvider,
-    providerNetworkParams,
-  );
+  return new ethers.BrowserProvider(luksoProvider, providerNetworkParams);
 };
 
 export const getLuksoProvider = () => {
