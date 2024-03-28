@@ -1,41 +1,9 @@
-import { extendTheme } from "@chakra-ui/react";
+import { extendTheme, type ThemeConfig } from '@chakra-ui/react'
 
 const foundations = {
   colors: {
     lukso: {
       pink: "#FE005B",
-    },
-    light: {
-      black: "#000000",
-      gray: {
-        100: "#F0F0F0",
-        200: "#E1EAF8",
-        300: "#CBD5DD",
-      },
-      green: {
-        brand: "#B3EDD7",
-        success: "#00BE7F",
-      },
-      blue: {
-        official: "#1d9bf0",
-      },
-      white: "#FFFFFF",
-    },
-    dark: {
-      orange: {
-        official: "#FFA500",
-      },
-      purple: {
-        100: "#EFE0F8",
-        200: "#D7B3ED",
-        300: "#852FBB",
-        400: "#350056",
-        500: "#26003E",
-      },
-      red: {
-        success: "#D0226A",
-      },
-      white: "#FFFFFF",
     },
   },
   fontSizes: {
@@ -65,7 +33,13 @@ const foundations = {
   },
 };
 
+const config: ThemeConfig = {
+  initialColorMode: 'light',
+  useSystemColorMode: false,
+}
+
 const theme = extendTheme({
+  ...config,
   ...foundations,
   components: {
     Divider: {
