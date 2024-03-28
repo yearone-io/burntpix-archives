@@ -31,13 +31,22 @@ contract ArchiveHelpers {
     }
 
     function toHexString(bytes32 data) internal pure returns (string memory) {
-        bytes memory alphabet = "0123456789abcdef";
-        bytes memory str = new bytes(64);
+        // Initialize a buffer for the output string
+        // 2 characters for each of the 32 bytes + 2 for the '0x' prefix
+        bytes memory buffer = new bytes(2 * 32 + 2);
+        // Add the '0x' prefix
+        buffer[0] = '0';
+        buffer[1] = 'x';
+        // Characters for conversion
+        bytes16 hexChars = "0123456789abcdef";
+
         for (uint256 i = 0; i < 32; i++) {
-            str[i*2] = alphabet[uint8(data[i] >> 4)];
-            str[1+i*2] = alphabet[uint8(data[i] & 0x0f)];
+            // Convert each byte to its hexadecimal character equivalent
+            buffer[2 + i * 2] = hexChars[uint8(data[i] >> 4)];
+            buffer[3 + i * 2] = hexChars[uint8(data[i] & 0x0f)];
         }
-        return string(str);
+
+        return string(buffer);
     }
 
     function addressToString(address _address) internal pure returns(string memory) {
@@ -79,7 +88,7 @@ contract ArchiveHelpers {
             Base64.encode(archive.image)
         );
         bytes memory _rawMetadata = abi.encodePacked(
-            '{"LSP4Metadata": {"name": "House of Burnt Pix", "description": "We burn together, we rise together. A community built archive of Burnt Pix #blahblahblah.",',
+            '{"LSP4Metadata": {"name": "House of Burnt Pix", "description": "We burn together, we rise together. A community built archive of Burnt Pix #.",',
                 '"images": [[{"height": 768, "width": 768, "url": "',encodedImage,'", "verification": {"method": "keccak256(bytes)", "data": "',toHexString(keccak256(archive.image)),'"}}]],',
                 '"attributes": [{"key": "Level", "type": "number", "value": ',uintToString(archive.level),'}, {"key": "Block Number", "type": "number", "value": ',uintToString(archive.blockNumber),'}, {"key": "Iterations", "type": "number", "value": ',uintToString(archive.iterations),'}, {"key": "Creator", "type": "string", "value": "',addressToString(archive.creator),'"}]}}'
         );
