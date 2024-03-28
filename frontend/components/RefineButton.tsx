@@ -1,19 +1,22 @@
-import React from 'react';
-import { Button, Flex, Icon } from '@chakra-ui/react';
-import { MdSettings } from 'react-icons/md';
+import React from "react";
+import { Button, Flex, Icon } from "@chakra-ui/react";
+import { MdSettings } from "react-icons/md";
 
 const RefineButton: React.FC = () => {
-  const buttonBgColor = '#FE005B';
-  const buttonTextColor = 'white';
-  const iconButtonSize = '24px';
+  const buttonBgColor = "#FE005B";
+  const buttonTextColor = "white";
+  const iconButtonSize = "24px";
 
   return (
-    <Flex align="center" justify="right" gap="1" mt='15px'>
+    <Flex align="center" justify="right">
       <Button
         bg={buttonBgColor}
         color={buttonTextColor}
-        _hover={{ bg: 'red.600' }}
-        borderRadius={50}
+        _hover={{ bg: "red.600" }}
+        borderRadius={10}
+        h="30px"
+        w="70px"
+        fontSize="14px"
       >
         REFINE
       </Button>
@@ -22,7 +25,8 @@ const RefineButton: React.FC = () => {
         size="sm"
         variant="ghost"
         color={buttonBgColor}
-        _hover={{ bg: 'red.200', color: 'red.700' }}
+        _hover={{ color: "red.600" }}
+        p={0}
       >
         <Icon as={MdSettings} boxSize={iconButtonSize} />
       </Button>

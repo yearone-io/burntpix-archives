@@ -1,6 +1,6 @@
-import React from 'react';
-import { List, ListItem, ListIcon, Box, Flex, Text } from '@chakra-ui/react';
-import { MdLens } from 'react-icons/md'; // This is an example icon from 'react-icons'
+import React from "react";
+import { List, ListItem, ListIcon, Box, Flex, Text } from "@chakra-ui/react";
+import { MdLens } from "react-icons/md"; // This is an example icon from 'react-icons'
 
 interface StatsListProps {
   iterations: number;
@@ -17,24 +17,40 @@ const MainStatsList: React.FC<StatsListProps> = ({
   totalMints,
   lyxBurned,
 }) => {
-  const bulletColor = '#FE005B';
+  const bulletColor = "#FE005B";
 
   return (
-    <Box p={'15px 18%'} w={'100%'}>
-      <List spacing={3}>
+    <Box p={"15px 14%"} w={"100%"}>
+      <List spacing={1}>
         {[
-          { label: 'Iterations:', value: iterations.toLocaleString() },
-          { label: 'Contributors:', value: contributors.toString() },
-          { label: 'Archive Mints:', value: `${totalArchives} / ${totalMints}` },
-          { label: 'LYX Burned:', value: `${lyxBurned} LYX` },
+          { label: "Iterations:", value: iterations.toLocaleString() },
+          { label: "Contributors:", value: contributors.toLocaleString() },
+          {
+            label: "Archive Mints:",
+            value: `${totalArchives.toLocaleString()} / ${totalMints.toLocaleString()}`,
+          },
+          { label: "LYX Burned:", value: `${lyxBurned} LYX` },
         ].map((item, index) => (
           <ListItem key={index}>
             <Flex justifyContent="space-between" alignItems="center">
-              <Text as="span" flex="1" textAlign="left"  fontWeight={500} fontSize='16px' lineHeight='26px' >
+              <Text
+                as="span"
+                flex="1"
+                textAlign="left"
+                fontWeight={500}
+                fontSize="16px"
+                lineHeight="26px"
+              >
                 <ListIcon as={MdLens} color={bulletColor} mr="2" />
                 {item.label}
               </Text>
-              <Text as="span" textAlign="right" fontWeight={800} fontSize='16px' lineHeight='26px' >
+              <Text
+                as="span"
+                textAlign="right"
+                fontWeight={800}
+                fontSize="16px"
+                lineHeight="26px"
+              >
                 {item.value}
               </Text>
             </Flex>
