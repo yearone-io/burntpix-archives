@@ -21,7 +21,7 @@ const MainStatsList: React.FC<StatsListProps> = ({
   const bulletColor = "#FE005B";
 
   return (
-    <Box p={"15px 14%"} w={"100%"}>
+    <Box p={"20px 10%"} w={"100%"}>
       <List spacing={1}>
         {[
           { label: "Iterations:", value: iterations.toLocaleString() },
@@ -42,8 +42,16 @@ const MainStatsList: React.FC<StatsListProps> = ({
                 fontSize="16px"
                 lineHeight="26px"
                 fontFamily={inter.style.fontFamily}
+                letterSpacing={1.5}
               >
-                <ListIcon as={MdLens} color={bulletColor} mr="2" />
+                <ListIcon
+                  as={MdLens}
+                  color={bulletColor}
+                  mr="2"
+                  h="9px"
+                  w="9px"
+                  mb="1.5"
+                />
                 {item.label}
               </Text>
               <Text
@@ -53,6 +61,7 @@ const MainStatsList: React.FC<StatsListProps> = ({
                 fontSize="16px"
                 lineHeight="26px"
                 fontFamily={inter.style.fontFamily}
+                letterSpacing={1.5}
               >
                 {item.value}
               </Text>
