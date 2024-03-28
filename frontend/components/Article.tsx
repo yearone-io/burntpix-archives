@@ -1,3 +1,4 @@
+import { ptSerifBold, inter } from "@/app/fonts";
 import { Box } from "@chakra-ui/react";
 import React, { ReactNode } from "react";
 
@@ -16,10 +17,17 @@ const Article: React.FC<Props> = ({ title, description, children }) => {
         fontSize="14px"
         lineHeight="17px"
         mb="10px"
+        fontFamily={inter.style.fontFamily}
       >
         {title}
       </Box>
-      <Box color="#000000" fontWeight={600} fontSize="26px" lineHeight="34.5px">
+      <Box
+        color="#000000"
+        fontWeight={600}
+        fontSize="26px"
+        lineHeight="34.5px"
+        fontFamily={ptSerifBold.style.fontFamily}
+      >
         {description}
       </Box>
       <Box>{children}</Box>

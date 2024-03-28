@@ -1,6 +1,7 @@
 import React from "react";
 import { Button, Flex, Icon } from "@chakra-ui/react";
 import { MdSettings } from "react-icons/md";
+import { inter } from "@/app/fonts";
 
 const RefineButton: React.FC = () => {
   const buttonBgColor = "#FE005B";
@@ -17,6 +18,8 @@ const RefineButton: React.FC = () => {
         h="30px"
         w="70px"
         fontSize="14px"
+        fontFamily={inter.style.fontFamily}
+        fontWeight={700}
       >
         REFINE
       </Button>

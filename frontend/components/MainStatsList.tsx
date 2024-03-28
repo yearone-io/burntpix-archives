@@ -1,6 +1,7 @@
 import React from "react";
 import { List, ListItem, ListIcon, Box, Flex, Text } from "@chakra-ui/react";
 import { MdLens } from "react-icons/md"; // This is an example icon from 'react-icons'
+import { inter } from "@/app/fonts";
 
 interface StatsListProps {
   iterations: number;
@@ -40,6 +41,7 @@ const MainStatsList: React.FC<StatsListProps> = ({
                 fontWeight={500}
                 fontSize="16px"
                 lineHeight="26px"
+                fontFamily={inter.style.fontFamily}
               >
                 <ListIcon as={MdLens} color={bulletColor} mr="2" />
                 {item.label}
@@ -50,6 +52,7 @@ const MainStatsList: React.FC<StatsListProps> = ({
                 fontWeight={800}
                 fontSize="16px"
                 lineHeight="26px"
+                fontFamily={inter.style.fontFamily}
               >
                 {item.value}
               </Text>
