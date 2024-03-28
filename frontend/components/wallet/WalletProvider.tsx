@@ -4,7 +4,7 @@ import Web3 from "web3";
 import { useToast } from "@chakra-ui/react";
 import { getNetworkConfig } from "@/constants/networks";
 import { getProvider } from "@/utils/provider";
-import { JsonRpcProvider, Web3Provider } from "@ethersproject/providers";
+import { JsonRpcProvider, BrowserProvider } from "ethers";
 import { buildSIWEMessage } from "@/utils/universalProfile";
 
 // Extends the window object to include `lukso`, which will be used to interact with LUKSO blockchain.
@@ -30,7 +30,7 @@ export const WalletProvider: React.FC<Props> = ({ children }) => {
   const networkConfig = getNetworkConfig(
     process.env.NEXT_PUBLIC_DEFAULT_NETWORK!,
   );
-  const [provider, setProvider] = useState<JsonRpcProvider | Web3Provider>(
+  const [provider, setProvider] = useState<JsonRpcProvider | BrowserProvider>(
     DEFAULT_PROVIDER,
   );
   const [account, setAccount] = useState<string | null>(null);
