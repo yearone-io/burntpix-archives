@@ -6,7 +6,7 @@ import Head from "next/head";
 import { ChakraProvider } from "@chakra-ui/react";
 import theme from "./theme";
 import Article from "@/components/Article";
-import SignInButton from "@/components/SignInButton";
+import MainStatsList from "@/components/MainStatsList";
 
 export default function RootLayout({
   children,
@@ -42,7 +42,13 @@ export default function RootLayout({
               <Navbar />
               <div style={{ flexGrow: 1 }}>{children}</div>
               <Article title="LIVE VIEW" description="In a First, LUKSO Community Works to Refine and Archive the Same Burnt Pic Together.">
-                {<SignInButton />}
+                {<MainStatsList  
+                  iterations={0}
+                  contributors={0}
+                  totalArchives={0}
+                  totalMints={0}
+                  lyxBurned={0}
+                />}
               </Article>
               <Footer />
             </div>
