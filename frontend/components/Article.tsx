@@ -1,7 +1,6 @@
 import { Box } from "@chakra-ui/react";
 import React, { ReactNode } from "react";
 
-// Updated the shape of props expected by the Article component to include title and description.
 interface Props {
   title: string;
   description: string;
