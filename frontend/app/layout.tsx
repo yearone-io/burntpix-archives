@@ -3,10 +3,11 @@ import Navbar from "@/components/instructionsComponent/navigation/navbar";
 import Footer from "@/components/instructionsComponent/navigation/footer";
 import { WalletProvider } from "@/components/wallet/WalletProvider";
 import Head from "next/head";
-import { ChakraProvider } from "@chakra-ui/react";
+import { Box, ChakraProvider } from "@chakra-ui/react";
 import theme from "./theme";
 import Article from "@/components/Article";
 import MainStatsList from "@/components/MainStatsList";
+import RefineButton from "@/components/RefineButton";
 
 export default function RootLayout({
   children,
@@ -42,13 +43,16 @@ export default function RootLayout({
               <Navbar />
               <div style={{ flexGrow: 1 }}>{children}</div>
               <Article title="LIVE VIEW" description="In a First, LUKSO Community Works to Refine and Archive the Same Burnt Pic Together.">
-                {<MainStatsList  
-                  iterations={0}
-                  contributors={0}
-                  totalArchives={0}
-                  totalMints={0}
-                  lyxBurned={0}
-                />}
+                {<Box>
+                    <MainStatsList  
+                    iterations={0}
+                    contributors={0}
+                    totalArchives={0}
+                    totalMints={0}
+                    lyxBurned={0}
+                  />
+                  <RefineButton />
+                </Box>}
               </Article>
               <Footer />
             </div>

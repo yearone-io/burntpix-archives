@@ -1,12 +1,12 @@
 import React from 'react';
-import { List, ListItem, ListIcon, Box } from '@chakra-ui/react';
+import { List, ListItem, ListIcon, Box, Flex, Text } from '@chakra-ui/react';
 import { MdLens } from 'react-icons/md'; // This is an example icon from 'react-icons'
 
 interface StatsListProps {
   iterations: number;
   contributors: number;
   totalArchives: number;
-  totalMints: number
+  totalMints: number;
   lyxBurned: number;
 }
 
@@ -17,28 +17,29 @@ const MainStatsList: React.FC<StatsListProps> = ({
   totalMints,
   lyxBurned,
 }) => {
-  // Define color for the bullet points
   const bulletColor = '#FE005B';
 
   return (
-    <Box>
+    <Box p={'15px 18%'} w={'100%'}>
       <List spacing={3}>
-        <ListItem>
-          <ListIcon as={MdLens} color={bulletColor} />
-          Iterations: {iterations.toLocaleString()}
-        </ListItem>
-        <ListItem>
-          <ListIcon as={MdLens} color={bulletColor} />
-          Contributors: {contributors}
-        </ListItem>
-        <ListItem>
-          <ListIcon as={MdLens} color={bulletColor} />
-          Archive Mints: {totalArchives} / {totalMints}
-        </ListItem>
-        <ListItem>
-          <ListIcon as={MdLens} color={bulletColor} />
-          LYX Burned: {lyxBurned} LYX
-        </ListItem>
+        {[
+          { label: 'Iterations:', value: iterations.toLocaleString() },
+          { label: 'Contributors:', value: contributors.toString() },
+          { label: 'Archive Mints:', value: `${totalArchives} / ${totalMints}` },
+          { label: 'LYX Burned:', value: `${lyxBurned} LYX` },
+        ].map((item, index) => (
+          <ListItem key={index}>
+            <Flex justifyContent="space-between" alignItems="center">
+              <Text as="span" flex="1" textAlign="left"  fontWeight={500} fontSize='16px' lineHeight='26px' >
+                <ListIcon as={MdLens} color={bulletColor} mr="2" />
+                {item.label}
+              </Text>
+              <Text as="span" textAlign="right" fontWeight={800} fontSize='16px' lineHeight='26px' >
+                {item.value}
+              </Text>
+            </Flex>
+          </ListItem>
+        ))}
       </List>
     </Box>
   );
