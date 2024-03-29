@@ -8,6 +8,8 @@ import theme from "./theme";
 import Article from "@/components/Article";
 import MainStatsList from "@/components/MainStatsList";
 import RefineButton from "@/components/RefineButton";
+import LeaderBoard from "@/components/leaderBoard";
+import { m } from "framer-motion";
 
 export default function RootLayout({
   children,
@@ -81,6 +83,63 @@ export default function RootLayout({
               <Article title="YOUR CONTRIBUTIONS">
                 <MainStatsList stats={userStats} />
               </Article>
+              <Article title="LEADER BOARD">
+                <LeaderBoard
+                  items={[
+                    {
+                      name: "0x",
+                      avatar: "https://avatars.githubusercontent.com/u/1?v=4",
+                      score: 0,
+                    },
+                    {
+                      name: "0x",
+                      avatar: "https://avatars.githubusercontent.com/u/1?v=4",
+                      score: 0,
+                    },
+                    {
+                      name: "0x",
+                      avatar: "https://avatars.githubusercontent.com/u/1?v=4",
+                      score: 0,
+                    },
+                    {
+                      name: "0x",
+                      avatar: "https://avatars.githubusercontent.com/u/1?v=4",
+                      score: 0,
+                    },
+                    {
+                      name: "0x",
+                      avatar: "https://avatars.githubusercontent.com/u/1?v=4",
+                      score: 0,
+                    },
+                    {
+                      name: "0x",
+                      avatar: "https://avatars.githubusercontent.com/u/1?v=4",
+                      score: 0,
+                    },
+                    {
+                      name: "0x",
+                      avatar: "https://avatars.githubusercontent.com/u/1?v=4",
+                      score: 0,
+                    },
+                    {
+                      name: "0x",
+                      avatar: "https://avatars.githubusercontent.com/u/1?v=4",
+                      score: 0,
+                    },
+                    {
+                      name: "0x",
+                      avatar: "https://avatars.githubusercontent.com/u/1?v=4",
+                      score: 0,
+                    },
+                    {
+                      name: "0x",
+                      avatar: "https://avatars.githubusercontent.com/u/1?v=4",
+                      score: 0,
+                    },
+                  ]}
+                />
+              </Article>
+
               <Footer />
             </div>
           </ChakraProvider>
