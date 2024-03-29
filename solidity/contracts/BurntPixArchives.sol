@@ -25,7 +25,8 @@ interface IFractal {
 
 interface IArchiveHelpers {
     function createFractalClone(address registry, address codehub, uint256 seed) external returns (address);
-    function generateMetadataBytes(Archive memory archive) external pure returns (bytes memory, bytes memory);
+    function generateCollectionMetadata(bytes32 burntPicId, address fractalClone) external pure returns (bytes memory);
+    function generateArchiveMetadata(Archive memory archive) external pure returns (bytes memory);
     function fibonacciIterations(uint256 n) external pure returns (uint256);
 }
 
@@ -78,7 +79,7 @@ contract BurntPixArchives is LSP8CappedSupply {
         return contributions[contributor].archiveIds;
     }
 
-    function refineToMint(uint256 iters) public {
+    function refineToArchive(uint256 iters) public {
         contributions[msg.sender].iterations += iters;
         uint256 diff = IFractal(address(uint160(uint256(burntPicId)))).iterations() - IFractal(fractalClone).iterations();
         IFractal(fractalClone).refine(iters);
@@ -117,7 +118,7 @@ contract BurntPixArchives is LSP8CappedSupply {
 
     function _getData(bytes32 key) internal view override returns (bytes memory) {
         if (key == _LSP4_METADATA_KEY) {
-            return IFractal(fractalClone).getData(keccak256("LSP4MetadataStripped"));
+            return IArchiveHelpers(archiveHelpers).generateCollectionMetadata(burntPicId, fractalClone);
         }
         return super._getData(key);
     }
@@ -125,13 +126,7 @@ contract BurntPixArchives is LSP8CappedSupply {
     function _getDataForTokenId(bytes32 archiveId, bytes32 key) internal view override returns (bytes memory dataValues) {
         require(_exists(archiveId));
         if (key == _LSP4_METADATA_KEY) {
-            (bytes memory _metadata, bytes memory _encoded) = IArchiveHelpers(archiveHelpers).generateMetadataBytes(burntArchives[archiveId]);
-            bytes memory verfiableURI = bytes.concat(
-                hex'00006f357c6a0020', 
-                keccak256(_metadata),
-                _encoded
-            );
-            return verfiableURI;
+            return IArchiveHelpers(archiveHelpers).generateArchiveMetadata(burntArchives[archiveId]);
         }
         return super._getData(key);
     }
