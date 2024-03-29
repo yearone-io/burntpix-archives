@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, Avatar, Flex, Text, Grid } from "@chakra-ui/react";
-import { inter } from "@/app/fonts";
+import { inter } from "@/app/fonts"; // Make sure this import path is correct
 
 interface LeaderboardItemProps {
   name: string;
@@ -21,7 +21,7 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ items }) => {
   };
 
   const renderItem = (item: LeaderboardItemProps, index: number) => (
-    <Flex key={index} alignItems="center" justifyContent="space-between" p={0}>
+    <Flex key={index} alignItems="center" justifyContent="space-between" p={0.5}>
       <Flex alignItems="center" flex="1">
         <Text
           fontSize="md"
@@ -42,15 +42,19 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ items }) => {
           fontSize="md"
           fontWeight="normal"
           ml="3"
+          mr="50px"
           flex="1"
           fontFamily={inter.style.fontFamily}
+          isTruncated // This ensures the name doesn't push the score out of view
         >
           {truncateName(item.name)}
         </Text>
       </Flex>
-      <Text fontSize="md" fontWeight="bold" pl="50px" textAlign="left">
-        {item.score.toLocaleString()}
-      </Text>
+      <Box textAlign="left" minW="80px"> {/* Ensure a minimum width for alignment */}
+        <Text fontSize="md" fontWeight="bold">
+          {item.score.toLocaleString()}
+        </Text>
+      </Box>
     </Flex>
   );
 
