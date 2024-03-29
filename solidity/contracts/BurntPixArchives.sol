@@ -25,9 +25,10 @@ interface IFractal {
 
 interface IArchiveHelpers {
     function createFractalClone(address registry, address codehub, uint256 seed) external returns (address);
-    function generateCollectionMetadata(bytes32 burntPicId, address fractalClone) external pure returns (bytes memory);
-    function generateArchiveMetadata(Archive memory archive) external pure returns (bytes memory);
+    function generateCollectionMetadata(address fractalClone, bytes32 burntPicId) external pure returns (bytes memory);
+    function generateArchiveMetadata(Archive memory archive, bytes32 burntPicId, uint256 highestLevel) external pure returns (bytes memory);
     function fibonacciIterations(uint256 n) external pure returns (uint256);
+    function getAlteredStringImage(bytes memory image) external pure returns (string memory);
 }
 
 struct Archive {
@@ -51,6 +52,7 @@ contract BurntPixArchives is LSP8CappedSupply {
     bytes32 public immutable burntPicId;
     uint256 public immutable winnerIters;
     uint256 public archiveCount;
+    uint256 public currentHighestLevel = 0;
     mapping(bytes32 => Archive) public burntArchives;
     mapping(address => Contribution) public contributions;
 
@@ -101,6 +103,9 @@ contract BurntPixArchives is LSP8CappedSupply {
                 blockNumber: block.number,
                 creator: msg.sender
             });
+            if (archive.level > currentHighestLevel) {
+                currentHighestLevel = archive.level;
+            }
             burntArchives[archiveId] = archive;
         }
     }
@@ -118,7 +123,7 @@ contract BurntPixArchives is LSP8CappedSupply {
 
     function _getData(bytes32 key) internal view override returns (bytes memory) {
         if (key == _LSP4_METADATA_KEY) {
-            return IArchiveHelpers(archiveHelpers).generateCollectionMetadata(burntPicId, fractalClone);
+            return IArchiveHelpers(archiveHelpers).generateCollectionMetadata(fractalClone, burntPicId);
         }
         return super._getData(key);
     }
@@ -126,7 +131,7 @@ contract BurntPixArchives is LSP8CappedSupply {
     function _getDataForTokenId(bytes32 archiveId, bytes32 key) internal view override returns (bytes memory dataValues) {
         require(_exists(archiveId));
         if (key == _LSP4_METADATA_KEY) {
-            return IArchiveHelpers(archiveHelpers).generateArchiveMetadata(burntArchives[archiveId]);
+            return IArchiveHelpers(archiveHelpers).generateArchiveMetadata(burntArchives[archiveId], burntPicId, currentHighestLevel);
         }
         return super._getData(key);
     }
