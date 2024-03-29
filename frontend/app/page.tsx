@@ -3,6 +3,7 @@ import styles from "./page.module.css";
 import "./globals.css";
 import { Box, Divider, Flex, Heading, Text } from "@chakra-ui/react";
 import { New_Rocker } from "next/font/google";
+import BurntPixArt from "@/components/BurntPixArt";
 
 const newRockerFont = New_Rocker({
   weight: ["400"],
@@ -35,7 +36,6 @@ export default function Home() {
             </Heading>
           </Flex>
         </header>
-
         <Box mt={4} pl={10} pr={10} width={"100%"}>
           <Divider mb={2} />
           <Flex>
@@ -46,6 +46,9 @@ export default function Home() {
             <Text flex="1"></Text>
           </Flex>
           <Divider colorScheme={"blackAlpha"} size={"lg"} />
+        </Box>
+        <Box mt={6}>
+          <BurntPixArt />
         </Box>
       </Flex>
     </main>
