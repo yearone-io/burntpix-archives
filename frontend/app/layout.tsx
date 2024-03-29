@@ -9,7 +9,54 @@ import Article from "@/components/Article";
 import MainStatsList from "@/components/MainStatsList";
 import RefineButton from "@/components/RefineButton";
 import LeaderBoard from "@/components/leaderBoard";
-import { m } from "framer-motion";
+
+const leaderboardFakeStats = [
+  {
+    name: "Tehnalogos",
+    avatar: "https://avatars.githubusercontent.com/u/1?v=4",
+    score: 134778,
+  },
+  {
+    name: "Demagogos",
+    avatar: "https://avatars.githubusercontent.com/u/1?v=4",
+    score: 100778,
+  },
+  {
+    name: "Crazygogos",
+    avatar: "https://avatars.githubusercontent.com/u/1?v=4",
+    score: 50778,
+  },
+  {
+    name: "Ledergogos",
+    avatar: "https://avatars.githubusercontent.com/u/1?v=4",
+    score: 44778,
+  },
+  {
+    name: "Eggplantgogos",
+    avatar: "https://avatars.githubusercontent.com/u/1?v=4",
+    score: 10000,
+  },
+  {
+    name: "GravygogoGOGOGOGOGOGOGOGOOGGOGOGOS",
+    avatar: "https://avatars.githubusercontent.com/u/1?v=4",
+    score: 9999,
+  },
+  {
+    name: "LSPgogos",
+    avatar: "https://avatars.githubusercontent.com/u/1?v=4",
+    score: 7000,
+  },
+  {
+    name: "0x",
+    avatar: "https://avatars.githubusercontent.com/u/1?v=4",
+    score: 3000,
+  },
+  {
+    name: "0x",
+    avatar: "https://avatars.githubusercontent.com/u/1?v=4",
+    score: 333,
+  },
+];
 
 export default function RootLayout({
   children,
@@ -84,60 +131,7 @@ export default function RootLayout({
                 <MainStatsList stats={userStats} />
               </Article>
               <Article title="LEADER BOARD">
-                <LeaderBoard
-                  items={[
-                    {
-                      name: "0x",
-                      avatar: "https://avatars.githubusercontent.com/u/1?v=4",
-                      score: 0,
-                    },
-                    {
-                      name: "0x",
-                      avatar: "https://avatars.githubusercontent.com/u/1?v=4",
-                      score: 0,
-                    },
-                    {
-                      name: "0x",
-                      avatar: "https://avatars.githubusercontent.com/u/1?v=4",
-                      score: 0,
-                    },
-                    {
-                      name: "0x",
-                      avatar: "https://avatars.githubusercontent.com/u/1?v=4",
-                      score: 0,
-                    },
-                    {
-                      name: "0x",
-                      avatar: "https://avatars.githubusercontent.com/u/1?v=4",
-                      score: 0,
-                    },
-                    {
-                      name: "0x",
-                      avatar: "https://avatars.githubusercontent.com/u/1?v=4",
-                      score: 0,
-                    },
-                    {
-                      name: "0x",
-                      avatar: "https://avatars.githubusercontent.com/u/1?v=4",
-                      score: 0,
-                    },
-                    {
-                      name: "0x",
-                      avatar: "https://avatars.githubusercontent.com/u/1?v=4",
-                      score: 0,
-                    },
-                    {
-                      name: "0x",
-                      avatar: "https://avatars.githubusercontent.com/u/1?v=4",
-                      score: 0,
-                    },
-                    {
-                      name: "0x",
-                      avatar: "https://avatars.githubusercontent.com/u/1?v=4",
-                      score: 0,
-                    },
-                  ]}
-                />
+                <LeaderBoard items={leaderboardFakeStats} />
               </Article>
 
               <Footer />

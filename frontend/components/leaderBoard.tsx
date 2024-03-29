@@ -1,5 +1,6 @@
 import React from "react";
 import { Box, Avatar, Flex, Text, Grid } from "@chakra-ui/react";
+import { inter } from "@/app/fonts";
 
 interface LeaderboardItemProps {
   name: string;
@@ -12,30 +13,54 @@ interface LeaderboardProps {
 }
 
 const Leaderboard: React.FC<LeaderboardProps> = ({ items }) => {
-  // Split the items into two columns
-  const columnOneItems = items.slice(0, 5);
-  const columnTwoItems = items.slice(5, 10);
+  const truncateName = (name: string) => {
+    if (name.length > 10) {
+      return name.substring(0, 10) + "...";
+    }
+    return name;
+  };
 
   const renderItem = (item: LeaderboardItemProps, index: number) => (
-    <Flex key={index} alignItems="center" justifyContent="space-between" p={2}>
-      <Flex alignItems="center">
-        <Text fontSize="md" fontWeight="bold" minWidth="10px" mr="2">
+    <Flex key={index} alignItems="center" justifyContent="space-between" p={0}>
+      <Flex alignItems="center" flex="1">
+        <Text
+          fontSize="md"
+          fontWeight="normal"
+          minWidth="20px"
+          mr="50px"
+          fontFamily={inter.style.fontFamily}
+        >
           {index + 1}.
         </Text>
-        <Avatar name={item.name} src={item.avatar} size="sm" mr="2" />
-        <Text fontSize="md" fontWeight="normal">
-          {item.name}
+        <Avatar
+          name={truncateName(item.name)}
+          src={item.avatar}
+          height="16px"
+          width="16px"
+        />
+        <Text
+          fontSize="md"
+          fontWeight="normal"
+          ml="3"
+          flex="1"
+          fontFamily={inter.style.fontFamily}
+        >
+          {truncateName(item.name)}
         </Text>
       </Flex>
-      <Text fontSize="md" fontWeight="semibold">
+      <Text fontSize="md" fontWeight="bold" pl="50px" textAlign="left">
         {item.score.toLocaleString()}
       </Text>
     </Flex>
   );
 
+  // Split the items into two columns
+  const columnOneItems = items.slice(0, 5);
+  const columnTwoItems = items.slice(5, 10);
+
   return (
     <Box p="20px" w="full">
-      <Grid templateColumns="repeat(2, 1fr)" gap={6}>
+      <Grid templateColumns="repeat(2, 1fr)" gap={10}>
         <Box>{columnOneItems.map(renderItem)}</Box>
         <Box>
           {columnTwoItems.map((item, index) => renderItem(item, index + 5))}
