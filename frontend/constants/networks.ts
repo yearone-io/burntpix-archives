@@ -13,7 +13,7 @@ const NETWORKS = {
     symbol: "LYX",
     rpcUrl: "https://lukso.rpc.thirdweb.com",
     explorerURL: "https://explorer.execution.mainnet.lukso.network",
-    baseUrl: " ", // TODO add mainnet base url
+    baseUrl: "https://burntpix-archives.netlify.app",
   },
   testnet: {
     chainId: 4201,
@@ -21,7 +21,7 @@ const NETWORKS = {
     symbol: "LYXt",
     rpcUrl: "https://lukso-testnet.rpc.thirdweb.com",
     explorerURL: "https://explorer.execution.testnet.lukso.network",
-    baseUrl: " ", // TODO add testnet base url
+    baseUrl: "https://testnet--burntpix-archives.netlify.app", 
   },
 } as {
   [key: string]: Network;
