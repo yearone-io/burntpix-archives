@@ -16,6 +16,30 @@ export default function RootLayout({
 }) {
   let title = "Burntpix Archives";
 
+  const mainStats =
+    // TODO Generate function that returns the dynamic stats
+    [
+      { label: "Iterations:", value: "0".toLocaleString() },
+      { label: "Contributors:", value: "0".toLocaleString() },
+      {
+        label: "Archive Mints:",
+        value: `${"0".toLocaleString()} / ${"0".toLocaleString()}`,
+      },
+      { label: "LYX Burned:", value: `${"0"} LYX` },
+    ];
+
+  const userStats =
+    // TODO Generate function that returns the dynamic stats
+    [
+      { label: "Iterations:", value: "0".toLocaleString() },
+      { label: "Archive Unlocks:", value: "0".toLocaleString() },
+      {
+        label: "Archive Mints:",
+        value: "0".toLocaleString(),
+      },
+      { label: "Iters Till Next Archive:", value: "0".toLocaleString() },
+    ];
+
   return (
     <html lang="en">
       <Head>
@@ -48,16 +72,14 @@ export default function RootLayout({
               >
                 {
                   <Box>
-                    <MainStatsList
-                      iterations={1000000}
-                      contributors={233}
-                      totalArchives={1256}
-                      totalMints={10000}
-                      lyxBurned={1.4}
-                    />
+                    <MainStatsList stats={mainStats} />
                     <RefineButton />
                   </Box>
                 }
+              </Article>
+
+              <Article title="YOUR CONTRIBUTIONS">
+                <MainStatsList stats={userStats} />
               </Article>
               <Footer />
             </div>

@@ -3,35 +3,22 @@ import { List, ListItem, ListIcon, Box, Flex, Text } from "@chakra-ui/react";
 import { MdLens } from "react-icons/md"; // This is an example icon from 'react-icons'
 import { inter } from "@/app/fonts";
 
-interface StatsListProps {
-  iterations: number;
-  contributors: number;
-  totalArchives: number;
-  totalMints: number;
-  lyxBurned: number;
+interface StatsItem {
+  label: string;
+  value: string;
 }
 
-const MainStatsList: React.FC<StatsListProps> = ({
-  iterations,
-  contributors,
-  totalArchives,
-  totalMints,
-  lyxBurned,
-}) => {
+interface StatsListProps {
+  stats: StatsItem[];
+}
+
+const MainStatsList: React.FC<StatsListProps> = ({ stats }) => {
   const bulletColor = "#FE005B";
 
   return (
     <Box p={"20px 10%"} w={"100%"}>
       <List spacing={1}>
-        {[
-          { label: "Iterations:", value: iterations.toLocaleString() },
-          { label: "Contributors:", value: contributors.toLocaleString() },
-          {
-            label: "Archive Mints:",
-            value: `${totalArchives.toLocaleString()} / ${totalMints.toLocaleString()}`,
-          },
-          { label: "LYX Burned:", value: `${lyxBurned} LYX` },
-        ].map((item, index) => (
+        {stats.map((item, index) => (
           <ListItem key={index}>
             <Flex justifyContent="space-between" alignItems="center">
               <Text

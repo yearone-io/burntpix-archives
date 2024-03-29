@@ -4,7 +4,7 @@ import React, { ReactNode } from "react";
 
 interface Props {
   title: string;
-  description: string;
+  description?: string;
   children: ReactNode;
 }
 
@@ -16,21 +16,23 @@ const Article: React.FC<Props> = ({ title, description, children }) => {
         fontWeight={900}
         fontSize="14px"
         lineHeight="17px"
-        mb="10px"
         letterSpacing={1.5}
         fontFamily={inter.style.fontFamily}
       >
         {title}
       </Box>
-      <Box
-        color="#000000"
-        fontWeight={600}
-        fontSize="26px"
-        lineHeight="34.5px"
-        fontFamily={ptSerifBold.style.fontFamily}
-      >
-        {description}
-      </Box>
+      {description && (
+        <Box
+          color="#000000"
+          fontWeight={600}
+          fontSize="26px"
+          lineHeight="34.5px"
+          fontFamily={ptSerifBold.style.fontFamily}
+          mt="10px"
+        >
+          {description}
+        </Box>
+      )}
       <Box>{children}</Box>
     </Box>
   );
