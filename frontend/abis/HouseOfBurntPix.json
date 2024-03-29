@@ -819,7 +819,7 @@
           "type": "address"
         }
       ],
-      "name": "refineToMint",
+      "name": "refineToArchive",
       "outputs": [
         {
           "internalType": "string",

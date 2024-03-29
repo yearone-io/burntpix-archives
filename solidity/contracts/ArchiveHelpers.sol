@@ -11,6 +11,10 @@ struct Archive {
     address creator;
 }
 
+interface IFractal {
+    function getData(bytes32 dataKey) external view returns (bytes memory);
+}
+
 contract ArchiveHelpers {
     function createFractalClone(address registry, address codehub, uint256 seed) external returns (address) {
         FractalClone fractalClone = new FractalClone(registry, codehub, seed);
@@ -30,17 +34,17 @@ contract ArchiveHelpers {
         return (a + b) * multiplier;
     }
 
-    function toHexString(bytes32 data) internal pure returns (string memory) {
+    function toHexString(bytes32 data, uint256 dataLength) internal pure returns (string memory) {
         // Initialize a buffer for the output string
-        // 2 characters for each of the 32 bytes + 2 for the '0x' prefix
-        bytes memory buffer = new bytes(2 * 32 + 2);
+        // 2 characters for each of the dataLength bytes + 2 for the '0x' prefix
+        bytes memory buffer = new bytes(2 * dataLength + 2);
         // Add the '0x' prefix
         buffer[0] = '0';
         buffer[1] = 'x';
         // Characters for conversion
         bytes16 hexChars = "0123456789abcdef";
 
-        for (uint256 i = 0; i < 32; i++) {
+        for (uint256 i = 0; i < dataLength; i++) {
             // Convert each byte to its hexadecimal character equivalent
             buffer[2 + i * 2] = hexChars[uint8(data[i] >> 4)];
             buffer[3 + i * 2] = hexChars[uint8(data[i] & 0x0f)];
@@ -82,19 +86,46 @@ contract ArchiveHelpers {
         return string(buffer);
     }
 
-    function generateMetadataBytes(Archive memory archive) external pure returns (bytes memory, bytes memory) {
+    function generateCollectionMetadata(bytes32 burntPicId) external view returns (bytes memory) {
+        address fractal = address(uint160(uint256(burntPicId)));
+        bytes memory image = IFractal(fractal).getData(keccak256("image"));
+        bytes memory encodedImage = abi.encodePacked(
+            'data:image/svg+xml;base64,',
+            Base64.encode(image)
+        );
+        bytes memory _rawMetadata = abi.encodePacked(
+            '{"LSP4Metadata": {"name": "Burnt Pix Archives: Season 1", "description": "We burn together, we rise together. A community built archive of Burnt Pix # ',toHexString(burntPicId, 32),'",',
+                '"links": [{"title": "Burnt Pix Archives", "url": "https://burntpix.cc" }],',
+                '"images": [[{"height": 768, "width": 768, "url": "',encodedImage,'", "verification": {"method": "keccak256(bytes)", "data": "',toHexString(keccak256(image), 32),'"}}]]}}'
+        );
+        return bytes.concat(
+            hex'00006f357c6a0020', 
+            keccak256(_rawMetadata),
+            abi.encodePacked(
+                "data:application/json;charset=UTF-8,",
+                _rawMetadata
+            )
+        );
+    }
+
+    function generateArchiveMetadata(Archive memory archive, bytes32 burntPicId) external pure returns (bytes memory) {
         bytes memory encodedImage = abi.encodePacked(
             'data:image/svg+xml;base64,',
             Base64.encode(archive.image)
         );
         bytes memory _rawMetadata = abi.encodePacked(
-            '{"LSP4Metadata": {"name": "House of Burnt Pix", "description": "We burn together, we rise together. A community built archive of Burnt Pix #.",',
-                '"images": [[{"height": 768, "width": 768, "url": "',encodedImage,'", "verification": {"method": "keccak256(bytes)", "data": "',toHexString(keccak256(archive.image)),'"}}]],',
+            '{"LSP4Metadata": {"name": "Burnt Pix Archives: Season 1", "description": "We burn together, we rise together. A community built archive of Burnt Pix # ',toHexString(burntPicId, 32),'",',
+                '"images": [[{"height": 768, "width": 768, "url": "',encodedImage,'", "verification": {"method": "keccak256(bytes)", "data": "',toHexString(keccak256(archive.image), 32),'"}}]],',
+                '"links": [{"title": "Burnt Pix Archives", "url": "https://burntpix.cc" }],',
                 '"attributes": [{"key": "Level", "type": "number", "value": ',uintToString(archive.level),'}, {"key": "Block Number", "type": "number", "value": ',uintToString(archive.blockNumber),'}, {"key": "Iterations", "type": "number", "value": ',uintToString(archive.iterations),'}, {"key": "Creator", "type": "string", "value": "',addressToString(archive.creator),'"}]}}'
         );
-        return (_rawMetadata, abi.encodePacked(
-            "data:application/json;charset=UTF-8,",
-            _rawMetadata
-        ));
+        return bytes.concat(
+            hex'00006f357c6a0020', 
+            keccak256(_rawMetadata),
+            abi.encodePacked(
+                "data:application/json;charset=UTF-8,",
+                _rawMetadata
+            )
+        );
     }
 }

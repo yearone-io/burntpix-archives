@@ -2,7 +2,7 @@ import { ethers } from "ethers";
 import HouseOfBurntPix from "@/abis/HouseOfBurntPix.json";
 import { JsonRpcProvider, Web3Provider } from "@ethersproject/providers";
 
-export const refineToMint = async (
+export const refineToArchive = async (
   iters: number,
   houseOfBurtnPixAddress: string,
   provider: JsonRpcProvider | Web3Provider,
@@ -13,5 +13,5 @@ export const refineToMint = async (
     HouseOfBurntPix.abi,
     provider,
   );
-  return await houseOfBurntPixContract.connect(signer).refineToMint(iters);
+  return await houseOfBurntPixContract.connect(signer).refineToArchive(iters);
 };
