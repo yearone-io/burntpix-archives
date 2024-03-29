@@ -40,7 +40,7 @@ const EditorsNote: React.FC = () => {
         The core idea behind Burnt Pix Archives is to encourage the Luxo
         community to work together and refine the same Burnt Pix NFT.
         Conceptually we do this by rewarding the refiners of the NFT with lower
-        resolution LSP8 archives of the same original at various stages in its
+        resolution LSP8 "archives" of the same original at various stages in its
         evolution as the refiners unlock new levels through their contributions.
         The amount of possible minted archives is limited to ten thousand. The
         refiner that first contributes 69,420,000 iterations to the archive
