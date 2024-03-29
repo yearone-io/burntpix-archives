@@ -8,6 +8,7 @@ import theme from "./theme";
 import Article from "@/components/Article";
 import MainStatsList from "@/components/MainStatsList";
 import RefineButton from "@/components/RefineButton";
+import EditorsNote from "@/components/EditorsNote";
 
 export default function RootLayout({
   children,
@@ -81,6 +82,7 @@ export default function RootLayout({
               <Article title="YOUR CONTRIBUTIONS">
                 <MainStatsList stats={userStats} />
               </Article>
+              <EditorsNote />
               <Footer />
             </div>
           </ChakraProvider>
