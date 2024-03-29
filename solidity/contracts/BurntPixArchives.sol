@@ -25,7 +25,7 @@ interface IFractal {
 
 interface IArchiveHelpers {
     function createFractalClone(address registry, address codehub, uint256 seed) external returns (address);
-    function generateCollectionMetadata(bytes32 burntPicId) external pure returns (bytes memory);
+    function generateCollectionMetadata(bytes32 burntPicId, address fractalClone) external pure returns (bytes memory);
     function generateArchiveMetadata(Archive memory archive) external pure returns (bytes memory);
     function fibonacciIterations(uint256 n) external pure returns (uint256);
 }
@@ -118,7 +118,7 @@ contract BurntPixArchives is LSP8CappedSupply {
 
     function _getData(bytes32 key) internal view override returns (bytes memory) {
         if (key == _LSP4_METADATA_KEY) {
-            return IArchiveHelpers(archiveHelpers).generateCollectionMetadata(burntPicId);
+            return IArchiveHelpers(archiveHelpers).generateCollectionMetadata(burntPicId, fractalClone);
         }
         return super._getData(key);
     }

@@ -86,9 +86,8 @@ contract ArchiveHelpers {
         return string(buffer);
     }
 
-    function generateCollectionMetadata(bytes32 burntPicId) external view returns (bytes memory) {
-        address fractal = address(uint160(uint256(burntPicId)));
-        bytes memory image = IFractal(fractal).getData(keccak256("image"));
+    function generateCollectionMetadata(bytes32 burntPicId, address fractalClone) external view returns (bytes memory) {
+        bytes memory image = IFractal(fractalClone).getData(keccak256("image"));
         bytes memory encodedImage = abi.encodePacked(
             'data:image/svg+xml;base64,',
             Base64.encode(image)
