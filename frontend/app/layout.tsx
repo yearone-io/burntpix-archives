@@ -134,7 +134,6 @@ export default function RootLayout({
               <Article title="LEADER BOARD">
                 <LeaderBoard items={leaderboardFakeStats} />
               </Article>
-
               <EditorsNote />
               <Footer />
             </div>
