@@ -2,5 +2,7 @@
 /* tslint:disable */
 /* eslint-disable */
 export type { BurntPixArchives } from "./BurntPixArchives";
+export type { Fractal } from "./Fractal";
 export * as factories from "./factories";
 export { BurntPixArchives__factory } from "./factories/BurntPixArchives__factory";
+export { Fractal__factory } from "./factories/Fractal__factory";
