@@ -21,7 +21,12 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ items }) => {
   };
 
   const renderItem = (item: LeaderboardItemProps, index: number) => (
-    <Flex key={index} alignItems="center" justifyContent="space-between" p={0.5}>
+    <Flex
+      key={index}
+      alignItems="center"
+      justifyContent="space-between"
+      p={0.5}
+    >
       <Flex alignItems="center" flex="1">
         <Text
           fontSize="md"
@@ -50,7 +55,9 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ items }) => {
           {truncateName(item.name)}
         </Text>
       </Flex>
-      <Box textAlign="left" minW="80px"> {/* Ensure a minimum width for alignment */}
+      <Box textAlign="left" minW="80px">
+        {" "}
+        {/* Ensure a minimum width for alignment */}
         <Text fontSize="md" fontWeight="bold">
           {item.score.toLocaleString()}
         </Text>
