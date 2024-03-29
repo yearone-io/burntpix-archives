@@ -45,7 +45,7 @@ export interface BurntPixArchivesInterface extends Interface {
       | "isOriginalLocked"
       | "mintArchive"
       | "owner"
-      | "refineToMint"
+      | "refineToArchive"
       | "registry"
       | "renounceOwnership"
       | "revokeOperator"
@@ -61,7 +61,7 @@ export interface BurntPixArchivesInterface extends Interface {
       | "transfer"
       | "transferBatch"
       | "transferOwnership"
-      | "winnerIters",
+      | "winnerIters"
   ): FunctionFragment;
 
   getEvent(
@@ -71,261 +71,261 @@ export interface BurntPixArchivesInterface extends Interface {
       | "OperatorRevoked"
       | "OwnershipTransferred"
       | "TokenIdDataChanged"
-      | "Transfer",
+      | "Transfer"
   ): EventFragment;
 
   encodeFunctionData(
     functionFragment: "archiveCount",
-    values?: undefined,
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "archiveHelpers",
-    values?: undefined,
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "authorizeOperator",
-    values: [AddressLike, BytesLike, BytesLike],
+    values: [AddressLike, BytesLike, BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "balanceOf",
-    values: [AddressLike],
+    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "batchCalls",
-    values: [BytesLike[]],
+    values: [BytesLike[]]
   ): string;
   encodeFunctionData(
     functionFragment: "burntArchives",
-    values: [BytesLike],
+    values: [BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "burntPicId",
-    values?: undefined,
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "contributions",
-    values: [AddressLike],
+    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "fractalClone",
-    values?: undefined,
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "getArchives",
-    values: [AddressLike],
+    values: [AddressLike]
   ): string;
   encodeFunctionData(functionFragment: "getData", values: [BytesLike]): string;
   encodeFunctionData(
     functionFragment: "getDataBatch",
-    values: [BytesLike[]],
+    values: [BytesLike[]]
   ): string;
   encodeFunctionData(
     functionFragment: "getDataBatchForTokenIds",
-    values: [BytesLike[], BytesLike[]],
+    values: [BytesLike[], BytesLike[]]
   ): string;
   encodeFunctionData(
     functionFragment: "getDataForTokenId",
-    values: [BytesLike, BytesLike],
+    values: [BytesLike, BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "getOperatorsOf",
-    values: [BytesLike],
+    values: [BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "isOperatorFor",
-    values: [AddressLike, BytesLike],
+    values: [AddressLike, BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "isOriginalLocked",
-    values?: undefined,
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "mintArchive",
-    values: [BytesLike, AddressLike],
+    values: [BytesLike, AddressLike]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "refineToMint",
-    values: [BigNumberish],
+    functionFragment: "refineToArchive",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "registry", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "renounceOwnership",
-    values?: undefined,
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "revokeOperator",
-    values: [AddressLike, BytesLike, boolean, BytesLike],
+    values: [AddressLike, BytesLike, boolean, BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "setData",
-    values: [BytesLike, BytesLike],
+    values: [BytesLike, BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "setDataBatch",
-    values: [BytesLike[], BytesLike[]],
+    values: [BytesLike[], BytesLike[]]
   ): string;
   encodeFunctionData(
     functionFragment: "setDataBatchForTokenIds",
-    values: [BytesLike[], BytesLike[], BytesLike[]],
+    values: [BytesLike[], BytesLike[], BytesLike[]]
   ): string;
   encodeFunctionData(
     functionFragment: "setDataForTokenId",
-    values: [BytesLike, BytesLike, BytesLike],
+    values: [BytesLike, BytesLike, BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "supportsInterface",
-    values: [BytesLike],
+    values: [BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "tokenIdsOf",
-    values: [AddressLike],
+    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "tokenOwnerOf",
-    values: [BytesLike],
+    values: [BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "tokenSupplyCap",
-    values?: undefined,
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "totalSupply",
-    values?: undefined,
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "transfer",
-    values: [AddressLike, AddressLike, BytesLike, boolean, BytesLike],
+    values: [AddressLike, AddressLike, BytesLike, boolean, BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "transferBatch",
-    values: [AddressLike[], AddressLike[], BytesLike[], boolean[], BytesLike[]],
+    values: [AddressLike[], AddressLike[], BytesLike[], boolean[], BytesLike[]]
   ): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
-    values: [AddressLike],
+    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "winnerIters",
-    values?: undefined,
+    values?: undefined
   ): string;
 
   decodeFunctionResult(
     functionFragment: "archiveCount",
-    data: BytesLike,
+    data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "archiveHelpers",
-    data: BytesLike,
+    data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "authorizeOperator",
-    data: BytesLike,
+    data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "batchCalls", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "burntArchives",
-    data: BytesLike,
+    data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "burntPicId", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "contributions",
-    data: BytesLike,
+    data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "fractalClone",
-    data: BytesLike,
+    data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "getArchives",
-    data: BytesLike,
+    data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getData", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getDataBatch",
-    data: BytesLike,
+    data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "getDataBatchForTokenIds",
-    data: BytesLike,
+    data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "getDataForTokenId",
-    data: BytesLike,
+    data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "getOperatorsOf",
-    data: BytesLike,
+    data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "isOperatorFor",
-    data: BytesLike,
+    data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "isOriginalLocked",
-    data: BytesLike,
+    data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "mintArchive",
-    data: BytesLike,
+    data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "refineToMint",
-    data: BytesLike,
+    functionFragment: "refineToArchive",
+    data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "registry", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "renounceOwnership",
-    data: BytesLike,
+    data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "revokeOperator",
-    data: BytesLike,
+    data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "setData", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setDataBatch",
-    data: BytesLike,
+    data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "setDataBatchForTokenIds",
-    data: BytesLike,
+    data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "setDataForTokenId",
-    data: BytesLike,
+    data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "supportsInterface",
-    data: BytesLike,
+    data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "tokenIdsOf", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "tokenOwnerOf",
-    data: BytesLike,
+    data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "tokenSupplyCap",
-    data: BytesLike,
+    data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "totalSupply",
-    data: BytesLike,
+    data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "transfer", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "transferBatch",
-    data: BytesLike,
+    data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
-    data: BytesLike,
+    data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "winnerIters",
-    data: BytesLike,
+    data: BytesLike
   ): Result;
 }
 
@@ -347,13 +347,13 @@ export namespace OperatorAuthorizationChangedEvent {
     operator: AddressLike,
     tokenOwner: AddressLike,
     tokenId: BytesLike,
-    operatorNotificationData: BytesLike,
+    operatorNotificationData: BytesLike
   ];
   export type OutputTuple = [
     operator: string,
     tokenOwner: string,
     tokenId: string,
-    operatorNotificationData: string,
+    operatorNotificationData: string
   ];
   export interface OutputObject {
     operator: string;
@@ -373,14 +373,14 @@ export namespace OperatorRevokedEvent {
     tokenOwner: AddressLike,
     tokenId: BytesLike,
     notified: boolean,
-    operatorNotificationData: BytesLike,
+    operatorNotificationData: BytesLike
   ];
   export type OutputTuple = [
     operator: string,
     tokenOwner: string,
     tokenId: string,
     notified: boolean,
-    operatorNotificationData: string,
+    operatorNotificationData: string
   ];
   export interface OutputObject {
     operator: string;
@@ -412,12 +412,12 @@ export namespace TokenIdDataChangedEvent {
   export type InputTuple = [
     tokenId: BytesLike,
     dataKey: BytesLike,
-    dataValue: BytesLike,
+    dataValue: BytesLike
   ];
   export type OutputTuple = [
     tokenId: string,
     dataKey: string,
-    dataValue: string,
+    dataValue: string
   ];
   export interface OutputObject {
     tokenId: string;
@@ -437,7 +437,7 @@ export namespace TransferEvent {
     to: AddressLike,
     tokenId: BytesLike,
     force: boolean,
-    data: BytesLike,
+    data: BytesLike
   ];
   export type OutputTuple = [
     operator: string,
@@ -445,7 +445,7 @@ export namespace TransferEvent {
     to: string,
     tokenId: string,
     force: boolean,
-    data: string,
+    data: string
   ];
   export interface OutputObject {
     operator: string;
@@ -470,38 +470,38 @@ export interface BurntPixArchives extends BaseContract {
   queryFilter<TCEvent extends TypedContractEvent>(
     event: TCEvent,
     fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined,
+    toBlock?: string | number | undefined
   ): Promise<Array<TypedEventLog<TCEvent>>>;
   queryFilter<TCEvent extends TypedContractEvent>(
     filter: TypedDeferredTopicFilter<TCEvent>,
     fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined,
+    toBlock?: string | number | undefined
   ): Promise<Array<TypedEventLog<TCEvent>>>;
 
   on<TCEvent extends TypedContractEvent>(
     event: TCEvent,
-    listener: TypedListener<TCEvent>,
+    listener: TypedListener<TCEvent>
   ): Promise<this>;
   on<TCEvent extends TypedContractEvent>(
     filter: TypedDeferredTopicFilter<TCEvent>,
-    listener: TypedListener<TCEvent>,
+    listener: TypedListener<TCEvent>
   ): Promise<this>;
 
   once<TCEvent extends TypedContractEvent>(
     event: TCEvent,
-    listener: TypedListener<TCEvent>,
+    listener: TypedListener<TCEvent>
   ): Promise<this>;
   once<TCEvent extends TypedContractEvent>(
     filter: TypedDeferredTopicFilter<TCEvent>,
-    listener: TypedListener<TCEvent>,
+    listener: TypedListener<TCEvent>
   ): Promise<this>;
 
   listeners<TCEvent extends TypedContractEvent>(
-    event: TCEvent,
+    event: TCEvent
   ): Promise<Array<TypedListener<TCEvent>>>;
   listeners(eventName?: string): Promise<Array<Listener>>;
   removeAllListeners<TCEvent extends TypedContractEvent>(
-    event?: TCEvent,
+    event?: TCEvent
   ): Promise<this>;
 
   archiveCount: TypedContractMethod<[], [bigint], "view">;
@@ -512,7 +512,7 @@ export interface BurntPixArchives extends BaseContract {
     [
       operator: AddressLike,
       tokenId: BytesLike,
-      operatorNotificationData: BytesLike,
+      operatorNotificationData: BytesLike
     ],
     [void],
     "nonpayable"
@@ -535,7 +535,7 @@ export interface BurntPixArchives extends BaseContract {
         level: bigint;
         blockNumber: bigint;
         creator: string;
-      },
+      }
     ],
     "view"
   >;
@@ -590,7 +590,7 @@ export interface BurntPixArchives extends BaseContract {
 
   owner: TypedContractMethod<[], [string], "view">;
 
-  refineToMint: TypedContractMethod<
+  refineToArchive: TypedContractMethod<
     [iters: BigNumberish],
     [void],
     "nonpayable"
@@ -605,7 +605,7 @@ export interface BurntPixArchives extends BaseContract {
       operator: AddressLike,
       tokenId: BytesLike,
       notify: boolean,
-      operatorNotificationData: BytesLike,
+      operatorNotificationData: BytesLike
     ],
     [void],
     "nonpayable"
@@ -659,7 +659,7 @@ export interface BurntPixArchives extends BaseContract {
       to: AddressLike,
       tokenId: BytesLike,
       force: boolean,
-      data: BytesLike,
+      data: BytesLike
     ],
     [void],
     "nonpayable"
@@ -671,7 +671,7 @@ export interface BurntPixArchives extends BaseContract {
       to: AddressLike[],
       tokenId: BytesLike[],
       force: boolean[],
-      data: BytesLike[],
+      data: BytesLike[]
     ],
     [void],
     "nonpayable"
@@ -686,33 +686,35 @@ export interface BurntPixArchives extends BaseContract {
   winnerIters: TypedContractMethod<[], [bigint], "view">;
 
   getFunction<T extends ContractMethod = ContractMethod>(
-    key: string | FunctionFragment,
+    key: string | FunctionFragment
   ): T;
 
   getFunction(
-    nameOrSignature: "archiveCount",
+    nameOrSignature: "archiveCount"
   ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
-    nameOrSignature: "archiveHelpers",
+    nameOrSignature: "archiveHelpers"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
-    nameOrSignature: "authorizeOperator",
+    nameOrSignature: "authorizeOperator"
   ): TypedContractMethod<
     [
       operator: AddressLike,
       tokenId: BytesLike,
-      operatorNotificationData: BytesLike,
+      operatorNotificationData: BytesLike
     ],
     [void],
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "balanceOf",
+    nameOrSignature: "balanceOf"
   ): TypedContractMethod<[tokenOwner: AddressLike], [bigint], "view">;
   getFunction(
-    nameOrSignature: "batchCalls",
+    nameOrSignature: "batchCalls"
   ): TypedContractMethod<[data: BytesLike[]], [string[]], "nonpayable">;
-  getFunction(nameOrSignature: "burntArchives"): TypedContractMethod<
+  getFunction(
+    nameOrSignature: "burntArchives"
+  ): TypedContractMethod<
     [arg0: BytesLike],
     [
       [string, bigint, bigint, bigint, string] & {
@@ -721,199 +723,199 @@ export interface BurntPixArchives extends BaseContract {
         level: bigint;
         blockNumber: bigint;
         creator: string;
-      },
+      }
     ],
     "view"
   >;
   getFunction(
-    nameOrSignature: "burntPicId",
+    nameOrSignature: "burntPicId"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
-    nameOrSignature: "contributions",
+    nameOrSignature: "contributions"
   ): TypedContractMethod<[arg0: AddressLike], [bigint], "view">;
   getFunction(
-    nameOrSignature: "fractalClone",
+    nameOrSignature: "fractalClone"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
-    nameOrSignature: "getArchives",
+    nameOrSignature: "getArchives"
   ): TypedContractMethod<[contributor: AddressLike], [string[]], "view">;
   getFunction(
-    nameOrSignature: "getData",
+    nameOrSignature: "getData"
   ): TypedContractMethod<[dataKey: BytesLike], [string], "view">;
   getFunction(
-    nameOrSignature: "getDataBatch",
+    nameOrSignature: "getDataBatch"
   ): TypedContractMethod<[dataKeys: BytesLike[]], [string[]], "view">;
   getFunction(
-    nameOrSignature: "getDataBatchForTokenIds",
+    nameOrSignature: "getDataBatchForTokenIds"
   ): TypedContractMethod<
     [tokenIds: BytesLike[], dataKeys: BytesLike[]],
     [string[]],
     "view"
   >;
   getFunction(
-    nameOrSignature: "getDataForTokenId",
+    nameOrSignature: "getDataForTokenId"
   ): TypedContractMethod<
     [tokenId: BytesLike, dataKey: BytesLike],
     [string],
     "view"
   >;
   getFunction(
-    nameOrSignature: "getOperatorsOf",
+    nameOrSignature: "getOperatorsOf"
   ): TypedContractMethod<[tokenId: BytesLike], [string[]], "view">;
   getFunction(
-    nameOrSignature: "isOperatorFor",
+    nameOrSignature: "isOperatorFor"
   ): TypedContractMethod<
     [operator: AddressLike, tokenId: BytesLike],
     [boolean],
     "view"
   >;
   getFunction(
-    nameOrSignature: "isOriginalLocked",
+    nameOrSignature: "isOriginalLocked"
   ): TypedContractMethod<[], [boolean], "view">;
   getFunction(
-    nameOrSignature: "mintArchive",
+    nameOrSignature: "mintArchive"
   ): TypedContractMethod<
     [archiveId: BytesLike, to: AddressLike],
     [void],
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "owner",
+    nameOrSignature: "owner"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
-    nameOrSignature: "refineToMint",
+    nameOrSignature: "refineToArchive"
   ): TypedContractMethod<[iters: BigNumberish], [void], "nonpayable">;
   getFunction(
-    nameOrSignature: "registry",
+    nameOrSignature: "registry"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
-    nameOrSignature: "renounceOwnership",
+    nameOrSignature: "renounceOwnership"
   ): TypedContractMethod<[], [void], "nonpayable">;
   getFunction(
-    nameOrSignature: "revokeOperator",
+    nameOrSignature: "revokeOperator"
   ): TypedContractMethod<
     [
       operator: AddressLike,
       tokenId: BytesLike,
       notify: boolean,
-      operatorNotificationData: BytesLike,
+      operatorNotificationData: BytesLike
     ],
     [void],
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "setData",
+    nameOrSignature: "setData"
   ): TypedContractMethod<
     [dataKey: BytesLike, dataValue: BytesLike],
     [void],
     "payable"
   >;
   getFunction(
-    nameOrSignature: "setDataBatch",
+    nameOrSignature: "setDataBatch"
   ): TypedContractMethod<
     [dataKeys: BytesLike[], dataValues: BytesLike[]],
     [void],
     "payable"
   >;
   getFunction(
-    nameOrSignature: "setDataBatchForTokenIds",
+    nameOrSignature: "setDataBatchForTokenIds"
   ): TypedContractMethod<
     [tokenIds: BytesLike[], dataKeys: BytesLike[], dataValues: BytesLike[]],
     [void],
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "setDataForTokenId",
+    nameOrSignature: "setDataForTokenId"
   ): TypedContractMethod<
     [tokenId: BytesLike, dataKey: BytesLike, dataValue: BytesLike],
     [void],
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "supportsInterface",
+    nameOrSignature: "supportsInterface"
   ): TypedContractMethod<[interfaceId: BytesLike], [boolean], "view">;
   getFunction(
-    nameOrSignature: "tokenIdsOf",
+    nameOrSignature: "tokenIdsOf"
   ): TypedContractMethod<[tokenOwner: AddressLike], [string[]], "view">;
   getFunction(
-    nameOrSignature: "tokenOwnerOf",
+    nameOrSignature: "tokenOwnerOf"
   ): TypedContractMethod<[tokenId: BytesLike], [string], "view">;
   getFunction(
-    nameOrSignature: "tokenSupplyCap",
+    nameOrSignature: "tokenSupplyCap"
   ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
-    nameOrSignature: "totalSupply",
+    nameOrSignature: "totalSupply"
   ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
-    nameOrSignature: "transfer",
+    nameOrSignature: "transfer"
   ): TypedContractMethod<
     [
       from: AddressLike,
       to: AddressLike,
       tokenId: BytesLike,
       force: boolean,
-      data: BytesLike,
+      data: BytesLike
     ],
     [void],
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "transferBatch",
+    nameOrSignature: "transferBatch"
   ): TypedContractMethod<
     [
       from: AddressLike[],
       to: AddressLike[],
       tokenId: BytesLike[],
       force: boolean[],
-      data: BytesLike[],
+      data: BytesLike[]
     ],
     [void],
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "transferOwnership",
+    nameOrSignature: "transferOwnership"
   ): TypedContractMethod<[newOwner: AddressLike], [void], "nonpayable">;
   getFunction(
-    nameOrSignature: "winnerIters",
+    nameOrSignature: "winnerIters"
   ): TypedContractMethod<[], [bigint], "view">;
 
   getEvent(
-    key: "DataChanged",
+    key: "DataChanged"
   ): TypedContractEvent<
     DataChangedEvent.InputTuple,
     DataChangedEvent.OutputTuple,
     DataChangedEvent.OutputObject
   >;
   getEvent(
-    key: "OperatorAuthorizationChanged",
+    key: "OperatorAuthorizationChanged"
   ): TypedContractEvent<
     OperatorAuthorizationChangedEvent.InputTuple,
     OperatorAuthorizationChangedEvent.OutputTuple,
     OperatorAuthorizationChangedEvent.OutputObject
   >;
   getEvent(
-    key: "OperatorRevoked",
+    key: "OperatorRevoked"
   ): TypedContractEvent<
     OperatorRevokedEvent.InputTuple,
     OperatorRevokedEvent.OutputTuple,
     OperatorRevokedEvent.OutputObject
   >;
   getEvent(
-    key: "OwnershipTransferred",
+    key: "OwnershipTransferred"
   ): TypedContractEvent<
     OwnershipTransferredEvent.InputTuple,
     OwnershipTransferredEvent.OutputTuple,
     OwnershipTransferredEvent.OutputObject
   >;
   getEvent(
-    key: "TokenIdDataChanged",
+    key: "TokenIdDataChanged"
   ): TypedContractEvent<
     TokenIdDataChangedEvent.InputTuple,
     TokenIdDataChangedEvent.OutputTuple,
     TokenIdDataChangedEvent.OutputObject
   >;
   getEvent(
-    key: "Transfer",
+    key: "Transfer"
   ): TypedContractEvent<
     TransferEvent.InputTuple,
     TransferEvent.OutputTuple,
