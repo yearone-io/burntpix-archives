@@ -1,11 +1,11 @@
 import React from "react";
 import { getNetworkConfig, Network } from "@/constants/networks";
-import { JsonRpcProvider, Web3Provider } from "@ethersproject/providers";
 import { ethers } from "ethers";
+import { JsonRpcProvider, BrowserProvider } from "ethers";
 
 interface WalletContextType {
   networkConfig: Network;
-  provider: JsonRpcProvider | Web3Provider;
+  provider: JsonRpcProvider | BrowserProvider;
   account: string | null;
   mainUPController: string | undefined;
   connect: () => Promise<void>;
@@ -18,7 +18,7 @@ const networkConfig = getNetworkConfig(
   process.env.NEXT_PUBLIC_DEFAULT_NETWORK!,
 );
 
-export const DEFAULT_PROVIDER = new ethers.providers.JsonRpcProvider(
+export const DEFAULT_PROVIDER = new ethers.JsonRpcProvider(
   networkConfig.rpcUrl,
   {
     name: networkConfig.name,
