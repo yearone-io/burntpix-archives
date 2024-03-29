@@ -9,6 +9,7 @@ import Article from "@/components/Article";
 import MainStatsList from "@/components/MainStatsList";
 import RefineButton from "@/components/RefineButton";
 import LeaderBoard from "@/components/leaderBoard";
+import EditorsNote from "@/components/EditorsNote";
 
 const leaderboardFakeStats = [
   {
@@ -134,6 +135,7 @@ export default function RootLayout({
                 <LeaderBoard items={leaderboardFakeStats} />
               </Article>
 
+              <EditorsNote />
               <Footer />
             </div>
           </ChakraProvider>
