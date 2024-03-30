@@ -55,13 +55,19 @@ contract BurntPixArchives is LSP8CappedSupply {
     uint256 public immutable winnerIters;
     address[] public contributors;
     uint256 public archiveCount;
-    uint256 public currentHighestLevel;
+    uint256 public currentHighestLevel = 1;
     mapping(bytes32 => Archive) public burntArchives;
     mapping(address => Contribution) public contributions;
 
-    // Construct a new NFT registry, keeping mostly everything standard and just
-    // delegating it to Lukso's base contracts.
-    constructor(address _codehub, address _registry, address _archiveHelpers, address _creator, bytes32 _burntPicId, uint256 _maxSupply, uint256 _winnerIters)
+    constructor(
+        address _codehub,
+        address _registry,
+        address _archiveHelpers,
+        address _creator,
+        bytes32 _burntPicId,
+        uint256 _maxSupply,
+        uint256 _winnerIters
+    )
         LSP8CappedSupply(_maxSupply)
         LSP8IdentifiableDigitalAsset(
             'Burnt Pix Archives: Season 1',
@@ -93,6 +99,7 @@ contract BurntPixArchives is LSP8CappedSupply {
             contributors.push(msg.sender);
         }
         contributions[msg.sender].iterations += iters;
+        // Balance iterations
         uint256 diff = IFractal(address(uint160(uint256(burntPicId)))).iterations() - IFractal(fractalClone).iterations();
         IFractal(fractalClone).refine(iters);
         if (diff == 0) {
@@ -100,9 +107,11 @@ contract BurntPixArchives is LSP8CappedSupply {
         } else if (iters > diff) {
             IRegistry(registry).refine(burntPicId, iters - diff);
         }
-        if (contributions[msg.sender].iterations >= winnerIters) {
+        // Transfer original when winner first encountered
+        if (contributions[msg.sender].iterations >= winnerIters && isOriginalLocked()) {
             IRegistry(registry).transfer(address(this), msg.sender, burntPicId, true, "");
         }
+        // Store archive
         if (contributions[msg.sender].iterations >= IArchiveHelpers(archiveHelpers).fibonacciIterations(contributions[msg.sender].archiveIds.length + 1)) {
             bytes32 archiveId = bytes32(++archiveCount);
             contributions[msg.sender].archiveIds.push(archiveId);
@@ -120,10 +129,9 @@ contract BurntPixArchives is LSP8CappedSupply {
         }
     }
 
-    function mintArchive(bytes32 archiveId, address to) external {
-        _exists(archiveId);
+    function mintArchive(bytes32 archiveId, address to) public {
         Archive memory archive = burntArchives[archiveId];
-        require(archive.creator == msg.sender, "BurntPixArchives: Only the creator can mint the archive");
+        require(archive.creator == msg.sender, "BurntPixArchives: Only the archive creator can mint the archive");
         _mint(to, archiveId, true, "");
     }
 
@@ -143,12 +151,8 @@ contract BurntPixArchives is LSP8CappedSupply {
         return contributors.length;
     }
 
-    function isOriginalLocked() view public returns (bool) {
+    function isOriginalLocked() public view returns (bool) {
         return IRegistry(registry).getOperatorsOf(burntPicId).length == 0 && IRegistry(registry).tokenOwnerOf(burntPicId) == address(this) && owner() == address(0);
-    }
-
-    function totalLYXBurned() view public returns (uint256) {
-        return IFractal(address(uint160(uint256(burntPicId)))).feesburnt() + IFractal(fractalClone).feesburnt();
     }
 
     function _getData(bytes32 key) internal view override returns (bytes memory) {

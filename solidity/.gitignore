@@ -76,3 +76,5 @@ templates/evm/core/pages/api
 typechain-types/
 artifacts/
 cache
+
+.vscode/
