@@ -26,7 +26,7 @@ const NETWORKS = {
     symbol: "LYXt",
     rpcUrl: "https://lukso-testnet.rpc.thirdweb.com",
     explorerURL: "https://explorer.execution.testnet.lukso.network",
-    baseUrl: "https://testnet--burntpix-archives.netlify.app", 
+    baseUrl: "https://testnet--burntpix-archives.netlify.app",
     burntPixWebUrl:
       "https://universalpage.dev/collections/0x12167f1c2713aC4f740B4700c4C72bC2de6C686f",
     burntPixId: "0x245f9A8Bea516165B45142f8b79eA204f97F8867",

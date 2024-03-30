@@ -1,6 +1,6 @@
 import React from "react";
-import { Box, Flex, Text, Link, IconButton, Select } from "@chakra-ui/react";
-import { ExternalLinkIcon } from "@chakra-ui/icons";
+import { Box, Flex, Text, Link, Select } from "@chakra-ui/react";
+import { FaExternalLinkAlt } from "react-icons/fa";
 import { inter } from "@/app/fonts";
 import { FaSquareGithub } from "react-icons/fa6";
 import { getNetworkConfig } from "@/constants/networks";
@@ -39,8 +39,8 @@ const Footer: React.FC = () => {
           >
             SC: 0xd4E...Fa2
           </Text>
-          <Link href="#" isExternal ml="5px" size="14px" mb="4px">
-            <ExternalLinkIcon />
+          <Link href="#" isExternal ml="5px" size="14px" mb="0px">
+            <FaExternalLinkAlt />
           </Link>
           <Link
             href="https://github.com/yearone-io/burntpix-archives"

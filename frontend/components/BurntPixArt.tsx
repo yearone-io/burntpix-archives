@@ -35,7 +35,10 @@ export default function BurntPixArt() {
 
       <HStack textAlign={"center"}>
         <Text>Burnt Pix Id</Text>
-        <Link isExternal={true} href={`${networkConfig.burntPixWebUrl}/${networkConfig.burntPixId}`}>
+        <Link
+          isExternal={true}
+          href={`${networkConfig.burntPixWebUrl}/${networkConfig.burntPixId}`}
+        >
           {formatAddress(networkConfig.burntPixId)}
         </Link>
       </HStack>
