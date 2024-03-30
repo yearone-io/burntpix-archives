@@ -155,34 +155,6 @@ contract BurntPixArchives is LSP8CappedSupply {
         return IRegistry(registry).getOperatorsOf(burntPicId).length == 0 && IRegistry(registry).tokenOwnerOf(burntPicId) == address(this) && owner() == address(0);
     }
 
-    function totalLYXBurned() public view returns (uint256) {
-        return IFractal(address(uint160(uint256(burntPicId)))).feesburnt() + IFractal(fractalClone).feesburnt();
-    }
-
-    function getArchives(address contributor) public view returns (bytes32[] memory) {
-        return contributions[contributor].archiveIds;
-    }
-
-    function getContributions(address[] memory targetContributors) public view returns (uint256[] memory) {
-        uint256[] memory values = new uint256[](targetContributors.length);
-        for (uint256 i = 0; i < targetContributors.length; i++) {
-            values[i] = contributions[targetContributors[i]].iterations;
-        }
-        return values;
-    }
-
-    function getTotalContributors() public view returns (uint256) {
-        return contributors.length;
-    }
-
-    function isOriginalLocked() view public returns (bool) {
-        return IRegistry(registry).getOperatorsOf(burntPicId).length == 0 && IRegistry(registry).tokenOwnerOf(burntPicId) == address(this) && owner() == address(0);
-    }
-
-    function totalLYXBurned() view public returns (uint256) {
-        return IFractal(address(uint160(uint256(burntPicId)))).feesburnt() + IFractal(fractalClone).feesburnt();
-    }
-
     function _getData(bytes32 key) internal view override returns (bytes memory) {
         if (key == _LSP4_METADATA_KEY) {
             return IArchiveHelpers(archiveHelpers).generateCollectionMetadata(fractalClone, burntPicId);
