@@ -34,13 +34,17 @@ export interface BurntPixArchivesInterface extends Interface {
       | "burntArchives"
       | "burntPicId"
       | "contributions"
+      | "contributors"
+      | "currentHighestLevel"
       | "fractalClone"
       | "getArchives"
+      | "getContributions"
       | "getData"
       | "getDataBatch"
       | "getDataBatchForTokenIds"
       | "getDataForTokenId"
       | "getOperatorsOf"
+      | "getTotalContributors"
       | "isOperatorFor"
       | "isOriginalLocked"
       | "mintArchive"
@@ -107,12 +111,24 @@ export interface BurntPixArchivesInterface extends Interface {
     values: [AddressLike],
   ): string;
   encodeFunctionData(
+    functionFragment: "contributors",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "currentHighestLevel",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "fractalClone",
     values?: undefined,
   ): string;
   encodeFunctionData(
     functionFragment: "getArchives",
     values: [AddressLike],
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getContributions",
+    values: [AddressLike[]]
   ): string;
   encodeFunctionData(functionFragment: "getData", values: [BytesLike]): string;
   encodeFunctionData(
@@ -130,6 +146,10 @@ export interface BurntPixArchivesInterface extends Interface {
   encodeFunctionData(
     functionFragment: "getOperatorsOf",
     values: [BytesLike],
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getTotalContributors",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "isOperatorFor",
@@ -234,12 +254,24 @@ export interface BurntPixArchivesInterface extends Interface {
     data: BytesLike,
   ): Result;
   decodeFunctionResult(
+    functionFragment: "contributors",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "currentHighestLevel",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "fractalClone",
     data: BytesLike,
   ): Result;
   decodeFunctionResult(
     functionFragment: "getArchives",
     data: BytesLike,
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getContributions",
+    data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getData", data: BytesLike): Result;
   decodeFunctionResult(
@@ -257,6 +289,10 @@ export interface BurntPixArchivesInterface extends Interface {
   decodeFunctionResult(
     functionFragment: "getOperatorsOf",
     data: BytesLike,
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getTotalContributors",
+    data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "isOperatorFor",
@@ -544,11 +580,21 @@ export interface BurntPixArchives extends BaseContract {
 
   contributions: TypedContractMethod<[arg0: AddressLike], [bigint], "view">;
 
+  contributors: TypedContractMethod<[arg0: BigNumberish], [string], "view">;
+
+  currentHighestLevel: TypedContractMethod<[], [bigint], "view">;
+
   fractalClone: TypedContractMethod<[], [string], "view">;
 
   getArchives: TypedContractMethod<
     [contributor: AddressLike],
     [string[]],
+    "view"
+  >;
+
+  getContributions: TypedContractMethod<
+    [targetContributors: AddressLike[]],
+    [bigint[]],
     "view"
   >;
 
@@ -573,6 +619,8 @@ export interface BurntPixArchives extends BaseContract {
   >;
 
   getOperatorsOf: TypedContractMethod<[tokenId: BytesLike], [string[]], "view">;
+
+  getTotalContributors: TypedContractMethod<[], [bigint], "view">;
 
   isOperatorFor: TypedContractMethod<
     [operator: AddressLike, tokenId: BytesLike],
@@ -732,13 +780,26 @@ export interface BurntPixArchives extends BaseContract {
     nameOrSignature: "contributions",
   ): TypedContractMethod<[arg0: AddressLike], [bigint], "view">;
   getFunction(
-    nameOrSignature: "fractalClone",
+    nameOrSignature: "contributors"
+  ): TypedContractMethod<[arg0: BigNumberish], [string], "view">;
+  getFunction(
+    nameOrSignature: "currentHighestLevel"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "fractalClone"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "getArchives",
   ): TypedContractMethod<[contributor: AddressLike], [string[]], "view">;
   getFunction(
-    nameOrSignature: "getData",
+    nameOrSignature: "getContributions"
+  ): TypedContractMethod<
+    [targetContributors: AddressLike[]],
+    [bigint[]],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "getData"
   ): TypedContractMethod<[dataKey: BytesLike], [string], "view">;
   getFunction(
     nameOrSignature: "getDataBatch",
@@ -761,7 +822,10 @@ export interface BurntPixArchives extends BaseContract {
     nameOrSignature: "getOperatorsOf",
   ): TypedContractMethod<[tokenId: BytesLike], [string[]], "view">;
   getFunction(
-    nameOrSignature: "isOperatorFor",
+    nameOrSignature: "getTotalContributors"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "isOperatorFor"
   ): TypedContractMethod<
     [operator: AddressLike, tokenId: BytesLike],
     [boolean],
