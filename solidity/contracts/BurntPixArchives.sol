@@ -22,6 +22,7 @@ interface IFractal {
     function refine(uint256 iters) external;
     function getData(bytes32 dataKey) external view returns (bytes memory);
     function iterations() external view returns (uint256);
+    function feesburnt() external view returns (uint256);
 }
 
 interface IArchiveHelpers {
@@ -86,10 +87,6 @@ contract BurntPixArchives is LSP8CappedSupply {
             _setData(0x580d62ad353782eca17b89e5900e7df3b13b6f4ca9bbc2f8af8bceb0c3d1ecc6, hex"01");
     }
 
-    function getArchives(address contributor) public view returns (bytes32[] memory) {
-        return contributions[contributor].archiveIds;
-    }
-
     function refineToArchive(uint256 iters) public {
         if (contributions[msg.sender].iterations == 0) {
             contributorsCount++;
@@ -122,15 +119,23 @@ contract BurntPixArchives is LSP8CappedSupply {
         }
     }
 
-    function isOriginalLocked() view public returns (bool) {
-        return IRegistry(registry).getOperatorsOf(burntPicId).length == 0 && IRegistry(registry).tokenOwnerOf(burntPicId) == address(this) && owner() == address(0);
-    }
-
     function mintArchive(bytes32 archiveId, address to) external {
         _exists(archiveId);
         Archive memory archive = burntArchives[archiveId];
         require(archive.creator == msg.sender, "BurntPixArchives: Only the creator can mint the archive");
         _mint(to, archiveId, true, "");
+    }
+
+    function getArchives(address contributor) public view returns (bytes32[] memory) {
+        return contributions[contributor].archiveIds;
+    }
+
+    function isOriginalLocked() view public returns (bool) {
+        return IRegistry(registry).getOperatorsOf(burntPicId).length == 0 && IRegistry(registry).tokenOwnerOf(burntPicId) == address(this) && owner() == address(0);
+    }
+
+    function totalLYXBurned() view public returns (uint256) {
+        return IFractal(address(uint160(uint256(burntPicId)))).feesburnt() + IFractal(fractalClone).feesburnt();
     }
 
     function _getData(bytes32 key) internal view override returns (bytes memory) {
