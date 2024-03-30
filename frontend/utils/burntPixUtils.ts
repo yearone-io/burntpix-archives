@@ -1,14 +1,14 @@
 import { JsonRpcProvider, BrowserProvider } from "ethers";
 import { BurntPixArchives__factory } from "@/contracts";
 
-export const refineToMint = async (
+export const refineToArchive = async (
   iters: number,
-  houseOfBurtnPixAddress: string,
+  burntPixArchivesAddress: string,
   provider: JsonRpcProvider | BrowserProvider,
 ) => {
   const signer = await provider.getSigner();
   return BurntPixArchives__factory.connect(
-    houseOfBurtnPixAddress,
+    burntPixArchivesAddress,
     signer,
-  ).refineToMint(iters);
+  ).refineToArchive(iters);
 };

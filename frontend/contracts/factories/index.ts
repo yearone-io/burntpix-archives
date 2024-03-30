@@ -2,3 +2,4 @@
 /* tslint:disable */
 /* eslint-disable */
 export { BurntPixArchives__factory } from "./BurntPixArchives__factory";
+export { Fractal__factory } from "./Fractal__factory";

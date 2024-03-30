@@ -14,7 +14,7 @@ const Article: React.FC<Props> = ({ title, description, children }) => {
       <Box
         color="#FE005B"
         fontWeight={900}
-        fontSize="14px"
+        fontSize="md"
         lineHeight="17px"
         letterSpacing={1.5}
         fontFamily={inter.style.fontFamily}
@@ -25,7 +25,7 @@ const Article: React.FC<Props> = ({ title, description, children }) => {
         <Box
           color="#000000"
           fontWeight={600}
-          fontSize="26px"
+          fontSize="xl"
           lineHeight="34.5px"
           fontFamily={ptSerifBold.style.fontFamily}
           mt="10px"

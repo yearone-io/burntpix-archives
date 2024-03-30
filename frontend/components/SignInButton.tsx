@@ -40,7 +40,7 @@ const SignInButton: React.FC = () => {
         <Image src="/images/LYX-logo.svg" alt="Sign In" />
         <Box
           ml="10px"
-          fontSize="14px"
+          fontSize="md"
           lineHeight="14px"
           fontFamily="Bungee"
           fontWeight="400"

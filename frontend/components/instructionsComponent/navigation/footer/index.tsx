@@ -32,7 +32,7 @@ const Footer: React.FC = () => {
             </Select>
           </Box>
           <Text
-            fontSize="14px"
+            fontSize="md"
             fontFamily={inter.style.fontFamily}
             fontWeight={400}
             letterSpacing={1.5}
