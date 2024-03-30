@@ -4,6 +4,7 @@ import "./globals.css";
 import { Box, Divider, Flex, Heading, Text } from "@chakra-ui/react";
 import { New_Rocker } from "next/font/google";
 import BurntPixArt from "@/components/BurntPixArt";
+import Archives from "@/components/Archives";
 
 const newRockerFont = New_Rocker({
   weight: ["400"],
@@ -46,6 +47,22 @@ export default function Home() {
             <Text flex="1"></Text>
           </Flex>
           <Divider colorScheme={"blackAlpha"} size={"lg"} />
+        </Box>
+        <Box>
+          <Archives
+            images={[
+              "https://http.cat/100",
+              "https://http.cat/200",
+              "https://http.cat/201",
+              "https://http.cat/202",
+              "https://http.cat/300",
+              "https://http.cat/400",
+              "https://http.cat/500",
+              "https://http.cat/501",
+              "https://http.cat/502",
+              "https://http.cat/503",
+            ]}
+          />
         </Box>
         <Box mt={6}>
           <BurntPixArt />
