@@ -86,7 +86,7 @@ contract ArchiveHelpers {
         return string(buffer);
     }
 
-    function alterImageBasedOnLevel(bytes memory originalBytes, uint256 imageLevel, uint256 highestLevel) public pure returns (bytes memory) {
+    function alterImageBasedOnLevel(bytes memory originalBytes, uint256 imageLevel, uint256 highestLevel) internal pure returns (bytes memory) {
         bytes memory oldStartBytes = hex'3c73766720786d6c6e733d22687474703a2f2f7777772e77332e6f72672f323030302f737667222076657273696f6e3d22312e31222076696577426f783d223020302033383520333835223e3c7265637420783d22302220793d2230222077696474683d2233383522206865696768743d22333835222072783d2233222066696c6c3d2223323032303230222f3e';
         bytes memory newStartBytes = abi.encodePacked(
             '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 385 385"><defs><linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:red; stop-opacity:calc(',uintToString(imageLevel),'/',uintToString(highestLevel),')"/><stop offset="100%" style="stop-color:blue; stop-opacity:calc(',uintToString(imageLevel),'/',uintToString(highestLevel),')"/></linearGradient></defs>',
@@ -107,46 +107,44 @@ contract ArchiveHelpers {
         return result;
     }
 
-    function generateCollectionMetadata(address fractalClone, bytes32 burntPicId) external view returns (bytes memory) {
-        bytes memory image = alterImageBasedOnLevel(IFractal(fractalClone).getData(keccak256("image")), 1, 1);
-        bytes memory encodedImage = abi.encodePacked(
-            'data:image/svg+xml;base64,',
-            Base64.encode(image)
-        );
-        bytes memory _rawMetadata = abi.encodePacked(
-            '{"LSP4Metadata": {"name": "Burnt Pix Archives: Season 1", "description": "We burn together, we rise together. A community built archive of Burnt Pix # ',toHexString(burntPicId, 32),'",',
-                '"links": [{"title": "Burnt Pix Archives", "url": "https://burntpix.cc" }],',
-                '"images": [[{"height": 768, "width": 768, "url": "',encodedImage,'", "verification": {"method": "keccak256(bytes)", "data": "',toHexString(keccak256(image), 32),'"}}]]}}'
-        );
+    function getVerifiableURI(bytes memory rawMetadata) internal pure returns (bytes memory) {
         return bytes.concat(
             hex'00006f357c6a0020', 
-            keccak256(_rawMetadata),
+            keccak256(rawMetadata),
             abi.encodePacked(
                 "data:application/json;charset=UTF-8,",
-                _rawMetadata
+                rawMetadata
             )
         );
     }
 
-    function generateArchiveMetadata(Archive memory archive, bytes32 burntPicId, uint256 highestLevel) external pure returns (bytes memory) {
-        bytes memory image = alterImageBasedOnLevel(archive.image, archive.level, highestLevel);
+    function getCoreMetadata(bytes memory image, bytes32 burntPicId) internal pure returns (bytes memory) {
         bytes memory encodedImage = abi.encodePacked(
             'data:image/svg+xml;base64,',
             Base64.encode(image)
         );
-        bytes memory _rawMetadata = abi.encodePacked(
+        return abi.encodePacked(
             '{"LSP4Metadata": {"name": "Burnt Pix Archives: Season 1", "description": "We burn together, we rise together. A community built archive of Burnt Pix # ',toHexString(burntPicId, 32),'",',
             '"images": [[{"height": 768, "width": 768, "url": "',encodedImage,'", "verification": {"method": "keccak256(bytes)", "data": "',toHexString(keccak256(image), 32),'"}}]],',
-            '"links": [{"title": "Burnt Pix Archives", "url": "https://burntpix.cc" }],',
-            '"attributes": [{"key": "Level", "type": "number", "value": ',uintToString(archive.level),'}, {"key": "Block Number", "type": "number", "value": ',uintToString(archive.blockNumber),'}, {"key": "Iterations", "type": "number", "value": ',uintToString(archive.iterations),'}, {"key": "Creator", "type": "string", "value": "',addressToString(archive.creator),'"}]}}'
+            '"links": [{"title": "Burnt Pix Archives", "url": "https://burntpix.cc" }]'
         );
-        return bytes.concat(
-            hex'00006f357c6a0020', 
-            keccak256(_rawMetadata),
-            abi.encodePacked(
-                "data:application/json;charset=UTF-8,",
-                _rawMetadata
-            )
+    } 
+
+    function generateCollectionMetadata(address fractalClone, bytes32 burntPicId) external view returns (bytes memory) {
+        bytes memory image = alterImageBasedOnLevel(IFractal(fractalClone).getData(keccak256("image")), 1, 1);
+        bytes memory _rawMetadata = abi.encodePacked(
+            getCoreMetadata(image, burntPicId),
+            '}}'
         );
+        return getVerifiableURI(_rawMetadata);
+    }
+
+    function generateArchiveMetadata(Archive memory archive, bytes32 burntPicId, uint256 highestLevel) external pure returns (bytes memory) {
+        bytes memory image = alterImageBasedOnLevel(archive.image, archive.level, highestLevel);
+        bytes memory _rawMetadata = abi.encodePacked(
+            getCoreMetadata(image, burntPicId),
+            ',"attributes": [{"key": "Level", "type": "number", "value": ',uintToString(archive.level),'}, {"key": "Block Number", "type": "number", "value": ',uintToString(archive.blockNumber),'}, {"key": "Iterations", "type": "number", "value": ',uintToString(archive.iterations),'}, {"key": "Creator", "type": "string", "value": "',addressToString(archive.creator),'"}]}}'
+        );
+        return getVerifiableURI(_rawMetadata);
     }
 }
