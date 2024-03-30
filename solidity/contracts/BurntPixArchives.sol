@@ -53,7 +53,7 @@ contract BurntPixArchives is LSP8CappedSupply {
     address public immutable archiveHelpers;
     bytes32 public immutable burntPicId;
     uint256 public immutable winnerIters;
-    uint256 public contributorsCount;
+    address[] public contributors;
     uint256 public archiveCount;
     uint256 public currentHighestLevel;
     mapping(bytes32 => Archive) public burntArchives;
@@ -88,8 +88,9 @@ contract BurntPixArchives is LSP8CappedSupply {
     }
 
     function refineToArchive(uint256 iters) public {
+        require(iters > 0);
         if (contributions[msg.sender].iterations == 0) {
-            contributorsCount++;
+            contributors.push(msg.sender);
         }
         contributions[msg.sender].iterations += iters;
         uint256 diff = IFractal(address(uint160(uint256(burntPicId)))).iterations() - IFractal(fractalClone).iterations();
@@ -128,6 +129,18 @@ contract BurntPixArchives is LSP8CappedSupply {
 
     function getArchives(address contributor) public view returns (bytes32[] memory) {
         return contributions[contributor].archiveIds;
+    }
+
+    function getContributions(address[] memory contributors) public view returns (uint256[] memory) {
+        Contribution[] memory values = new Contribution[](contributors.length);
+        for (uint256 i = 0; i < contributors.length; i++) {
+            values[i] = contributions[contributors[i]].iterations;
+        }
+        return values;
+    }
+
+    function getTotalContributors() public view return (uint256) {
+        return contributors.length;
     }
 
     function isOriginalLocked() view public returns (bool) {
