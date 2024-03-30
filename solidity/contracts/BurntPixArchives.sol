@@ -8,6 +8,7 @@ import {
 } from "@lukso/lsp-smart-contracts/contracts/LSP8IdentifiableDigitalAsset/extensions/LSP8CappedSupply.sol";
 import {_LSP8_TOKENID_FORMAT_NUMBER}  from "@lukso/lsp-smart-contracts/contracts/LSP8IdentifiableDigitalAsset/LSP8Constants.sol";
 import {_LSP4_TOKEN_TYPE_COLLECTION, _LSP4_METADATA_KEY, _LSP4_CREATORS_ARRAY_KEY, _LSP4_CREATORS_MAP_KEY_PREFIX} from "@lukso/lsp-smart-contracts/contracts/LSP4DigitalAssetMetadata/LSP4Constants.sol";
+import {_INTERFACEID_LSP0} from "@lukso/lsp-smart-contracts/contracts/LSP0ERC725Account/LSP0Constants.sol";
 
 interface IRegistry {
     function refine(bytes32 archiveId, uint256 iters) external;
@@ -75,6 +76,13 @@ contract BurntPixArchives is LSP8CappedSupply {
             _setData(_LSP4_CREATORS_ARRAY_KEY, hex"00000000000000000000000000000001");
             _setData(0x114bd03b3a46d48759680d81ebb2b41400000000000000000000000000000000, abi.encodePacked(_creator));
             _setData(bytes32(abi.encodePacked(_LSP4_CREATORS_MAP_KEY_PREFIX, hex"0000", _creator)) , hex"24871b3d00000000000000000000000000000000");
+            // royalties
+            _setData(0xc0569ca6c9180acc2c3590f36330a36ae19015a19f4e85c28a7631e3317e6b9d, abi.encodePacked(
+                _INTERFACEID_LSP0,
+                _creator,
+                uint256(5_000)
+            ));
+            _setData(0x580d62ad353782eca17b89e5900e7df3b13b6f4ca9bbc2f8af8bceb0c3d1ecc6, hex"01");
     }
 
     function getArchives(address contributor) public view returns (bytes32[] memory) {
