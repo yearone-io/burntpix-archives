@@ -52,8 +52,9 @@ contract BurntPixArchives is LSP8CappedSupply {
     address public immutable archiveHelpers;
     bytes32 public immutable burntPicId;
     uint256 public immutable winnerIters;
+    uint256 public contributorsCount;
     uint256 public archiveCount;
-    uint256 public currentHighestLevel = 0;
+    uint256 public currentHighestLevel;
     mapping(bytes32 => Archive) public burntArchives;
     mapping(address => Contribution) public contributions;
 
@@ -90,6 +91,9 @@ contract BurntPixArchives is LSP8CappedSupply {
     }
 
     function refineToArchive(uint256 iters) public {
+        if (contributions[msg.sender].iterations == 0) {
+            contributorsCount++;
+        }
         contributions[msg.sender].iterations += iters;
         uint256 diff = IFractal(address(uint160(uint256(burntPicId)))).iterations() - IFractal(fractalClone).iterations();
         IFractal(fractalClone).refine(iters);
