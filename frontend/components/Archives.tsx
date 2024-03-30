@@ -1,7 +1,14 @@
-// components/CarouselGallery.js
 import React, { useState } from "react";
-import { Box, Flex, HStack, IconButton } from "@chakra-ui/react";
-import { FaArrowCircleLeft } from "react-icons/fa";
+import {
+  Box,
+  Flex,
+  HStack,
+  IconButton,
+  Link,
+  Text,
+  VStack,
+} from "@chakra-ui/react";
+import { FaArrowCircleLeft, FaExternalLinkAlt } from "react-icons/fa";
 import { FaArrowCircleRight } from "react-icons/fa";
 
 const Archives = ({ images }: { images: string[] }) => {
@@ -16,25 +23,41 @@ const Archives = ({ images }: { images: string[] }) => {
   };
 
   return (
-    <HStack w="80%" mx="auto" overflow="hidden" position="relative">
-      <IconButton
-        icon={<FaArrowCircleLeft />}
-        onClick={prevSlide}
-        aria-label={"Previous"}
-      ></IconButton>
-      <Flex className="carousel" overflowX="hidden">
-        {images.slice(startIndex, startIndex + 5).map((image, index) => (
-          <Box key={index} flex="0 0 auto" width="20%">
-            <img src={image} alt={`Image ${index + startIndex + 1}`} />
-          </Box>
-        ))}
-      </Flex>
-      <IconButton
-        onClick={nextSlide}
-        icon={<FaArrowCircleRight />}
-        aria-label={"Next"}
-      ></IconButton>
-    </HStack>
+    <VStack alignItems={"left"}>
+      <HStack>
+        <Text color={"lukso.pink"} fontSize={"lg"} fontWeight={"900"}>
+          ARCHIVES
+        </Text>
+        <Link isExternal={true} href={"/"}>
+          <IconButton
+            aria-label="View archives"
+            color={"lukso.pink"}
+            icon={<FaExternalLinkAlt />}
+            size="sm"
+            variant="ghost"
+          />
+        </Link>
+      </HStack>
+      <HStack>
+        <IconButton
+          icon={<FaArrowCircleLeft />}
+          onClick={prevSlide}
+          aria-label={"Previous"}
+        ></IconButton>
+        <Flex>
+          {images.slice(startIndex, startIndex + 5).map((image, index) => (
+            <Box key={index} flex="0 0 auto" width="20%">
+              <img src={image} alt={`Image ${index + startIndex + 1}`} />
+            </Box>
+          ))}
+        </Flex>
+        <IconButton
+          onClick={nextSlide}
+          icon={<FaArrowCircleRight />}
+          aria-label={"Next"}
+        ></IconButton>
+      </HStack>
+    </VStack>
   );
 };
 
