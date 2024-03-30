@@ -34,6 +34,7 @@ export interface BurntPixArchivesInterface extends Interface {
       | "burntArchives"
       | "burntPicId"
       | "contributions"
+      | "currentHighestLevel"
       | "fractalClone"
       | "getArchives"
       | "getData"
@@ -105,6 +106,10 @@ export interface BurntPixArchivesInterface extends Interface {
   encodeFunctionData(
     functionFragment: "contributions",
     values: [AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "currentHighestLevel",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "fractalClone",
@@ -231,6 +236,10 @@ export interface BurntPixArchivesInterface extends Interface {
   decodeFunctionResult(functionFragment: "burntPicId", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "contributions",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "currentHighestLevel",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -544,6 +553,8 @@ export interface BurntPixArchives extends BaseContract {
 
   contributions: TypedContractMethod<[arg0: AddressLike], [bigint], "view">;
 
+  currentHighestLevel: TypedContractMethod<[], [bigint], "view">;
+
   fractalClone: TypedContractMethod<[], [string], "view">;
 
   getArchives: TypedContractMethod<
@@ -733,6 +744,9 @@ export interface BurntPixArchives extends BaseContract {
   getFunction(
     nameOrSignature: "contributions"
   ): TypedContractMethod<[arg0: AddressLike], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "currentHighestLevel"
+  ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
     nameOrSignature: "fractalClone"
   ): TypedContractMethod<[], [string], "view">;
