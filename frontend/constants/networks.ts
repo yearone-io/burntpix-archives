@@ -6,6 +6,7 @@ export interface Network {
   explorerURL: string;
   burntPixWebUrl: string;
   burntPixId: string;
+  baseUrl: string;
 }
 
 const NETWORKS = {
