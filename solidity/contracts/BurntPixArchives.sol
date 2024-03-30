@@ -131,15 +131,15 @@ contract BurntPixArchives is LSP8CappedSupply {
         return contributions[contributor].archiveIds;
     }
 
-    function getContributions(address[] memory contributors) public view returns (uint256[] memory) {
-        Contribution[] memory values = new Contribution[](contributors.length);
-        for (uint256 i = 0; i < contributors.length; i++) {
-            values[i] = contributions[contributors[i]].iterations;
+    function getContributions(address[] memory targetContributors) public view returns (uint256[] memory) {
+        uint256[] memory values = new uint256[](targetContributors.length);
+        for (uint256 i = 0; i < targetContributors.length; i++) {
+            values[i] = contributions[targetContributors[i]].iterations;
         }
         return values;
     }
 
-    function getTotalContributors() public view return (uint256) {
+    function getTotalContributors() public view returns (uint256) {
         return contributors.length;
     }
 
