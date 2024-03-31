@@ -10,7 +10,7 @@ const EditorsNote: React.FC = () => {
       fontFamily={inter.style.fontFamily}
       lineHeight="tall"
     >
-      <Text fontSize="12px" fontWeight={400} lineHeight="15px" marginBottom="2">
+      <Text fontSize="sm" fontWeight={400} lineHeight="15px" marginBottom="2">
         <Text as="span" fontWeight={900} letterSpacing={1.5}>
           Editor’s Note:
         </Text>{" "}
@@ -36,7 +36,7 @@ const EditorsNote: React.FC = () => {
         on. There will be no updates, no fixes, no community, no nothing. The
         Burnt Pix Archives are provided as is.
       </Text>
-      <Text fontSize="12px" fontWeight={400} lineHeight="15px" marginBottom="2">
+      <Text fontSize="sm" fontWeight={400} lineHeight="15px" marginBottom="2">
         The core idea behind Burnt Pix Archives is to encourage the Luxo
         community to work together and refine the same Burnt Pix NFT.
         Conceptually we do this by rewarding the refiners of the NFT with lower
