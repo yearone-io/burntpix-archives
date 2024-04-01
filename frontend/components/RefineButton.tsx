@@ -17,7 +17,7 @@ const RefineButton: React.FC = () => {
         borderRadius={10}
         h="30px"
         w="70px"
-        fontSize="14px"
+        fontSize="md"
         fontFamily={inter.style.fontFamily}
         fontWeight={700}
       >
