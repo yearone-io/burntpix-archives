@@ -33,7 +33,7 @@ const NETWORKS = {
     burntPixWebUrl:
       "https://universalpage.dev/collections/0x12167f1c2713aC4f740B4700c4C72bC2de6C686f",
     burntPixId: "0x245f9A8Bea516165B45142f8b79eA204f97F8867",
-    burntPixArchivesAddress: "0xA084Be8912EeC74660762dbAf15916E1597faAbd",
+    burntPixArchivesAddress: "0xC2d8fE5A798697EC76E23C2afb99B1DFD7C33166",
   },
 } as {
   [key: string]: Network;
