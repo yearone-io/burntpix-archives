@@ -39,7 +39,12 @@ const Archives = ({ images }: { images: string[] }) => {
         <Flex>
           {images.slice(startIndex, startIndex + 5).map((image, index) => (
             <VStack alignItems={"left"} key={index} flex="0 0 auto" width="20%">
-              <img src={image} alt={`Brunt Pix ${index + startIndex + 1}`}  height='100px' width='100px'/>
+              <img
+                src={image}
+                alt={`Brunt Pix ${index + startIndex + 1}`}
+                height="100px"
+                width="100px"
+              />
               <Text>{index + startIndex + 1}</Text>
             </VStack>
           ))}

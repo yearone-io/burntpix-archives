@@ -38,11 +38,10 @@ const SignInButton: React.FC = () => {
       border={"1px solid #000000"}
       backgroundColor={"transparent"}
       fontFamily={inter.style.fontFamily}
-      p='10px'
+      p="10px"
       borderRadius={"12px"}
-
     >
-      <Flex alignItems="center" justifyContent="space-between" >
+      <Flex alignItems="center" justifyContent="space-between">
         <Image src="/images/LYX-logo.svg" alt="Sign In" />
         <Box
           ml="10px"
