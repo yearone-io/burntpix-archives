@@ -39,16 +39,21 @@ export default function Home() {
           </Box>
         </Flex>
       </header>
-        <Box mt={4} pl={10} pr={10} width={"100%"}>
-          <Divider mb={2} />
-          <Flex>
-            <Box flex="1">
-              <Text pl={10}>All the Pixels, That Are Fit To Burn</Text>
+        <Box mt={4} pl={10} pr={10} width={"100%"} >
+          <Divider mb={2} borderColor={"#00000"} />
+          <Flex justifyContent='space-between'>
+            <Box >
+              <Text pl={10} color='#00000' fontWeight='400'>All the Pixels, That Are Fit To Burn</Text>
             </Box>
-            <Text as={"b"}>{formattedDate}</Text>
-            <Text flex="1"></Text>
+            <Box >
+              <Text as={"b"}>{formattedDate}</Text>
+            </Box>
+            <Box >
+              <Text pr={10} color='#00000' fontWeight='400'>To Unlock Original Contribute: XX,XX,XXX Iterations</Text>
+            </Box>
+
           </Flex>
-          <Divider colorScheme={"blackAlpha"} size={"lg"} />
+          <Divider borderColor={"#00000"} size={"lg"} />
         </Box>
         <Box>
           <Archives
