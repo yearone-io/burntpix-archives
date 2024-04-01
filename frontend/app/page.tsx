@@ -208,19 +208,33 @@ export default function Home() {
             </Flex>
             <Divider borderColor={"#00000"} size={"lg"} />
           </Box>
-          <Grid templateColumns={{ base: "1fr", md: "2fr 1fr" }} gap={2} mt='20px' ml='20px' mr='20px' >
-            <GridItem borderRight={{ base: "none", md: "1px solid #000000" }}>
+          <Grid
+            templateColumns={{ base: "1fr", md: "2fr 1fr" }}
+            gap={2}
+            mt="20px"
+            ml="20px"
+            mr="20px"
+          >
+            <GridItem
+              borderRight={{ base: "none", md: "1px solid #000000" }}
+              pb="20px"
+            >
               <Flex direction={{ base: "column", md: "row" }}>
-                <Box flex="1" minW={'300px'}>
+                <Box flex="1" minW={"300px"}>
                   <Article
                     title="LIVE VIEW"
                     description="In a First, LUKSO Community Works to Refine and Archive the Same Burnt Pic Together"
                   >
                     <MainStatsList stats={mainStats} />
-                    <RefineButton />	
+                    <RefineButton />
                   </Article>
                 </Box>
-                <Flex flex="1" minW={0} mt={{ base: 4, md: 0 }} justifyContent='center'>
+                <Flex
+                  flex="1"
+                  minW={0}
+                  mt={{ base: 4, md: 0 }}
+                  justifyContent="center"
+                >
                   <BurntPixArt />
                 </Flex>
               </Flex>
@@ -229,15 +243,14 @@ export default function Home() {
               <EditorsNote />
             </GridItem>
           </Grid>
-
           <Divider borderColor={"#00000"} size={"md"} />
           <Grid templateColumns={gridTemplateColumns}>
-            <GridItem w="2/3" mr='20px'>
+            <GridItem w="2/3" mr="20px">
               <Flex
                 flexDir="column"
                 borderRight={{ base: "none", md: "1px solid #000000" }}
               >
-                <Box w="100%" ml='20px'>
+                <Box w="100%" ml="20px">
                   <Article title={archivesTitle}>
                     <Archives
                       images={[
@@ -255,10 +268,10 @@ export default function Home() {
                   </Article>
                 </Box>
                 <Divider borderColor={"#00000"} size={"md"} />
-                <Box ml='20px'>
-                <Article title="LEADER BOARD">
-                  <Leaderboard items={leaderboardFakeStats} />
-                </Article>
+                <Box ml="20px">
+                  <Article title="LEADER BOARD">
+                    <Leaderboard items={leaderboardFakeStats} />
+                  </Article>
                 </Box>
               </Flex>
             </GridItem>
