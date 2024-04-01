@@ -119,13 +119,13 @@ export default function Home() {
   const mainStats =
     // TODO Generate function that returns the dynamic stats
     [
-      { label: "Iterations:", value: "0".toLocaleString() },
-      { label: "Contributors:", value: "0".toLocaleString() },
+      { label: "Iterations:", value: "3330".toLocaleString() },
+      { label: "Contributors:", value: "230".toLocaleString() },
       {
         label: "Archive Mints:",
-        value: `${"0".toLocaleString()} / ${"0".toLocaleString()}`,
+        value: `${"324230".toLocaleString()} / ${"423420".toLocaleString()}`,
       },
-      { label: "LYX Burned:", value: `${"0"} LYX` },
+      { label: "LYX Burned:", value: `${"4232340"} LYX` },
     ];
 
   const userStats =
@@ -208,48 +208,36 @@ export default function Home() {
             </Flex>
             <Divider borderColor={"#00000"} size={"lg"} />
           </Box>
-          <Grid templateColumns={gridTemplateColumns}>
-            <GridItem w="2/3" mt="10px">
-              <Flex
-                p="0 20px 20px 20px"
-                borderRight={{ base: "none", md: "1px solid #000000" }}
-              >
-                <Grid templateColumns={gridTemplateColumns}>
-                  <GridItem>
-                    <Article
-                      title="LIVE VIEW"
-                      description="In a First, LUKSO Community Works to Refine and Archive the Same Burnt Pic Together"
-                    >
-                      {
-                        <Box w="390px">
-                          <MainStatsList stats={mainStats} />
-                          <RefineButton />
-                        </Box>
-                      }
-                    </Article>
-                  </GridItem>
-                  <GridItem>
-                    <Box mt={6}>
-                      <BurntPixArt />
-                    </Box>
-                  </GridItem>
-                </Grid>
+          <Grid templateColumns={{ base: "1fr", md: "2fr 1fr" }} gap={2} mt='20px' ml='20px' mr='20px' >
+            <GridItem borderRight={{ base: "none", md: "1px solid #000000" }}>
+              <Flex direction={{ base: "column", md: "row" }}>
+                <Box flex="1" minW={'300px'}>
+                  <Article
+                    title="LIVE VIEW"
+                    description="In a First, LUKSO Community Works to Refine and Archive the Same Burnt Pic Together"
+                  >
+                    <MainStatsList stats={mainStats} />
+                    <RefineButton />	
+                  </Article>
+                </Box>
+                <Flex flex="1" minW={0} mt={{ base: 4, md: 0 }} justifyContent='center'>
+                  <BurntPixArt />
+                </Flex>
               </Flex>
             </GridItem>
-            <GridItem w="1/3">
-              <Box p="0 20px">
-                <EditorsNote />
-              </Box>
+            <GridItem>
+              <EditorsNote />
             </GridItem>
           </Grid>
+
           <Divider borderColor={"#00000"} size={"md"} />
           <Grid templateColumns={gridTemplateColumns}>
-            <GridItem w="2/3">
+            <GridItem w="2/3" mr='20px'>
               <Flex
                 flexDir="column"
                 borderRight={{ base: "none", md: "1px solid #000000" }}
               >
-                <Box w="100%">
+                <Box w="100%" ml='20px'>
                   <Article title={archivesTitle}>
                     <Archives
                       images={[
@@ -267,9 +255,11 @@ export default function Home() {
                   </Article>
                 </Box>
                 <Divider borderColor={"#00000"} size={"md"} />
+                <Box ml='20px'>
                 <Article title="LEADER BOARD">
                   <Leaderboard items={leaderboardFakeStats} />
                 </Article>
+                </Box>
               </Flex>
             </GridItem>
             <GridItem w="1/3">
