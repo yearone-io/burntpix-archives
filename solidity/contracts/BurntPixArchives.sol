@@ -19,6 +19,7 @@ interface IRegistry {
 }
 
 interface IFractal {
+    function registry() external view returns (address);
     function refine(uint256 iters) external;
     function getData(bytes32 dataKey) external view returns (bytes memory);
     function iterations() external view returns (uint256);
@@ -48,7 +49,6 @@ struct Contribution {
 
 // Registry implements the NFT existence and ownership tracking.
 contract BurntPixArchives is LSP8CappedSupply {
-    address public immutable registry;
     address public immutable fractalClone;
     address public immutable archiveHelpers;
     bytes32 public immutable burntPicId;
@@ -61,7 +61,6 @@ contract BurntPixArchives is LSP8CappedSupply {
 
     constructor(
         address _codehub,
-        address _registry,
         address _archiveHelpers,
         address _creator,
         bytes32 _burntPicId,
@@ -76,11 +75,12 @@ contract BurntPixArchives is LSP8CappedSupply {
             _LSP4_TOKEN_TYPE_COLLECTION,
             _LSP8_TOKENID_FORMAT_NUMBER
         ) {
+            address fractal = address(uint160(uint256(_burntPicId)));
+            address registry = IFractal(fractal).registry();
             archiveHelpers = _archiveHelpers;
             burntPicId = _burntPicId;
-            registry = _registry;
             winnerIters = _winnerIters;
-            fractalClone = IArchiveHelpers(_archiveHelpers).createFractalClone(address(this), _codehub, uint256(IRegistry(registry).seeds(address(uint160(uint256(_burntPicId))))));
+            fractalClone = IArchiveHelpers(_archiveHelpers).createFractalClone(address(this), _codehub, uint256(IRegistry(registry).seeds(fractal)));
             _setData(_LSP4_CREATORS_ARRAY_KEY, hex"00000000000000000000000000000001");
             _setData(0x114bd03b3a46d48759680d81ebb2b41400000000000000000000000000000000, abi.encodePacked(_creator));
             _setData(bytes32(abi.encodePacked(_LSP4_CREATORS_MAP_KEY_PREFIX, hex"0000", _creator)) , hex"24871b3d00000000000000000000000000000000");
@@ -95,6 +95,7 @@ contract BurntPixArchives is LSP8CappedSupply {
 
     function refineToArchive(uint256 iters) public {
         require(iters > 0);
+        address registry = IFractal(address(uint160(uint256(burntPicId)))).registry();
         if (contributions[msg.sender].iterations == 0) {
             contributors.push(msg.sender);
         }
@@ -152,7 +153,8 @@ contract BurntPixArchives is LSP8CappedSupply {
     }
 
     function isOriginalLocked() public view returns (bool) {
-        return IRegistry(registry).getOperatorsOf(burntPicId).length == 0 && IRegistry(registry).tokenOwnerOf(burntPicId) == address(this) && owner() == address(0);
+        address registry = IFractal(address(uint160(uint256(burntPicId)))).registry();
+        return IRegistry(registry).getOperatorsOf(burntPicId).length == 0 && IRegistry(registry).tokenOwnerOf(burntPicId) == address(this);
     }
 
     function _getData(bytes32 key) internal view override returns (bytes memory) {

@@ -24,7 +24,7 @@ async function main() {
   const burntpicId = "0x000000000000000000000000245f9a8bea516165b45142f8b79ea204f97f8867";
   const maxSupply = 10000;
   const winnerGoal = 69_000;
-  const constructorArguments = [CODEHUB, REGISTRY, ARCHIVE_HELPERS, contractOwner, burntpicId, maxSupply, winnerGoal];
+  const constructorArguments = [CODEHUB, ARCHIVE_HELPERS, contractOwner, burntpicId, maxSupply, winnerGoal];
   const BurntPixArchivesFactory = new ethers.ContractFactory(
     BurntPixArchives.abi,
     BurntPixArchives.bytecode,
