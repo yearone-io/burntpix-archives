@@ -100,7 +100,7 @@ export default function Home() {
 
   return (
     <main className={styles.main}>
-      <Flex width="100%" direction={"column"} alignItems={"center"}>
+      <Flex width="100%" direction={"column"}>
         <header>
           <Flex width="100%" alignItems="center">
             <Flex direction="column" alignItems="center">
@@ -126,60 +126,82 @@ export default function Home() {
           </Flex>
         </header>
         <Box mt={4} pl={10} pr={10} width={"100%"}>
-          <Divider mb={2} borderColor={"#00000"} />
-          <Flex justifyContent="space-between">
-            <Box>
-              <Text pl={10} color="#00000" fontWeight="400">
-                All the Pixels, That Are Fit To Burn
-              </Text>
+          <Box>
+            <Divider mb={2} borderColor={"#00000"} />
+            <Flex justifyContent="space-between">
+              <Box>
+                <Text pl={10} color="#00000" fontWeight="400">
+                  All the Pixels, That Are Fit To Burn
+                </Text>
+              </Box>
+              <Box>
+                <Text as={"b"}>{formattedDate}</Text>
+              </Box>
+              <Box>
+                <Text pr={10} color="#00000" fontWeight="400">
+                  To Unlock Original Contribute: XX,XX,XXX Iterations
+                </Text>
+              </Box>
+            </Flex>
+            <Divider borderColor={"#00000"} size={"lg"} />
+          </Box>
+          <Flex>
+            <Article
+              title="LIVE VIEW"
+              description="In a First, LUKSO Community Works to Refine and Archive the Same Burnt Pic Together"
+            >
+              {
+                <Box>
+                  <MainStatsList stats={mainStats} />
+                  <RefineButton />
+                </Box>
+              }
+            </Article>
+            <Box mt={6}>
+              <BurntPixArt />
             </Box>
             <Box>
-              <Text as={"b"}>{formattedDate}</Text>
-            </Box>
-            <Box>
-              <Text pr={10} color="#00000" fontWeight="400">
-                To Unlock Original Contribute: XX,XX,XXX Iterations
-              </Text>
+              <EditorsNote />
             </Box>
           </Flex>
-          <Divider borderColor={"#00000"} size={"lg"} />
-        </Box>
-        <Article
-          title="LIVE VIEW"
-          description="In a First, LUKSO Community Works to Refine and Archive the Same Burnt Pic Together"
-        >
-          {
-            <Box>
-              <MainStatsList stats={mainStats} />
-              <RefineButton />
-            </Box>
-          }
-        </Article>
-
-        <Article title="YOUR CONTRIBUTIONS">
-          <MainStatsList stats={userStats} />
-        </Article>
-        <Article title="LEADER BOARD">
-          <Leaderboard items={leaderboardFakeStats} />
-        </Article>
-        <EditorsNote />
-        <Box>
-          <Archives
-            images={[
-              "https://http.cat/100",
-              "https://http.cat/200",
-              "https://http.cat/201",
-              "https://http.cat/202",
-              "https://http.cat/400",
-              "https://http.cat/500",
-              "https://http.cat/501",
-              "https://http.cat/502",
-              "https://http.cat/503",
-            ]}
-          />
-        </Box>
-        <Box mt={6}>
-          <BurntPixArt />
+          <Flex>
+            <Flex flexDir="column">
+              <Archives
+                images={[
+                  "https://http.cat/100",
+                  "https://http.cat/200",
+                  "https://http.cat/201",
+                  "https://http.cat/202",
+                  "https://http.cat/400",
+                  "https://http.cat/500",
+                  "https://http.cat/501",
+                  "https://http.cat/502",
+                  "https://http.cat/503",
+                ]}
+              />
+              <Article title="LEADER BOARD">
+                <Leaderboard items={leaderboardFakeStats} />
+              </Article>
+            </Flex>
+            <Flex flexDir="column">
+              <Article title="YOUR CONTRIBUTIONS">
+                <MainStatsList stats={userStats} />
+              </Article>
+            <Archives
+                images={[
+                  "https://http.cat/100",
+                  "https://http.cat/200",
+                  "https://http.cat/201",
+                  "https://http.cat/202",
+                  "https://http.cat/400",
+                  "https://http.cat/500",
+                  "https://http.cat/501",
+                  "https://http.cat/502",
+                  "https://http.cat/503",
+                ]}
+              />
+          </Flex>
+          </Flex>
         </Box>
       </Flex>
     </main>
