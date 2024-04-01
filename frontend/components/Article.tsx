@@ -10,7 +10,7 @@ interface Props {
 
 const Article: React.FC<Props> = ({ title, description, children }) => {
   return (
-    <Box m="20px" w="405px">
+    <Box m="20px">
       <Box
         color="#FE005B"
         fontWeight={900}

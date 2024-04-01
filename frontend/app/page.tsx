@@ -1,7 +1,15 @@
 "use client";
 import styles from "./page.module.css";
 import "./globals.css";
-import { Box, Divider, Flex, Heading, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Divider,
+  Flex,
+  Grid,
+  GridItem,
+  Heading,
+  Text,
+} from "@chakra-ui/react";
 import { New_Rocker } from "next/font/google";
 import BurntPixArt from "@/components/BurntPixArt";
 import Archives from "@/components/Archives";
@@ -97,6 +105,7 @@ export default function Home() {
       },
       { label: "Iters Till Next Archive:", value: "0".toLocaleString() },
     ];
+  const gridTemplateColumns = { base: "repeat(1, 2fr)", md: "repeat(2, 1fr)" };
 
   return (
     <main className={styles.main}>
@@ -125,10 +134,10 @@ export default function Home() {
             </Box>
           </Flex>
         </header>
-        <Box mt={4} pl={10} pr={10} width={"100%"} maxW='1400px'>
+        <Box mt={4} pl={10} pr={10} width={"100%"} maxW="1400px">
           <Box>
             <Divider mb={2} borderColor={"#00000"} />
-            <Flex justifyContent="space-between" w='100%' >
+            <Flex justifyContent="space-between" w="100%">
               <Box>
                 <Text pl={10} color="#00000" fontWeight="400">
                   All the Pixels, That Are Fit To Burn
@@ -145,71 +154,83 @@ export default function Home() {
             </Flex>
             <Divider borderColor={"#00000"} size={"lg"} />
           </Box>
-          <Flex justifyContent="space-between" w='100%' mt='10px' >
-            <Flex p='0 20px 20px 20px' borderRight={"1px solid #000000"} w='60%'>
-              <Article
-                title="LIVE VIEW"
-                description="In a First, LUKSO Community Works to Refine and Archive the Same Burnt Pic Together"
-              >
-                {
-                  <Box>
-                    <MainStatsList stats={mainStats} />
-                    <RefineButton />
-                  </Box>
-                }
-              </Article>
-              <Box mt={6}>
-                <BurntPixArt />
+          <Grid templateColumns={gridTemplateColumns}>
+            <GridItem w="2/3" mt="10px">
+              <Flex p="0 20px 20px 20px" borderRight={"1px solid #000000"}>
+                <Grid templateColumns={gridTemplateColumns}>
+                  <GridItem>
+                    <Article
+                      title="LIVE VIEW"
+                      description="In a First, LUKSO Community Works to Refine and Archive the Same Burnt Pic Together"
+                    >
+                      {
+                        <Box w="390px">
+                          <MainStatsList stats={mainStats} />
+                          <RefineButton />
+                        </Box>
+                      }
+                    </Article>
+                  </GridItem>
+                  <GridItem>
+                    <Box mt={6}>
+                      <BurntPixArt />
+                    </Box>
+                  </GridItem>
+                </Grid>
+              </Flex>
+            </GridItem>
+            <GridItem w="1/3">
+              <Box p="0 20px">
+                <EditorsNote />
               </Box>
-            </Flex>
-            <Box  w='30%' p='0 20px'>
-              <EditorsNote />
-            </Box>
-          </Flex>
-          
+            </GridItem>
+          </Grid>
           <Divider borderColor={"#00000"} size={"md"} />
-          <Flex justifyContent="space-between" w='100%'>
-            <Flex flexDir="column"  borderRight={"1px solid #000000"} w='60%'>
-              <Box w='100%'>
-              <Archives
-                images={[
-                  "https://http.cat/100",
-                  "https://http.cat/200",
-                  "https://http.cat/201",
-                  "https://http.cat/202",
-                  "https://http.cat/400",
-                  "https://http.cat/500",
-                  "https://http.cat/501",
-                  "https://http.cat/502",
-                  "https://http.cat/503",
-                ]}
-              />
-              </Box>
-              <Divider borderColor={"#00000"} size={"md"} />
-              <Article title="LEADER BOARD">
-                <Leaderboard items={leaderboardFakeStats} />
-              </Article>
-            </Flex>
-
-            <Flex flexDir="column" w='30%'>
-              <Article title="YOUR CONTRIBUTIONS">
-                <MainStatsList stats={userStats} />
-              </Article>
-            <Archives
-                images={[
-                  "https://http.cat/100",
-                  "https://http.cat/200",
-                  "https://http.cat/201",
-                  "https://http.cat/202",
-                  "https://http.cat/400",
-                  "https://http.cat/500",
-                  "https://http.cat/501",
-                  "https://http.cat/502",
-                  "https://http.cat/503",
-                ]}
-              />
-          </Flex>
-          </Flex>
+          <Grid templateColumns={gridTemplateColumns}>
+            <GridItem w="2/3">
+              <Flex flexDir="column" borderRight={"1px solid #000000"}>
+                <Box w="100%">
+                  <Archives
+                    images={[
+                      "https://http.cat/100",
+                      "https://http.cat/200",
+                      "https://http.cat/201",
+                      "https://http.cat/202",
+                      "https://http.cat/400",
+                      "https://http.cat/500",
+                      "https://http.cat/501",
+                      "https://http.cat/502",
+                      "https://http.cat/503",
+                    ]}
+                  />
+                </Box>
+                <Divider borderColor={"#00000"} size={"md"} />
+                <Article title="LEADER BOARD">
+                  <Leaderboard items={leaderboardFakeStats} />
+                </Article>
+              </Flex>
+            </GridItem>
+            <GridItem w="1/3">
+              <Flex flexDir="column">
+                <Article title="YOUR CONTRIBUTIONS">
+                  <MainStatsList stats={userStats} />
+                </Article>
+                <Archives
+                  images={[
+                    "https://http.cat/100",
+                    "https://http.cat/200",
+                    "https://http.cat/201",
+                    "https://http.cat/202",
+                    "https://http.cat/400",
+                    "https://http.cat/500",
+                    "https://http.cat/501",
+                    "https://http.cat/502",
+                    "https://http.cat/503",
+                  ]}
+                />
+              </Flex>
+            </GridItem>
+          </Grid>
         </Box>
       </Flex>
     </main>

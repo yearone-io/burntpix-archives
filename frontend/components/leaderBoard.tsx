@@ -69,11 +69,13 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ items }) => {
   const columnOneItems = items.slice(0, 5);
   const columnTwoItems = items.slice(5, 10);
 
+  const gridTemplateColumns = { base: "repeat(1, 1fr)", md: "repeat(2, 1fr)" };
+
   return (
-    <Box p="20px" w="full">
-      <Grid templateColumns="repeat(2, 1fr)" gap={10}>
-        <Box>{columnOneItems.map(renderItem)}</Box>
-        <Box>
+    <Box p="20px" w="100%">
+      <Grid templateColumns={gridTemplateColumns}>
+        <Box mr="20px">{columnOneItems.map(renderItem)}</Box>
+        <Box mr="20px">
           {columnTwoItems.map((item, index) => renderItem(item, index + 5))}
         </Box>
       </Grid>
