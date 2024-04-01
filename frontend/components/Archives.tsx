@@ -1,13 +1,5 @@
 import React, { useState } from "react";
-import {
-  Box,
-  Flex,
-  HStack,
-  IconButton,
-  Link,
-  Text,
-  VStack,
-} from "@chakra-ui/react";
+import { Flex, HStack, IconButton, Link, Text, VStack } from "@chakra-ui/react";
 import { FaArrowCircleLeft, FaExternalLinkAlt } from "react-icons/fa";
 import { FaArrowCircleRight } from "react-icons/fa";
 
@@ -46,9 +38,10 @@ const Archives = ({ images }: { images: string[] }) => {
         ></IconButton>
         <Flex>
           {images.slice(startIndex, startIndex + 5).map((image, index) => (
-            <Box key={index} flex="0 0 auto" width="20%">
-              <img src={image} alt={`Image ${index + startIndex + 1}`} />
-            </Box>
+            <VStack alignItems={"left"} key={index} flex="0 0 auto" width="20%">
+              <img src={image} alt={`Brunt Pix ${index + startIndex + 1}`} />
+              <Text>{index + startIndex + 1}</Text>
+            </VStack>
           ))}
         </Flex>
         <IconButton
