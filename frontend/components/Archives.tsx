@@ -41,10 +41,17 @@ function hexToText(hexString: string): string {
   return text;
 }
 
+interface IArchive {
+  id: string;
+  image: string;
+  owner: string;
+  isMinted: boolean;
+}
+
 const Archives = ({ images }: { images: string[] }) => {
   const walletContext = useContext(WalletContext);
   const { networkConfig, provider } = walletContext;
-  const [archives, setArchives] = useState<string[]>([]);
+  const [archives, setArchives] = useState<IArchive[]>([]);
   const [startIndex, setStartIndex] = useState(0);
 
   const nextSlide = () => {
@@ -63,25 +70,23 @@ const Archives = ({ images }: { images: string[] }) => {
   useEffect(() => {
     burntPixArchives
       .archiveCount()
-      .then((value) => {
-        console.log("archives", Number(value));
-        return Number(value);
-      })
-      .then((value) => {
+      .then((archiveCount) => {
+        const fetchedArchives: IArchive[] = [];
         return Promise.all(
-          Array.from({ length: value }, (_, i) => {
+          Array.from({ length: Number(archiveCount) }, async (_, i) => {
             const id = numberToBytes32(i + 1);
-            console.log("id", id);
-            return burntPixArchives.burntArchives(id);
+            const archive = await burntPixArchives.burntArchives(id);
+            fetchedArchives.push({
+              id: id,
+              image: hexToText(archive.image),
+              owner: await burntPixArchives.tokenOwnerOf(id),
+              isMinted: false,
+            });
+            return archive;
           }),
-        );
-      })
-      .then((value) => {
-        const fetchedArchives: string[] = [];
-        value.map((archive) => {
-          fetchedArchives.push(hexToText(archive.image));
+        ).then((value) => {
+          setArchives(fetchedArchives);
         });
-        setArchives(fetchedArchives);
       })
       .catch((reason) => {
         console.error("Error fetching archives", reason);
@@ -111,19 +116,26 @@ const Archives = ({ images }: { images: string[] }) => {
           aria-label={"Previous"}
         ></IconButton>
         <Flex>
-          {archives.slice(startIndex, startIndex + 5).map((image, index) => (
+          {archives.slice(startIndex, startIndex + 5).map((archive, index) => (
             <VStack alignItems={"left"} key={index}>
               <div
                 style={{ height: "115px", width: "115px" }}
-                dangerouslySetInnerHTML={{ __html: image }}
+                dangerouslySetInnerHTML={{ __html: archive.image }}
               />
               <Flex>
-                <Text color={"black"} fontWeight={"500"}>
+                <Link
+                  href={`${networkConfig.artWebBaseUrl}/${networkConfig.burntPixArchivesAddress}/${archive.id}`}
+                  isExternal={true}
+                  color={"black"}
+                  fontWeight={"500"}
+                >
                   #{index + startIndex + 1}
-                </Text>
+                </Link>
                 <Spacer />
                 <Avatar height={"24px"} width={"24px"} />
-                <Icon ml={1} as={FaCheckCircle} boxSize={"24px"} />
+                {archive.isMinted && (
+                  <Icon ml={1} as={FaCheckCircle} boxSize={"24px"} />
+                )}
               </Flex>
             </VStack>
           ))}
