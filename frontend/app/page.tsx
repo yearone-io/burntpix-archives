@@ -189,7 +189,7 @@ export default function Home() {
           </Box>
           <Grid templateColumns={gridTemplateColumns}>
             <GridItem w="2/3" mt="10px">
-              <Flex p="0 20px 20px 20px" borderRight={"1px solid #000000"}>
+              <Flex p="0 20px 20px 20px"  borderRight={{ base: "none", md: "1px solid #000000" }}>
                 <Grid templateColumns={gridTemplateColumns}>
                   <GridItem>
                     <Article
@@ -221,7 +221,7 @@ export default function Home() {
           <Divider borderColor={"#00000"} size={"md"} />
           <Grid templateColumns={gridTemplateColumns}>
             <GridItem w="2/3">
-              <Flex flexDir="column" borderRight={"1px solid #000000"}>
+              <Flex flexDir="column"  borderRight={{ base: "none", md: "1px solid #000000" }}>
                 <Box w="100%">
                   <Article title={archivesTitle}>
                     <Archives
