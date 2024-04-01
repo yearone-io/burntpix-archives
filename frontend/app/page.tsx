@@ -125,10 +125,10 @@ export default function Home() {
             </Box>
           </Flex>
         </header>
-        <Box mt={4} pl={10} pr={10} width={"100%"}>
+        <Box mt={4} pl={10} pr={10} width={"100%"} maxW='1400px'>
           <Box>
             <Divider mb={2} borderColor={"#00000"} />
-            <Flex justifyContent="space-between">
+            <Flex justifyContent="space-between" w='100%' >
               <Box>
                 <Text pl={10} color="#00000" fontWeight="400">
                   All the Pixels, That Are Fit To Burn
@@ -145,27 +145,32 @@ export default function Home() {
             </Flex>
             <Divider borderColor={"#00000"} size={"lg"} />
           </Box>
-          <Flex>
-            <Article
-              title="LIVE VIEW"
-              description="In a First, LUKSO Community Works to Refine and Archive the Same Burnt Pic Together"
-            >
-              {
-                <Box>
-                  <MainStatsList stats={mainStats} />
-                  <RefineButton />
-                </Box>
-              }
-            </Article>
-            <Box mt={6}>
-              <BurntPixArt />
-            </Box>
-            <Box>
+          <Flex justifyContent="space-between" w='100%' mt='10px' >
+            <Flex p='0 20px 20px 20px' borderRight={"1px solid #000000"} w='60%'>
+              <Article
+                title="LIVE VIEW"
+                description="In a First, LUKSO Community Works to Refine and Archive the Same Burnt Pic Together"
+              >
+                {
+                  <Box>
+                    <MainStatsList stats={mainStats} />
+                    <RefineButton />
+                  </Box>
+                }
+              </Article>
+              <Box mt={6}>
+                <BurntPixArt />
+              </Box>
+            </Flex>
+            <Box  w='30%' p='0 20px'>
               <EditorsNote />
             </Box>
           </Flex>
-          <Flex>
-            <Flex flexDir="column">
+          
+          <Divider borderColor={"#00000"} size={"md"} />
+          <Flex justifyContent="space-between" w='100%'>
+            <Flex flexDir="column"  borderRight={"1px solid #000000"} w='60%'>
+              <Box w='100%'>
               <Archives
                 images={[
                   "https://http.cat/100",
@@ -179,11 +184,14 @@ export default function Home() {
                   "https://http.cat/503",
                 ]}
               />
+              </Box>
+              <Divider borderColor={"#00000"} size={"md"} />
               <Article title="LEADER BOARD">
                 <Leaderboard items={leaderboardFakeStats} />
               </Article>
             </Flex>
-            <Flex flexDir="column">
+
+            <Flex flexDir="column" w='30%'>
               <Article title="YOUR CONTRIBUTIONS">
                 <MainStatsList stats={userStats} />
               </Article>

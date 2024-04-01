@@ -36,7 +36,7 @@ export default function RootLayout({
                 minHeight: "105vh",
               }}
             >
-              <div style={{ flexGrow: 1 }}>{children}</div>
+              <div style={{ flexGrow: 1, height: '100%' }}>{children}</div>
 
               <Footer />
             </div>
