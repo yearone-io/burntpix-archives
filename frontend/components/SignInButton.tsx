@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
 import { Box, Button, Flex, Image, useToast } from "@chakra-ui/react";
 import { WalletContext } from "./wallet/WalletContext";
+import { inter } from "@/app/fonts";
 
 const SignInButton: React.FC = () => {
   const walletContext = useContext(WalletContext);
@@ -34,19 +35,22 @@ const SignInButton: React.FC = () => {
   return (
     <Button
       onClick={onSignInClick}
-      border={"1px solid var(--chakra-colors-dark-purple-500)"}
+      border={"1px solid #000000"}
+      backgroundColor={"transparent"}
+      fontFamily={inter.style.fontFamily}
+      p='10px'
+      borderRadius={"12px"}
+
     >
-      <Flex alignItems="center" justifyContent="space-between">
+      <Flex alignItems="center" justifyContent="space-between" >
         <Image src="/images/LYX-logo.svg" alt="Sign In" />
         <Box
           ml="10px"
-          fontSize="md"
-          lineHeight="14px"
-          fontFamily="Bungee"
-          fontWeight="400"
-          color={"dark.purple.500"}
+          fontSize="sm"
+          fontWeight="700"
+          fontFamily={inter.style.fontFamily}
         >
-          {isLoadingAccount ? "..." : "Sign In"}
+          {isLoadingAccount ? "..." : "SIGN IN"}
         </Box>
       </Flex>
     </Button>
