@@ -16,11 +16,11 @@ const Archives = ({ images }: { images: string[] }) => {
 
   return (
     <VStack alignItems={"left"}>
-      <HStack>
+      {/* <HStack>
         <Text color={"lukso.pink"} fontSize={"lg"} fontWeight={"900"}>
           ARCHIVES
-        </Text>
-        <Link isExternal={true} href={"/"}>
+        </Text> */}
+      {/* <Link isExternal={true} href={"/"}>
           <IconButton
             aria-label="View archives"
             color={"lukso.pink"}
@@ -28,8 +28,8 @@ const Archives = ({ images }: { images: string[] }) => {
             size="sm"
             variant="ghost"
           />
-        </Link>
-      </HStack>
+        </Link> */}
+      {/* </HStack> */}
       <HStack>
         <IconButton
           icon={<FaArrowCircleLeft />}

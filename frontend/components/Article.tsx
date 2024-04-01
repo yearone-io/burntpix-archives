@@ -1,9 +1,10 @@
 import { ptSerifBold, inter } from "@/app/fonts";
 import { Box } from "@chakra-ui/react";
+import { HtmlProps } from "next/dist/shared/lib/html-context";
 import React, { ReactNode } from "react";
 
 interface Props {
-  title: string;
+  title: string | ReactNode;
   description?: string;
   children: ReactNode;
 }

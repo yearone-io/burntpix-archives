@@ -8,6 +8,8 @@ import {
   Grid,
   GridItem,
   Heading,
+  IconButton,
+  Link,
   Text,
 } from "@chakra-ui/react";
 import { New_Rocker } from "next/font/google";
@@ -19,6 +21,7 @@ import MainStatsList from "@/components/MainStatsList";
 import RefineButton from "@/components/RefineButton";
 import Leaderboard from "@/components/leaderBoard";
 import EditorsNote from "@/components/EditorsNote";
+import { FaExternalLinkAlt } from "react-icons/fa";
 
 const newRockerFont = New_Rocker({
   weight: ["400"],
@@ -81,6 +84,36 @@ export default function Home() {
     month: "long",
     day: "numeric",
   });
+
+  const yourArchivesTitle = (
+    <Text>
+      YOUR ARCHIVES
+      <Link isExternal={true} href={"/"}>
+        <IconButton
+          aria-label="View archives"
+          color={"lukso.pink"}
+          icon={<FaExternalLinkAlt />}
+          size="sm"
+          variant="ghost"
+        />
+      </Link>
+    </Text>
+  );
+
+  const archivesTitle = (
+    <Text>
+      ARCHIVES
+      <Link isExternal={true} href={"/"}>
+        <IconButton
+          aria-label="View archives"
+          color={"lukso.pink"}
+          icon={<FaExternalLinkAlt />}
+          size="sm"
+          variant="ghost"
+        />
+      </Link>
+    </Text>
+  );
 
   const mainStats =
     // TODO Generate function that returns the dynamic stats
@@ -190,6 +223,34 @@ export default function Home() {
             <GridItem w="2/3">
               <Flex flexDir="column" borderRight={"1px solid #000000"}>
                 <Box w="100%">
+                  <Article title={archivesTitle}>
+                    <Archives
+                      images={[
+                        "https://http.cat/100",
+                        "https://http.cat/200",
+                        "https://http.cat/201",
+                        "https://http.cat/202",
+                        "https://http.cat/400",
+                        "https://http.cat/500",
+                        "https://http.cat/501",
+                        "https://http.cat/502",
+                        "https://http.cat/503",
+                      ]}
+                    />
+                  </Article>
+                </Box>
+                <Divider borderColor={"#00000"} size={"md"} />
+                <Article title="LEADER BOARD">
+                  <Leaderboard items={leaderboardFakeStats} />
+                </Article>
+              </Flex>
+            </GridItem>
+            <GridItem w="1/3">
+              <Flex flexDir="column">
+                <Article title="YOUR CONTRIBUTIONS">
+                  <MainStatsList stats={userStats} />
+                </Article>
+                <Article title={yourArchivesTitle}>
                   <Archives
                     images={[
                       "https://http.cat/100",
@@ -203,31 +264,7 @@ export default function Home() {
                       "https://http.cat/503",
                     ]}
                   />
-                </Box>
-                <Divider borderColor={"#00000"} size={"md"} />
-                <Article title="LEADER BOARD">
-                  <Leaderboard items={leaderboardFakeStats} />
                 </Article>
-              </Flex>
-            </GridItem>
-            <GridItem w="1/3">
-              <Flex flexDir="column">
-                <Article title="YOUR CONTRIBUTIONS">
-                  <MainStatsList stats={userStats} />
-                </Article>
-                <Archives
-                  images={[
-                    "https://http.cat/100",
-                    "https://http.cat/200",
-                    "https://http.cat/201",
-                    "https://http.cat/202",
-                    "https://http.cat/400",
-                    "https://http.cat/500",
-                    "https://http.cat/501",
-                    "https://http.cat/502",
-                    "https://http.cat/503",
-                  ]}
-                />
               </Flex>
             </GridItem>
           </Grid>
