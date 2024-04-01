@@ -5,6 +5,7 @@ import { Box, Divider, Flex, Heading, Text } from "@chakra-ui/react";
 import { New_Rocker } from "next/font/google";
 import BurntPixArt from "@/components/BurntPixArt";
 import Archives from "@/components/Archives";
+import WalletConnector from "@/components/wallet/WalletConnector";
 
 const newRockerFont = New_Rocker({
   weight: ["400"],
@@ -23,20 +24,21 @@ export default function Home() {
   return (
     <main className={styles.main}>
       <Flex width="100%" direction={"column"} alignItems={"center"}>
-        <header>
-          <Flex direction={"column"} alignItems={"center"}>
-            <Heading as={"h1"} fontFamily={newRockerFont.style.fontFamily}>
+      <header >
+        <Flex width="100%" alignItems="center">
+          <Flex direction="column" alignItems="center">
+            <Heading as="h1" fontFamily={newRockerFont.style.fontFamily} m='0' p='0'>
               Burnt Pix Archives
             </Heading>
-            <Heading fontSize={"m"} as={"h3"}>
-              ON THE{" "}
-              <Heading fontSize={"m"} as={"span"} color={"lukso.pink"}>
-                LUKSO
-              </Heading>{" "}
-              CHAIN
+            <Heading fontSize="m" as="h3" m='0' p='0'>
+              ON THE <Heading fontSize="m" as="span" color="lukso.pink">LUKSO</Heading> CHAIN
             </Heading>
           </Flex>
-        </header>
+          <Box>
+            <WalletConnector />
+          </Box>
+        </Flex>
+      </header>
         <Box mt={4} pl={10} pr={10} width={"100%"}>
           <Divider mb={2} />
           <Flex>
@@ -55,7 +57,6 @@ export default function Home() {
               "https://http.cat/200",
               "https://http.cat/201",
               "https://http.cat/202",
-              "https://http.cat/300",
               "https://http.cat/400",
               "https://http.cat/500",
               "https://http.cat/501",

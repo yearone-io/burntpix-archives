@@ -1,5 +1,4 @@
 "use client";
-import Navbar from "@/components/instructionsComponent/navigation/navbar";
 import Footer from "@/components/instructionsComponent/navigation/footer";
 import { WalletProvider } from "@/components/wallet/WalletProvider";
 import Head from "next/head";
@@ -114,7 +113,6 @@ export default function RootLayout({
                 minHeight: "105vh",
               }}
             >
-              <Navbar />
               <div style={{ flexGrow: 1 }}>{children}</div>
               <Article
                 title="LIVE VIEW"
