@@ -78,6 +78,7 @@ const leaderboardFakeStats = [
 
 export default function Home() {
   const date = new Date();
+  const maxWidth = "1400px";
   const formattedDate = date.toLocaleDateString("en-US", {
     weekday: "long",
     year: "numeric",
@@ -144,8 +145,26 @@ export default function Home() {
     <main className={styles.main}>
       <Flex width="100%" direction={"column"}>
         <header>
-          <Flex width="100%" alignItems="center" justifyContent='center'>
-            <Flex direction="column" alignItems="center" justifyContent='center'>
+          <Flex
+            flexDir={{
+              base: "column",
+              md: "row",
+            }}
+            justifyContent="center"
+            alignItems="center"
+            pl={10}
+            pr={10}
+            width={"100%"}
+            maxW={maxWidth}
+          >
+            <Flex flex="1" justifyContent="flex-end"></Flex>
+            <Flex
+              flex="2"
+              direction="column"
+              alignItems="center"
+              justifyContent="center"
+              px={5}
+            >
               <Heading
                 as="h1"
                 fontFamily={newRockerFont.style.fontFamily}
@@ -162,27 +181,27 @@ export default function Home() {
                 CHAIN
               </Heading>
             </Flex>
-          </Flex>
-          <Flex w='100%' justifyContent='right' >
-            <Box mr='50px' mt={{sm: 0, md: '-80px'}}>
-              <WalletConnector />
-            </Box>
+            <Flex flex="1" justifyContent="flex-end">
+              <Box>
+                <WalletConnector />
+              </Box>
+            </Flex>
           </Flex>
         </header>
-        <Box mt={4} pl={10} pr={10} width={"100%"} maxW="1400px">
+        <Box mt={4} pl={10} pr={10} width={"100%"} maxW={maxWidth}>
           <Box>
             <Divider mb={2} borderColor={"#00000"} />
-            <Flex justifyContent="space-between" w="100%">
-              <Box>
-                <Text pl={10} color="#00000" fontWeight="400">
+            <Flex justifyContent="center" alignItems="center" w="100%">
+              <Box flex="1" textAlign="left" pl={10}>
+                <Text color="#000000" fontWeight="400">
                   All the Pixels, That Are Fit To Burn
                 </Text>
               </Box>
-              <Box>
-                <Text as={"b"}>{formattedDate}</Text>
+              <Box flex="0" minWidth="max-content" px={5}>
+                <Text as="b">{formattedDate}</Text>
               </Box>
-              <Box>
-                <Text pr={10} color="#00000" fontWeight="400">
+              <Box flex="1" textAlign="right" pr={10}>
+                <Text color="#000000" fontWeight="400">
                   To Unlock Original Contribute: XX,XX,XXX Iterations
                 </Text>
               </Box>
@@ -191,7 +210,10 @@ export default function Home() {
           </Box>
           <Grid templateColumns={gridTemplateColumns}>
             <GridItem w="2/3" mt="10px">
-              <Flex p="0 20px 20px 20px"  borderRight={{ base: "none", md: "1px solid #000000" }}>
+              <Flex
+                p="0 20px 20px 20px"
+                borderRight={{ base: "none", md: "1px solid #000000" }}
+              >
                 <Grid templateColumns={gridTemplateColumns}>
                   <GridItem>
                     <Article
@@ -223,7 +245,10 @@ export default function Home() {
           <Divider borderColor={"#00000"} size={"md"} />
           <Grid templateColumns={gridTemplateColumns}>
             <GridItem w="2/3">
-              <Flex flexDir="column"  borderRight={{ base: "none", md: "1px solid #000000" }}>
+              <Flex
+                flexDir="column"
+                borderRight={{ base: "none", md: "1px solid #000000" }}
+              >
                 <Box w="100%">
                   <Article title={archivesTitle}>
                     <Archives
