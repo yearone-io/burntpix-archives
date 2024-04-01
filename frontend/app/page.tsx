@@ -144,8 +144,8 @@ export default function Home() {
     <main className={styles.main}>
       <Flex width="100%" direction={"column"}>
         <header>
-          <Flex width="100%" alignItems="center">
-            <Flex direction="column" alignItems="center">
+          <Flex width="100%" alignItems="center" justifyContent='center'>
+            <Flex direction="column" alignItems="center" justifyContent='center'>
               <Heading
                 as="h1"
                 fontFamily={newRockerFont.style.fontFamily}
@@ -162,7 +162,9 @@ export default function Home() {
                 CHAIN
               </Heading>
             </Flex>
-            <Box>
+          </Flex>
+          <Flex w='100%' justifyContent='right' >
+            <Box mr='50px' mt={{sm: 0, md: '-80px'}}>
               <WalletConnector />
             </Box>
           </Flex>
