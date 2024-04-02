@@ -7,15 +7,12 @@ import {
   IconButton,
   Link,
   Spacer,
-  Text,
   VStack,
   useBreakpointValue,
+  Stack,
+  Skeleton,
 } from "@chakra-ui/react";
-import {
-  FaArrowCircleLeft,
-  FaExternalLinkAlt,
-  FaCheckCircle,
-} from "react-icons/fa";
+import { FaArrowCircleLeft, FaCheckCircle } from "react-icons/fa";
 import { FaArrowCircleRight } from "react-icons/fa";
 import { BurntPixArchives__factory } from "@/contracts";
 import { WalletContext } from "@/components/wallet/WalletContext";
@@ -32,31 +29,10 @@ interface IArchive {
   isMinted: boolean;
 }
 
-const ARCHIVE_PLACEHOLDER = {
-  id: "",
-  image:
-    '<svg width="100" height="100" viewBox="0 0 100 100">\n' +
-    '    <rect x="1" y="1" width="98" height="98" stroke="black" stroke-width="4" fill="none"/>\n' +
-    '    <circle cx="50" cy="50" r="35" fill="none" stroke="black" stroke-width="6" stroke-linecap="round" stroke-dasharray="55 180">\n' +
-    '        <animateTransform attributeName="transform" attributeType="XML" type="rotate" from="0 50 50" to="360 50 50" dur="1s" repeatCount="indefinite"/>\n' +
-    "    </circle>\n" +
-    "</svg>\n",
-  ownerName: "",
-  ownerAddress: "",
-  ownerAvatar: "",
-  isMinted: false,
-};
-
 const Archives = ({ images }: { images: string[] }) => {
   const walletContext = useContext(WalletContext);
   const { networkConfig, provider } = walletContext;
-  const [archives, setArchives] = useState<IArchive[]>([
-    ARCHIVE_PLACEHOLDER,
-    ARCHIVE_PLACEHOLDER,
-    ARCHIVE_PLACEHOLDER,
-    ARCHIVE_PLACEHOLDER,
-    ARCHIVE_PLACEHOLDER,
-  ]);
+  const [archives, setArchives] = useState<IArchive[] | undefined>();
   const [startIndex, setStartIndex] = useState(0);
 
   // Use the useBreakpointValue hook to determine the number of images to slide
@@ -112,6 +88,16 @@ const Archives = ({ images }: { images: string[] }) => {
       });
   }, []);
 
+  if (archives === undefined) {
+    return (
+      <Stack>
+        <Skeleton height="30px" />
+        <Skeleton height="30px" />
+        <Skeleton height="30px" />
+        <Skeleton height="30px" />
+      </Stack>
+    );
+  }
   return (
     <VStack alignItems={"left"} w="100%" pr="20px" pt="20px">
       <HStack>
