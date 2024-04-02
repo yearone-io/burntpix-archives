@@ -6,8 +6,8 @@ const EditorsNote: React.FC = () => {
   return (
     <Box
       m="20px"
-      w="405px"
       fontFamily={inter.style.fontFamily}
+      minW="300px"
       lineHeight="tall"
     >
       <Text fontSize="sm" fontWeight={400} lineHeight="15px" marginBottom="2">
