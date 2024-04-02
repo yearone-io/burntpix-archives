@@ -78,7 +78,6 @@ const leaderboardFakeStats = [
 
 export default function Home() {
   const date = new Date();
-  const maxWidth = "1400px";
   const formattedDate = date.toLocaleDateString("en-US", {
     weekday: "long",
     year: "numeric",
@@ -143,7 +142,7 @@ export default function Home() {
 
   return (
     <main className={styles.main}>
-      <Flex width="100%" direction={"column"}>
+      <Flex width="100%" direction={"column"} maxW={"2000px"}>
         <header>
           <Flex
             flexDir={{
@@ -152,10 +151,9 @@ export default function Home() {
             }}
             justifyContent="center"
             alignItems="center"
-            pl={10}
-            pr={10}
             width={"100%"}
-            maxW={maxWidth}
+            pr="20px"
+            pl="20px"
           >
             <Flex flex="1" justifyContent="flex-end"></Flex>
             <Flex
@@ -163,7 +161,6 @@ export default function Home() {
               direction="column"
               alignItems="center"
               justifyContent="center"
-              px={5}
             >
               <Heading
                 as="h1"
@@ -188,8 +185,8 @@ export default function Home() {
             </Flex>
           </Flex>
         </header>
-        <Box mt={4} pl={10} pr={10} width={"100%"} maxW={maxWidth}>
-          <Box>
+        <Box mt={4} pl={"20px"} pr={"20px"} width={"100%"}>
+          <Box width="100%">
             <Divider mb={2} borderColor={"#00000"} />
             <Flex justifyContent="center" alignItems="center" w="100%">
               <Box flex="1" textAlign="left" pl={10}>
@@ -231,7 +228,7 @@ export default function Home() {
                 </Box>
                 <Flex
                   flex="1"
-                  minW={0}
+                  minW="fit-content"
                   mt={{ base: 4, md: 0 }}
                   justifyContent="center"
                 >

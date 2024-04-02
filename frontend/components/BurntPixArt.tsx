@@ -1,7 +1,15 @@
 import { Fractal__factory } from "@/contracts";
 import React, { useContext, useEffect, useState } from "react";
 import { WalletContext } from "@/components/wallet/WalletContext";
-import { HStack, Text, VStack, Link, Spinner, Box, Flex } from "@chakra-ui/react";
+import {
+  HStack,
+  Text,
+  VStack,
+  Link,
+  Spinner,
+  Box,
+  Flex,
+} from "@chakra-ui/react";
 import { formatAddress } from "@/utils/tokenUtils";
 import { inter } from "@/app/fonts";
 import { FaExternalLinkAlt } from "react-icons/fa";
@@ -49,17 +57,19 @@ export default function BurntPixArt() {
           href={`${networkConfig.burntPixWebUrl}/${networkConfig.burntPixId}`}
         >
           <Flex>
-           <Text
-                     fontSize="sm"
-                     fontWeight="500"
-                     letterSpacing={1.5}
-                     fontFamily={inter.style.fontFamily}
-            mr='2px'>{formatAddress(networkConfig.burntPixId)}</Text>
-            <Text fontSize={'12px'} ml='2px' mt='4px'>           
-              <FaExternalLinkAlt/>
+            <Text
+              fontSize="sm"
+              fontWeight="500"
+              letterSpacing={1.5}
+              fontFamily={inter.style.fontFamily}
+              mr="2px"
+            >
+              {formatAddress(networkConfig.burntPixId)}
+            </Text>
+            <Text fontSize={"12px"} ml="2px" mt="4px">
+              <FaExternalLinkAlt />
             </Text>
           </Flex>
-
         </Link>
       </HStack>
     </VStack>

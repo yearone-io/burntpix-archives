@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Flex, HStack, IconButton, Link, Text, VStack } from "@chakra-ui/react";
-import { FaArrowCircleLeft, FaExternalLinkAlt } from "react-icons/fa";
+import { Flex, HStack, IconButton, Text, VStack } from "@chakra-ui/react";
+import { FaArrowCircleLeft } from "react-icons/fa";
 import { FaArrowCircleRight } from "react-icons/fa";
 
 const Archives = ({ images }: { images: string[] }) => {
@@ -16,20 +16,6 @@ const Archives = ({ images }: { images: string[] }) => {
 
   return (
     <VStack alignItems={"left"}>
-      {/* <HStack>
-        <Text color={"lukso.pink"} fontSize={"lg"} fontWeight={"900"}>
-          ARCHIVES
-        </Text> */}
-      {/* <Link isExternal={true} href={"/"}>
-          <IconButton
-            aria-label="View archives"
-            color={"lukso.pink"}
-            icon={<FaExternalLinkAlt />}
-            size="sm"
-            variant="ghost"
-          />
-        </Link> */}
-      {/* </HStack> */}
       <HStack>
         <IconButton
           icon={<FaArrowCircleLeft />}
