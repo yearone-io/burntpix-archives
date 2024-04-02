@@ -56,37 +56,37 @@ const Archives = () => {
   useEffect(() => {
     burntPixArchives
       .archiveCount()
-      .then((archiveCount) => {
+      .then(async (archiveCount) => {
         const fetchedArchives: IArchive[] = [];
-        return Promise.all(
+        await Promise.all(
           Array.from({ length: Number(archiveCount) }, async (_, i) => {
             const id = numberToBytes32(i + 1);
             const archive = await burntPixArchives.burntArchives(id);
             let isMinted = false;
-            let ownerName = undefined;
-            let ownerAddress = undefined;
+            let ownerAddress = archive.creator;
+            try {
+              ownerAddress = await burntPixArchives.tokenOwnerOf(id);
+              isMinted = true;
+            } catch (reason: any) {
+              if (reason.message.includes("LSP8NonExistentTokenId")) {
+                console.log(`token ${id} not minted yet`);
+              } else {
+                console.error("Error fetching owner", reason);
+                throw reason;
+              }
+            }
+
+            const ownerProfile = await getProfileData(
+              ownerAddress,
+              networkConfig.rpcUrl,
+            );
+
+            const ownerName = ownerProfile.name;
             let ownerAvatar = undefined;
-            await burntPixArchives
-              .tokenOwnerOf(id)
-              .then(async (owner) => {
-                isMinted = true;
-                ownerAddress = owner;
-                return await getProfileData(owner, networkConfig.rpcUrl);
-              })
-              .then((ownerProfile) => {
-                if (ownerProfile.profileImage) {
-                  ownerAvatar = `${constants.IPFS_GATEWAY}/${ownerProfile.profileImage[0].url.replace("ipfs://", "")}`;
-                }
-                ownerName = ownerProfile.name;
-              })
-              .catch((reason) => {
-                if (reason.message.includes("LSP8NonExistentTokenId")) {
-                  console.log(`token ${id} not minted yet`);
-                } else {
-                  console.error("Error fetching owner", reason);
-                  throw reason;
-                }
-              });
+
+            if (ownerProfile.profileImage && ownerProfile.profileImage.length) {
+              ownerAvatar = `${constants.IPFS_GATEWAY}/${ownerProfile.profileImage[0].url.replace("ipfs://", "")}`;
+            }
 
             fetchedArchives.push({
               id: id,
@@ -96,11 +96,9 @@ const Archives = () => {
               ownerAvatar: ownerAvatar,
               isMinted: isMinted,
             });
-            return archive;
           }),
-        ).then((value) => {
-          setArchives(fetchedArchives.sort((a, b) => a.id.localeCompare(b.id)));
-        });
+        );
+        setArchives(fetchedArchives.sort((a, b) => a.id.localeCompare(b.id)));
       })
       .catch((reason) => {
         console.error("Error fetching archives", reason);
