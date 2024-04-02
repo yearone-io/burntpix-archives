@@ -68,9 +68,10 @@ const Archives = ({ images }: { images: string[] }) => {
             let ownerAvatar = undefined;
             await burntPixArchives
               .tokenOwnerOf(id)
-              .then(async (ownerAddress) => {
+              .then(async (owner) => {
                 isMinted = true;
-                return await getProfileData(ownerAddress, networkConfig.rpcUrl);
+                ownerAddress = owner;
+                return await getProfileData(owner, networkConfig.rpcUrl);
               })
               .then((ownerProfile) => {
                 if (ownerProfile.profileImage) {
@@ -98,7 +99,7 @@ const Archives = ({ images }: { images: string[] }) => {
             return archive;
           }),
         ).then((value) => {
-          setArchives(fetchedArchives);
+          setArchives(fetchedArchives.sort((a, b) => a.id.localeCompare(b.id)));
         });
       })
       .catch((reason) => {
@@ -137,6 +138,7 @@ const Archives = ({ images }: { images: string[] }) => {
                   style={{
                     height: slideAmount === 1 ? "200px" : "100px",
                     width: slideAmount === 1 ? "200px" : "100px",
+                    filter: archive.isMinted ? "none" : "invert(100%)",
                   }}
                   dangerouslySetInnerHTML={{ __html: archive.image }}
                 />
