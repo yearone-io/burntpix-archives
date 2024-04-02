@@ -18,33 +18,16 @@ import {
 import { FaArrowCircleRight } from "react-icons/fa";
 import { BurntPixArchives__factory } from "@/contracts";
 import { WalletContext } from "@/components/wallet/WalletContext";
-
-function numberToBytes32(num: number): string {
-  // Convert the number to a hex string
-  let hexString = num.toString(16);
-
-  // Pad the hex string with zeros to ensure it is 64 characters long
-  hexString = hexString.padStart(64, "0");
-
-  // Prepend '0x' to denote a hex value
-  return "0x" + hexString;
-}
-
-function hexToText(hexString: string): string {
-  // Remove the '0x' prefix if present
-  if (hexString.startsWith("0x")) {
-    hexString = hexString.slice(2);
-  }
-
-  // Convert the hex string to a Buffer, then to a UTF-8 string
-  const text = Buffer.from(hexString, "hex").toString("utf8");
-  return text;
-}
+import { hexToText, numberToBytes32 } from "@/utils/hexUtils";
+import { getProfileData } from "@/utils/universalProfile";
+import { constants } from "@/constants/constants";
 
 interface IArchive {
   id: string;
   image: string;
-  owner: string;
+  ownerName: string;
+  ownerAddress: string;
+  ownerAvatar: string | undefined;
   isMinted: boolean;
 }
 
@@ -76,10 +59,19 @@ const Archives = ({ images }: { images: string[] }) => {
           Array.from({ length: Number(archiveCount) }, async (_, i) => {
             const id = numberToBytes32(i + 1);
             const archive = await burntPixArchives.burntArchives(id);
+            const owner = await burntPixArchives.tokenOwnerOf(id);
+            const ownerProfile = await getProfileData(
+              owner,
+              networkConfig.rpcUrl,
+            );
             fetchedArchives.push({
               id: id,
               image: hexToText(archive.image),
-              owner: await burntPixArchives.tokenOwnerOf(id),
+              ownerAddress: owner,
+              ownerName: ownerProfile.name,
+              ownerAvatar: ownerProfile.profileImage
+                ? `${constants.IPFS_GATEWAY}/${ownerProfile.profileImage[0].url.replace("ipfs://", "")}`
+                : undefined,
               isMinted: false,
             });
             return archive;
@@ -132,7 +124,17 @@ const Archives = ({ images }: { images: string[] }) => {
                   #{index + startIndex + 1}
                 </Link>
                 <Spacer />
-                <Avatar height={"24px"} width={"24px"} />
+                <Link
+                  isExternal={true}
+                  href={`${networkConfig.profileWebBaseUrl}/${archive.ownerAddress}`}
+                >
+                  <Avatar
+                    name={archive.ownerName}
+                    src={archive.ownerAvatar}
+                    height={"24px"}
+                    width={"24px"}
+                  />
+                </Link>
                 {archive.isMinted && (
                   <Icon ml={1} as={FaCheckCircle} boxSize={"24px"} />
                 )}
