@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import {
   Box,
   Avatar,
@@ -8,6 +8,9 @@ import {
   useBreakpointValue,
 } from "@chakra-ui/react";
 import { inter } from "@/app/fonts"; // Make sure this import path is correct
+import { BurntPixArchives__factory } from "@/contracts";
+import { getNetworkConfig } from "@/constants/networks";
+import { WalletContext } from "./wallet/WalletContext";
 
 interface LeaderboardItemProps {
   name: string;
@@ -21,6 +24,8 @@ interface LeaderboardProps {
 
 const Leaderboard: React.FC<LeaderboardProps> = ({ items }) => {
   const margin = useBreakpointValue({ base: "0", md: "20px" });
+  const walletContext = useContext(WalletContext);
+  const { networkConfig, provider } = walletContext;
 
   const truncateName = (name: string) => {
     if (name.length > 10) {
@@ -28,6 +33,11 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ items }) => {
     }
     return name;
   };
+
+  const burntPixArchives = BurntPixArchives__factory.connect(
+    networkConfig.burntPixArchivesAddress,
+    provider,
+  );
 
   const renderItem = (item: LeaderboardItemProps, index: number) => (
     <Flex
