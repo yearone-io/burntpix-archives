@@ -49,7 +49,7 @@ const Footer: React.FC = () => {
             >
               SC: 0xd4E...Fa2
             </Text>
-            <Link href="#" isExternal ml="5px" size="14px" mb="0px">
+            <Link href="#" isExternal ml="5px" size="14px" mt="4px">
               <FaExternalLinkAlt />
             </Link>
             <Link
