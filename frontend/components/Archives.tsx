@@ -29,7 +29,7 @@ interface IArchive {
   isMinted: boolean;
 }
 
-const Archives = ({ images }: { images: string[] }) => {
+const Archives = () => {
   const walletContext = useContext(WalletContext);
   const { networkConfig, provider } = walletContext;
   const [archives, setArchives] = useState<IArchive[] | undefined>();
@@ -39,9 +39,9 @@ const Archives = ({ images }: { images: string[] }) => {
   const slideAmount = useBreakpointValue({ base: 1, md: 5 }) || 5; // 1 image for base (mobile), 5 for md (tablet) and up
 
   const nextSlide = () => {
-    setStartIndex((prevIndex) =>
-      Math.min(prevIndex + slideAmount, images.length - 1),
-    );
+    setStartIndex((prevIndex) => {
+      return Math.min(prevIndex + slideAmount, archives!.length - 1);
+    });
   };
 
   const prevSlide = () => {
@@ -124,6 +124,7 @@ const Archives = ({ images }: { images: string[] }) => {
           icon={<FaArrowCircleLeft />}
           onClick={prevSlide}
           aria-label={"Previous"}
+          isDisabled={startIndex <= 0}
         ></IconButton>
         <Flex w={slideAmount === 1 ? "200px" : "100%"}>
           {archives
@@ -182,6 +183,7 @@ const Archives = ({ images }: { images: string[] }) => {
           onClick={nextSlide}
           icon={<FaArrowCircleRight />}
           aria-label={"Next"}
+          isDisabled={startIndex + slideAmount >= archives!.length}
         />
       </HStack>
     </VStack>

@@ -263,19 +263,7 @@ export default function Home() {
               >
                 <Box w="100%">
                   <Article title={archivesTitle}>
-                    <Archives
-                      images={[
-                        "https://http.cat/100",
-                        "https://http.cat/200",
-                        "https://http.cat/201",
-                        "https://http.cat/202",
-                        "https://http.cat/400",
-                        "https://http.cat/500",
-                        "https://http.cat/501",
-                        "https://http.cat/502",
-                        "https://http.cat/503",
-                      ]}
-                    />
+                    <Archives />
                   </Article>
                 </Box>
                 <Divider borderColor={"#00000"} size={"md"} />
@@ -290,19 +278,7 @@ export default function Home() {
                   <MainStatsList stats={userStats} />
                 </Article>
                 <Article title={yourArchivesTitle}>
-                  <Archives
-                    images={[
-                      "https://http.cat/100",
-                      "https://http.cat/200",
-                      "https://http.cat/201",
-                      "https://http.cat/202",
-                      "https://http.cat/400",
-                      "https://http.cat/500",
-                      "https://http.cat/501",
-                      "https://http.cat/502",
-                      "https://http.cat/503",
-                    ]}
-                  />
+                  <Archives />
                 </Article>
               </Flex>
             </GridItem>
