@@ -1,5 +1,9 @@
 import { SiweMessage } from "siwe";
 import { getNetworkConfig } from "@/constants/networks";
+import { ERC725, ERC725JSONSchema } from "@erc725/erc725.js";
+import lsp3ProfileSchema from "@erc725/erc725.js/schemas/LSP3ProfileMetadata.json";
+import { LSP3ProfileMetadata } from "@lukso/lsp3-contracts";
+import { constants } from "@/constants/constants";
 
 export const buildSIWEMessage = (upAddress: string): string => {
   const siweParams = {
@@ -17,4 +21,22 @@ export const buildSIWEMessage = (upAddress: string): string => {
     ], // Information the user wishes to have resolved as part of authentication by the relying party
   };
   return new SiweMessage(siweParams).prepareMessage();
+};
+
+export const getProfileData = async (
+  universalProfileAddress: string,
+  rpcUrl: string,
+): Promise<LSP3ProfileMetadata> => {
+  const erc725js = new ERC725(
+    lsp3ProfileSchema as ERC725JSONSchema[],
+    universalProfileAddress,
+    rpcUrl,
+    {
+      ipfsGateway: constants.IPFS_GATEWAY,
+    },
+  );
+
+  const profileData = await erc725js.fetchData("LSP3Profile");
+  return (profileData!.value as { LSP3Profile: Record<string, any> })
+    .LSP3Profile as LSP3ProfileMetadata;
 };

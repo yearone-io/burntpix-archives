@@ -1,16 +1,18 @@
 import { ptSerifBold, inter } from "@/app/fonts";
-import { Box } from "@chakra-ui/react";
+import { Box, useBreakpointValue } from "@chakra-ui/react";
 import React, { ReactNode } from "react";
 
 interface Props {
-  title: string;
+  title: string | ReactNode;
   description?: string;
   children: ReactNode;
 }
 
 const Article: React.FC<Props> = ({ title, description, children }) => {
+  const margin = useBreakpointValue({ base: "0", md: "20px" });
+
   return (
-    <Box m="20px" w="405px">
+    <Box ml={margin} mr={margin} mt="20px" mb="20px">
       <Box
         color="#FE005B"
         fontWeight={900}

@@ -6,6 +6,9 @@ export interface Network {
   explorerURL: string;
   burntPixWebUrl: string;
   burntPixId: string;
+  burntPixArchivesAddress: string;
+  artWebBaseUrl: string;
+  profileWebBaseUrl: string;
   baseUrl: string;
 }
 
@@ -19,7 +22,10 @@ const NETWORKS = {
     baseUrl: "https://burntpix-archives.netlify.app",
     burntPixWebUrl:
       "https://universal.page/collections/0x3983151E0442906000DAb83c8b1cF3f2D2535F82",
+    artWebBaseUrl: "https://universal.page/collections",
+    profileWebBaseUrl: "https://universal.page/profiles",
     burntPixId: "",
+    burntPixArchivesAddress: "",
   },
   testnet: {
     chainId: 4201,
@@ -30,7 +36,10 @@ const NETWORKS = {
     baseUrl: "https://testnet--burntpix-archives.netlify.app",
     burntPixWebUrl:
       "https://universalpage.dev/collections/0x12167f1c2713aC4f740B4700c4C72bC2de6C686f",
+    artWebBaseUrl: "https://universalpage.dev/collections",
+    profileWebBaseUrl: "https://universalpage.dev/profiles",
     burntPixId: "0x245f9A8Bea516165B45142f8b79eA204f97F8867",
+    burntPixArchivesAddress: "0xC2d8fE5A798697EC76E23C2afb99B1DFD7C33166",
   },
 } as {
   [key: string]: Network;
