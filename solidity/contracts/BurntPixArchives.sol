@@ -94,34 +94,39 @@ contract BurntPixArchives is LSP8CappedSupply {
     }
 
     function refineToArchive(uint256 iters) public {
+        return refineToArchive(iters, msg.sender);
+    }
+
+    function refineToArchive(uint256 iters, address contributor) public {
         require(iters > 0);
+        // BALANCE FRACTAL ITERATIONS
         address registry = IFractal(address(uint160(uint256(burntPicId)))).registry();
-        if (contributions[msg.sender].iterations == 0) {
-            contributors.push(msg.sender);
-        }
-        contributions[msg.sender].iterations += iters;
-        // Balance iterations
         uint256 diff = IFractal(address(uint160(uint256(burntPicId)))).iterations() - IFractal(fractalClone).iterations();
+        // no matter whether original & clone are in sync we refine the clone
         IFractal(fractalClone).refine(iters);
-        if (diff == 0) {
-            IRegistry(registry).refine(burntPicId, iters);
-        } else if (iters > diff) {
+        // original and clone get synced if no difference or original needs to catch up to current clone iters
+        if (diff == 0 || iters > diff) {
             IRegistry(registry).refine(burntPicId, iters - diff);
         }
-        // Transfer original when winner first encountered
-        if (contributions[msg.sender].iterations >= winnerIters && isOriginalLocked()) {
-            IRegistry(registry).transfer(address(this), msg.sender, burntPicId, true, "");
+        // UPDATE CONTRIBUTIONS
+        if (contributions[contributor].iterations == 0) {
+            contributors.push(contributor);
         }
-        // Store archive
-        if (contributions[msg.sender].iterations >= IArchiveHelpers(archiveHelpers).fibonacciIterations(contributions[msg.sender].archiveIds.length + 1)) {
+        contributions[contributor].iterations += iters;
+        // TRANSFER ORIGINAL IF WINNER DETECTED
+        if (contributions[contributor].iterations >= winnerIters && isOriginalUnclaimed()) {
+            IRegistry(registry).transfer(address(this), contributor, burntPicId, true, "");
+        }
+        // STORE ARCHIVE IF UNLOCKED
+        if (contributions[contributor].iterations >= IArchiveHelpers(archiveHelpers).fibonacciIterations(contributions[contributor].archiveIds.length + 1)) {
             bytes32 archiveId = bytes32(++archiveCount);
-            contributions[msg.sender].archiveIds.push(archiveId);
+            contributions[contributor].archiveIds.push(archiveId);
             Archive memory archive = Archive({
                 image: IFractal(fractalClone).getData(keccak256("image")),
                 iterations: IFractal(fractalClone).iterations(),
-                level: contributions[msg.sender].archiveIds.length,
+                level: contributions[contributor].archiveIds.length,
                 blockNumber: block.number,
-                creator: msg.sender
+                creator: contributor
             });
             if (archive.level > currentHighestLevel) {
                 currentHighestLevel = archive.level;
@@ -152,7 +157,7 @@ contract BurntPixArchives is LSP8CappedSupply {
         return contributors.length;
     }
 
-    function isOriginalLocked() public view returns (bool) {
+    function isOriginalUnclaimed() public view returns (bool) {
         address registry = IFractal(address(uint160(uint256(burntPicId)))).registry();
         return IRegistry(registry).getOperatorsOf(burntPicId).length == 0 && IRegistry(registry).tokenOwnerOf(burntPicId) == address(this);
     }
