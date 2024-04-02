@@ -17,14 +17,14 @@ const Archives = ({ images }: { images: string[] }) => {
   };
 
   return (
-    <VStack alignItems={"left"}>
+    <VStack alignItems={"left"} w='100%' pr='20px' pt='20px'>
       <HStack>
         <IconButton
           icon={<FaArrowCircleLeft />}
           onClick={prevSlide}
           aria-label={"Previous"}
         />
-        <Flex maxW={'100%'}>
+        <Flex w={slideAmount === 1 ? '200px' : '100%'}>
           {images.slice(startIndex, startIndex + slideAmount).map((image, index) => (
             <VStack alignItems={"left"} key={index} flex="0 0 auto" width={slideAmount === 1 ? "100%" : "20%"}>
               <img
