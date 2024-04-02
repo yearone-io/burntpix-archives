@@ -20,12 +20,11 @@ const Footer: React.FC = () => {
       <Flex
         alignItems="center"
         justifyContent="space-between"
-        p={8}
-        m={"0"}
-        borderTop="1px"
+        p={'20px'}
+        m={"20px"}
+        borderTop="2px"
         borderColor="#000000"
       >
-        {/* Left side: Lukso Mainnet and SC */}
         <Flex alignItems="center">
           <Box minWidth={"170"} mr="20px">
             <Select
