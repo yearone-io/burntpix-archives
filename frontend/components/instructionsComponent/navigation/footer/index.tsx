@@ -7,7 +7,7 @@ import { getNetworkConfig } from "@/constants/networks";
 
 const Footer: React.FC = () => {
   return (
-    <Box as="footer" w="full">
+    <Box as="footer">
       <Flex
         alignItems="center"
         justifyContent="space-between"

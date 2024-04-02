@@ -4,6 +4,8 @@ html,
 body {
   font-family: "Rubik";
   font-weight: normal;
+    overflow-x: hidden;
+  
 }
 h1 {
   margin-bottom: 1rem;
