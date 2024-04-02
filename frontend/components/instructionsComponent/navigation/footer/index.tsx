@@ -20,7 +20,7 @@ const Footer: React.FC = () => {
       <Flex
         alignItems="center"
         justifyContent="space-between"
-        p={'20px'}
+        p={"20px"}
         m={"20px"}
         borderTop="2px"
         borderColor="#000000"

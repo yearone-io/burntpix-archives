@@ -6,9 +6,10 @@ import {
   Text,
   VStack,
   Link,
-  Spinner,
   Box,
   Flex,
+  Stack,
+  Skeleton,
 } from "@chakra-ui/react";
 import { formatAddress } from "@/utils/tokenUtils";
 import { inter } from "@/app/fonts";
@@ -39,7 +40,12 @@ export default function BurntPixArt() {
             dangerouslySetInnerHTML={{ __html: burntPix }}
           />
         ) : (
-          <Spinner width={"100%"} height={"100%"} />
+          <Stack>
+            <Skeleton height="75px" />
+            <Skeleton height="75px" />
+            <Skeleton height="75px" />
+            <Skeleton height="75px" />
+          </Stack>
         )}
       </Box>
 
