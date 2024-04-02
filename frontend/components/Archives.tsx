@@ -32,10 +32,31 @@ interface IArchive {
   isMinted: boolean;
 }
 
+const ARCHIVE_PLACEHOLDER = {
+  id: "",
+  image:
+    '<svg width="100" height="100" viewBox="0 0 100 100">\n' +
+    '    <rect x="1" y="1" width="98" height="98" stroke="black" stroke-width="4" fill="none"/>\n' +
+    '    <circle cx="50" cy="50" r="35" fill="none" stroke="black" stroke-width="6" stroke-linecap="round" stroke-dasharray="55 180">\n' +
+    '        <animateTransform attributeName="transform" attributeType="XML" type="rotate" from="0 50 50" to="360 50 50" dur="1s" repeatCount="indefinite"/>\n' +
+    "    </circle>\n" +
+    "</svg>\n",
+  ownerName: "",
+  ownerAddress: "",
+  ownerAvatar: "",
+  isMinted: false,
+};
+
 const Archives = ({ images }: { images: string[] }) => {
   const walletContext = useContext(WalletContext);
   const { networkConfig, provider } = walletContext;
-  const [archives, setArchives] = useState<IArchive[]>([]);
+  const [archives, setArchives] = useState<IArchive[]>([
+    ARCHIVE_PLACEHOLDER,
+    ARCHIVE_PLACEHOLDER,
+    ARCHIVE_PLACEHOLDER,
+    ARCHIVE_PLACEHOLDER,
+    ARCHIVE_PLACEHOLDER,
+  ]);
   const [startIndex, setStartIndex] = useState(0);
 
   // Use the useBreakpointValue hook to determine the number of images to slide
@@ -100,39 +121,56 @@ const Archives = ({ images }: { images: string[] }) => {
           aria-label={"Previous"}
         ></IconButton>
         <Flex w={slideAmount === 1 ? "200px" : "100%"}>
-          {archives.slice(startIndex, startIndex + slideAmount).map((archive, index) => (
-            <VStack alignItems={"left"} key={index} width={slideAmount === 1 ? "100%" : "20%"}>
-              <div
-                style={{ height: slideAmount === 1 ? "200px" : "100px", width: slideAmount === 1 ? "200px" : "100px" }}
-                dangerouslySetInnerHTML={{ __html: archive.image }}
-              />
-              <Flex>
-                <Link
-                  href={`${networkConfig.artWebBaseUrl}/${networkConfig.burntPixArchivesAddress}/${archive.id}`}
-                  isExternal={true}
-                  color={"black"}
-                  fontWeight={"500"}
-                >
-                  #{index + startIndex + 1}
-                </Link>
-                <Spacer />
-                <Link
-                  isExternal={true}
-                  href={`${networkConfig.profileWebBaseUrl}/${archive.ownerAddress}`}
-                >
-                  <Avatar
-                    name={archive.ownerName}
-                    src={archive.ownerAvatar}
-                    height={"24px"}
-                    width={"24px"}
-                  />
-                </Link>
-                {archive.isMinted && (
-                  <Icon ml={1} as={FaCheckCircle} boxSize={"24px"} />
-                )}
-              </Flex>
-            </VStack>
-          ))}
+          {archives
+            .slice(startIndex, startIndex + slideAmount)
+            .map((archive, index) => (
+              <VStack
+                alignItems={"left"}
+                key={index}
+                width={slideAmount === 1 ? "100%" : "20%"}
+              >
+                <div
+                  style={{
+                    height: slideAmount === 1 ? "200px" : "100px",
+                    width: slideAmount === 1 ? "200px" : "100px",
+                  }}
+                  dangerouslySetInnerHTML={{ __html: archive.image }}
+                />
+                <Flex width={slideAmount === 1 ? "200px" : "100px"}>
+                  <Link
+                    href={
+                      archive.id
+                        ? `${networkConfig.artWebBaseUrl}/${networkConfig.burntPixArchivesAddress}/${archive.id}`
+                        : undefined
+                    }
+                    isExternal={true}
+                    color={"black"}
+                    fontWeight={"500"}
+                  >
+                    #{index + startIndex + 1}
+                  </Link>
+                  <Spacer />
+                  <Link
+                    isExternal={true}
+                    href={
+                      archive.ownerAddress
+                        ? `${networkConfig.profileWebBaseUrl}/${archive.ownerAddress}`
+                        : undefined
+                    }
+                  >
+                    <Avatar
+                      name={archive.ownerName}
+                      src={archive.ownerAvatar}
+                      height={"24px"}
+                      width={"24px"}
+                    />
+                  </Link>
+                  {archive.isMinted && (
+                    <Icon ml={1} as={FaCheckCircle} boxSize={"24px"} />
+                  )}
+                </Flex>
+              </VStack>
+            ))}
         </Flex>
         <IconButton
           onClick={nextSlide}
