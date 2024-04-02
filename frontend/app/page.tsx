@@ -22,6 +22,7 @@ import RefineButton from "@/components/RefineButton";
 import Leaderboard from "@/components/leaderBoard";
 import EditorsNote from "@/components/EditorsNote";
 import { FaExternalLinkAlt } from "react-icons/fa";
+import { inter } from "@/app/fonts";
 
 const newRockerFont = New_Rocker({
   weight: ["400"],
@@ -86,7 +87,15 @@ export default function Home() {
   });
 
   const yourArchivesTitle = (
-    <Text>
+    <Box
+      color="#FE005B"
+      fontWeight={900}
+      fontSize="md"
+      lineHeight="17px"
+      letterSpacing={1.5}
+      fontFamily={inter.style.fontFamily}
+    >
+      {" "}
       YOUR ARCHIVES
       <Link isExternal={true} href={"/"}>
         <IconButton
@@ -97,11 +106,18 @@ export default function Home() {
           variant="ghost"
         />
       </Link>
-    </Text>
+    </Box>
   );
 
   const archivesTitle = (
-    <Text>
+    <Box
+      color="#FE005B"
+      fontWeight={900}
+      fontSize="md"
+      lineHeight="17px"
+      letterSpacing={1.5}
+      fontFamily={inter.style.fontFamily}
+    >
       ARCHIVES
       <Link isExternal={true} href={"/"}>
         <IconButton
@@ -112,7 +128,7 @@ export default function Home() {
           variant="ghost"
         />
       </Link>
-    </Text>
+    </Box>
   );
 
   const mainStats =
@@ -189,7 +205,7 @@ export default function Home() {
           <Box width="100%">
             <Divider mb={2} borderColor={"#00000"} />
             <Flex justifyContent="center" alignItems="center" w="100%">
-              <Box flex="1" textAlign="left" pl={10}>
+              <Box flex="1" textAlign="left" pl={"20px"}>
                 <Text color="#000000" fontWeight="400">
                   All the Pixels, That Are Fit To Burn
                 </Text>
@@ -197,7 +213,7 @@ export default function Home() {
               <Box flex="0" minWidth="max-content" px={5}>
                 <Text as="b">{formattedDate}</Text>
               </Box>
-              <Box flex="1" textAlign="right" pr={10}>
+              <Box flex="1" textAlign="right" pr={"20px"}>
                 <Text color="#000000" fontWeight="400">
                   To Unlock Original Contribute: XX,XX,XXX Iterations
                 </Text>
@@ -209,8 +225,6 @@ export default function Home() {
             templateColumns={{ base: "1fr", md: "2fr 1fr" }}
             gap={2}
             mt="20px"
-            ml="20px"
-            mr="20px"
           >
             <GridItem
               borderRight={{ base: "none", md: "1px solid #000000" }}
@@ -247,7 +261,7 @@ export default function Home() {
                 flexDir="column"
                 borderRight={{ base: "none", md: "1px solid #000000" }}
               >
-                <Box w="100%" ml="20px">
+                <Box w="100%">
                   <Article title={archivesTitle}>
                     <Archives
                       images={[
@@ -265,11 +279,9 @@ export default function Home() {
                   </Article>
                 </Box>
                 <Divider borderColor={"#00000"} size={"md"} />
-                <Box ml="20px">
-                  <Article title="LEADER BOARD">
-                    <Leaderboard items={leaderboardFakeStats} />
-                  </Article>
-                </Box>
+                <Article title="LEADER BOARD">
+                  <Leaderboard items={leaderboardFakeStats} />
+                </Article>
               </Flex>
             </GridItem>
             <GridItem w="1/3">

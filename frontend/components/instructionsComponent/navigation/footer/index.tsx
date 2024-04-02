@@ -12,7 +12,7 @@ const Footer: React.FC = () => {
         alignItems="center"
         justifyContent="space-between"
         p={8}
-        m={"0 20px"}
+        m={"0"}
         borderTop="1px"
         borderColor="#000000"
       >

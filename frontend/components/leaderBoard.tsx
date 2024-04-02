@@ -1,5 +1,12 @@
 import React from "react";
-import { Box, Avatar, Flex, Text, Grid } from "@chakra-ui/react";
+import {
+  Box,
+  Avatar,
+  Flex,
+  Text,
+  Grid,
+  useBreakpointValue,
+} from "@chakra-ui/react";
 import { inter } from "@/app/fonts"; // Make sure this import path is correct
 
 interface LeaderboardItemProps {
@@ -13,6 +20,8 @@ interface LeaderboardProps {
 }
 
 const Leaderboard: React.FC<LeaderboardProps> = ({ items }) => {
+  const margin = useBreakpointValue({ base: "0", md: "20px" });
+
   const truncateName = (name: string) => {
     if (name.length > 10) {
       return name.substring(0, 10) + "...";
@@ -72,7 +81,7 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ items }) => {
   const gridTemplateColumns = { base: "repeat(1, 1fr)", md: "repeat(2, 1fr)" };
 
   return (
-    <Box p="20px" w="100%">
+    <Box ml={margin} mr={margin} mt="20px" mb="20px" w="100%">
       <Grid templateColumns={gridTemplateColumns}>
         <Box mr="20px">{columnOneItems.map(renderItem)}</Box>
         <Box mr="20px">
