@@ -1,5 +1,4 @@
-const { ethers } = require("hardhat");
-import * as dotenv from 'dotenv';
+import hre, { ethers } from 'hardhat';
 import BurntPixArchives from "../artifacts/contracts/BurntPixArchives.sol/BurntPixArchives.json";
 import config from '../hardhat.config';
 import { getNetworkAccountsConfig } from '../constants/network';
@@ -10,21 +9,20 @@ import UniversalProfileArtifact from '@lukso/lsp-smart-contracts/artifacts/Unive
 import { INTERFACE_IDS } from '@lukso/lsp-smart-contracts';
 
 // load env vars
-dotenv.config();
-const { NETWORK } = process.env;
-console.log('NETWORK: ', NETWORK);
-const { EOA_PRIVATE_KEY, UP_ADDR_CONTROLLED_BY_EOA, CODEHUB, REGISTRY, ARCHIVE_HELPERS } = getNetworkAccountsConfig(NETWORK as string);
+const network = hre.network.name;
+console.log('network: ', network);
+const { EOA_PRIVATE_KEY, UP_ADDR_CONTROLLED_BY_EOA, CODEHUB, ARCHIVE_HELPERS } = getNetworkAccountsConfig(network as string);
 
 async function main() {
   // network setup
-  const provider = new ethers.JsonRpcProvider(config.networks[NETWORK].url);
+  const provider = new ethers.JsonRpcProvider(config.networks[network].url);
   const signer = new ethers.Wallet(EOA_PRIVATE_KEY as string, provider);
   // deployment config
   const contractOwner = UP_ADDR_CONTROLLED_BY_EOA;
   const burntpicId = "0x000000000000000000000000245f9a8bea516165b45142f8b79ea204f97f8867";
   const maxSupply = 10000;
   const winnerGoal = 69_000;
-  const constructorArguments = [CODEHUB, REGISTRY, ARCHIVE_HELPERS, contractOwner, burntpicId, maxSupply, winnerGoal];
+  const constructorArguments = [CODEHUB, ARCHIVE_HELPERS, contractOwner, burntpicId, maxSupply, winnerGoal];
   const BurntPixArchivesFactory = new ethers.ContractFactory(
     BurntPixArchives.abi,
     BurntPixArchives.bytecode,
@@ -37,10 +35,15 @@ async function main() {
   await onchainArchives.waitForDeployment();
 
   // Verify the contract after deployment
+  let stringArgs = "";
+  for (let i = 0; i < constructorArguments.length; i++) {
+      stringArgs += constructorArguments[i] + " ";
+  }
+  console.log(`to manually verify run: npx hardhat verify --network ${network} ${onchainArchives.target} ${stringArgs}`);
   try {
     await hre.run("verify:verify", {
       address: onchainArchives.target,
-      network: NETWORK,
+      network: network,
       constructorArguments: [
         ...constructorArguments,
       ],
@@ -60,7 +63,7 @@ async function main() {
   const erc725 = new ERC725(
     LSP12Schema,
     contractOwner,
-    config.networks[NETWORK].url,
+    config.networks[network].url,
   );
   const allAssetAddresses = issuedAssets.map((asset) => asset.address);
   const issuedAssetsMap = issuedAssets.map((asset, index) => {

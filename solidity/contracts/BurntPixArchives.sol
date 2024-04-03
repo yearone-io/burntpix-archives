@@ -19,6 +19,7 @@ interface IRegistry {
 }
 
 interface IFractal {
+    function registry() external view returns (address);
     function refine(uint256 iters) external;
     function getData(bytes32 dataKey) external view returns (bytes memory);
     function iterations() external view returns (uint256);
@@ -48,7 +49,6 @@ struct Contribution {
 
 // Registry implements the NFT existence and ownership tracking.
 contract BurntPixArchives is LSP8CappedSupply {
-    address public immutable registry;
     address public immutable fractalClone;
     address public immutable archiveHelpers;
     bytes32 public immutable burntPicId;
@@ -61,7 +61,6 @@ contract BurntPixArchives is LSP8CappedSupply {
 
     constructor(
         address _codehub,
-        address _registry,
         address _archiveHelpers,
         address _creator,
         bytes32 _burntPicId,
@@ -76,11 +75,12 @@ contract BurntPixArchives is LSP8CappedSupply {
             _LSP4_TOKEN_TYPE_COLLECTION,
             _LSP8_TOKENID_FORMAT_NUMBER
         ) {
+            address fractal = address(uint160(uint256(_burntPicId)));
+            address registry = IFractal(fractal).registry();
             archiveHelpers = _archiveHelpers;
             burntPicId = _burntPicId;
-            registry = _registry;
             winnerIters = _winnerIters;
-            fractalClone = IArchiveHelpers(_archiveHelpers).createFractalClone(address(this), _codehub, uint256(IRegistry(registry).seeds(address(uint160(uint256(_burntPicId))))));
+            fractalClone = IArchiveHelpers(_archiveHelpers).createFractalClone(address(this), _codehub, uint256(IRegistry(registry).seeds(fractal)));
             _setData(_LSP4_CREATORS_ARRAY_KEY, hex"00000000000000000000000000000001");
             _setData(0x114bd03b3a46d48759680d81ebb2b41400000000000000000000000000000000, abi.encodePacked(_creator));
             _setData(bytes32(abi.encodePacked(_LSP4_CREATORS_MAP_KEY_PREFIX, hex"0000", _creator)) , hex"24871b3d00000000000000000000000000000000");
@@ -94,33 +94,39 @@ contract BurntPixArchives is LSP8CappedSupply {
     }
 
     function refineToArchive(uint256 iters) public {
+        return refineToArchive(iters, msg.sender);
+    }
+
+    function refineToArchive(uint256 iters, address contributor) public {
         require(iters > 0);
-        if (contributions[msg.sender].iterations == 0) {
-            contributors.push(msg.sender);
-        }
-        contributions[msg.sender].iterations += iters;
-        // Balance iterations
+        // BALANCE FRACTAL ITERATIONS
+        address registry = IFractal(address(uint160(uint256(burntPicId)))).registry();
         uint256 diff = IFractal(address(uint160(uint256(burntPicId)))).iterations() - IFractal(fractalClone).iterations();
+        // no matter whether original & clone are in sync we refine the clone
         IFractal(fractalClone).refine(iters);
-        if (diff == 0) {
-            IRegistry(registry).refine(burntPicId, iters);
-        } else if (iters > diff) {
+        // original and clone get synced if no difference or original needs to catch up to current clone iters
+        if (diff == 0 || iters > diff) {
             IRegistry(registry).refine(burntPicId, iters - diff);
         }
-        // Transfer original when winner first encountered
-        if (contributions[msg.sender].iterations >= winnerIters && isOriginalLocked()) {
-            IRegistry(registry).transfer(address(this), msg.sender, burntPicId, true, "");
+        // UPDATE CONTRIBUTIONS
+        if (contributions[contributor].iterations == 0) {
+            contributors.push(contributor);
         }
-        // Store archive
-        if (contributions[msg.sender].iterations >= IArchiveHelpers(archiveHelpers).fibonacciIterations(contributions[msg.sender].archiveIds.length + 1)) {
+        contributions[contributor].iterations += iters;
+        // TRANSFER ORIGINAL IF WINNER DETECTED
+        if (contributions[contributor].iterations >= winnerIters && isOriginalUnclaimed()) {
+            IRegistry(registry).transfer(address(this), contributor, burntPicId, true, "");
+        }
+        // STORE ARCHIVE IF UNLOCKED
+        if (contributions[contributor].iterations >= IArchiveHelpers(archiveHelpers).fibonacciIterations(contributions[contributor].archiveIds.length + 1)) {
             bytes32 archiveId = bytes32(++archiveCount);
-            contributions[msg.sender].archiveIds.push(archiveId);
+            contributions[contributor].archiveIds.push(archiveId);
             Archive memory archive = Archive({
                 image: IFractal(fractalClone).getData(keccak256("image")),
                 iterations: IFractal(fractalClone).iterations(),
-                level: contributions[msg.sender].archiveIds.length,
+                level: contributions[contributor].archiveIds.length,
                 blockNumber: block.number,
-                creator: msg.sender
+                creator: contributor
             });
             if (archive.level > currentHighestLevel) {
                 currentHighestLevel = archive.level;
@@ -139,6 +145,10 @@ contract BurntPixArchives is LSP8CappedSupply {
         return contributions[contributor].archiveIds;
     }
 
+    function getContributors() public view returns (address[] memory) {
+        return contributors;
+    }
+
     function getContributions(address[] memory targetContributors) public view returns (uint256[] memory) {
         uint256[] memory values = new uint256[](targetContributors.length);
         for (uint256 i = 0; i < targetContributors.length; i++) {
@@ -151,8 +161,9 @@ contract BurntPixArchives is LSP8CappedSupply {
         return contributors.length;
     }
 
-    function isOriginalLocked() public view returns (bool) {
-        return IRegistry(registry).getOperatorsOf(burntPicId).length == 0 && IRegistry(registry).tokenOwnerOf(burntPicId) == address(this) && owner() == address(0);
+    function isOriginalUnclaimed() public view returns (bool) {
+        address registry = IFractal(address(uint160(uint256(burntPicId)))).registry();
+        return IRegistry(registry).getOperatorsOf(burntPicId).length == 0 && IRegistry(registry).tokenOwnerOf(burntPicId) == address(this);
     }
 
     function _getData(bytes32 key) internal view override returns (bytes memory) {
