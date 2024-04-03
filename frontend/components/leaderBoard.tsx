@@ -6,6 +6,7 @@ import {
   Text,
   Grid,
   useBreakpointValue,
+  Skeleton,
 } from "@chakra-ui/react";
 import { inter } from "@/app/fonts"; // Make sure this import path is correct
 import { BurntPixArchives__factory } from "@/contracts";
@@ -34,7 +35,10 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ items }) => {
   const margin = useBreakpointValue({ base: "0", md: "20px" });
   const walletContext = useContext(WalletContext);
   const { networkConfig, provider } = walletContext;
-  const [sortedContributions, setSortedContributions] = useState<Contribution[]>([]);
+  const [sortedContributions, setSortedContributions] = useState<
+    Contribution[]
+  >([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const truncateName = (name: string) => {
     if (name.length > 10) {
@@ -53,25 +57,32 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ items }) => {
       try {
         const contributors = await burntPixArchives.getContributors();
         const rpcUrl = networkConfig.rpcUrl;
-        const contributionsPromises = contributors.map(contributor =>
-          fetchContributionAndProfile(contributor, rpcUrl)
+        const contributionsPromises = contributors.map((contributor) =>
+          fetchContributionAndProfile(contributor, rpcUrl),
         );
 
         const allContributions = await Promise.all(contributionsPromises);
-        const validContributions = allContributions.filter((contribution): contribution is Contribution => contribution !== null);
+        const validContributions = allContributions.filter(
+          (contribution): contribution is Contribution => contribution !== null,
+        );
         validContributions.sort((a, b) => b.contribution - a.contribution);
         setSortedContributions(validContributions);
       } catch (error) {
         console.error("Error getting contributors", error);
+        setIsLoading(false);
       }
     };
 
-    fetchAllContributions();
+    fetchAllContributions().finally(() => setIsLoading(false));
   }, []);
 
-  const fetchContributionAndProfile = async (contributor: string, rpcUrl: string): Promise<Contribution | null> => {
+  const fetchContributionAndProfile = async (
+    contributor: string,
+    rpcUrl: string,
+  ): Promise<Contribution | null> => {
     try {
-      const contributionBigInt = await burntPixArchives.contributions(contributor);
+      const contributionBigInt =
+        await burntPixArchives.contributions(contributor);
       const contribution = Number(contributionBigInt.toString());
       const profileData = await getProfileData(contributor, rpcUrl);
 
@@ -91,7 +102,6 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ items }) => {
       return null;
     }
   };
-
 
   const renderItem = (item: LeaderboardItemProps, index: number) => (
     <Flex
@@ -144,14 +154,33 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ items }) => {
 
   const gridTemplateColumns = { base: "repeat(1, 1fr)", md: "repeat(2, 1fr)" };
 
+  const loadingSkeleton = (
+    <Grid templateColumns={gridTemplateColumns} gap="2" mr="20px">
+      <Skeleton height="30px" width="100%" />
+      <Skeleton height="30px" width="100%" />
+      <Skeleton height="30px" width="100%" />
+      <Skeleton height="30px" width="100%" />
+      <Skeleton height="30px" width="100%" />
+      <Skeleton height="30px" width="100%" />
+      <Skeleton height="30px" width="100%" />
+      <Skeleton height="30px" width="100%" />
+      <Skeleton height="30px" width="100%" />
+      <Skeleton height="30px" width="100%" />
+    </Grid>
+  );
+
+  const gridItems = (
+    <Grid templateColumns={gridTemplateColumns}>
+      <Box mr="20px">{columnOneItems.map(renderItem)}</Box>
+      <Box mr="20px">
+        {columnTwoItems.map((item, index) => renderItem(item, index + 5))}
+      </Box>
+    </Grid>
+  );
+
   return (
     <Box ml={margin} mr={margin} mt="20px" mb="20px" w="100%">
-      <Grid templateColumns={gridTemplateColumns}>
-        <Box mr="20px">{columnOneItems.map(renderItem)}</Box>
-        <Box mr="20px">
-          {columnTwoItems.map((item, index) => renderItem(item, index + 5))}
-        </Box>
-      </Grid>
+      {isLoading ? loadingSkeleton : gridItems}
     </Box>
   );
 };
