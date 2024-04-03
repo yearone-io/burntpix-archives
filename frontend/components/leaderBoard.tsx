@@ -10,6 +10,8 @@ import {
 import { inter } from "@/app/fonts"; // Make sure this import path is correct
 import { BurntPixArchives__factory } from "@/contracts";
 import { WalletContext } from "./wallet/WalletContext";
+import { getProfileData } from "@/utils/universalProfile";
+import { constants } from "@/constants/constants";
 
 interface LeaderboardItemProps {
   name: string;
@@ -24,6 +26,8 @@ interface LeaderboardProps {
 interface Contribution {
   contributor: string;
   contribution: number;
+  name: string;
+  avatar: string;
 }
 
 const Leaderboard: React.FC<LeaderboardProps> = ({ items }) => {
@@ -45,28 +49,48 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ items }) => {
   );
 
   useEffect(() => {
-    burntPixArchives.getContributors()
-      .then(async (contributors: string[]) => {
-        const contributionsPromises: Promise<Contribution | null>[] = contributors.map(contributor => 
-          burntPixArchives.contributions(contributor)
-            .then(contribution => ({ contributor, contribution } as Contribution))
-            .catch(error => {
-              console.error("Error getting score for contributor", contributor, error);
-              return null;
-            })
+    const fetchAllContributions = async () => {
+      try {
+        const contributors = await burntPixArchives.getContributors();
+        const rpcUrl = networkConfig.rpcUrl;
+        const contributionsPromises = contributors.map(contributor =>
+          fetchContributionAndProfile(contributor, rpcUrl)
         );
 
-        Promise.all(contributionsPromises)
-          .then(allContributions => {
-            const validContributions: Contribution[] = allContributions.filter((contribution): contribution is Contribution => contribution !== null);
-            const formattedContributions = validContributions.sort((a, b) => b.contribution - a.contribution);
-            setSortedContributions(formattedContributions);
-          });
-      })
-      .catch((error: any) => {
+        const allContributions = await Promise.all(contributionsPromises);
+        const validContributions = allContributions.filter((contribution): contribution is Contribution => contribution !== null);
+        validContributions.sort((a, b) => b.contribution - a.contribution);
+        setSortedContributions(validContributions);
+      } catch (error) {
         console.error("Error getting contributors", error);
-      });
+      }
+    };
+
+    fetchAllContributions();
   }, []);
+
+  const fetchContributionAndProfile = async (contributor: string, rpcUrl: string): Promise<Contribution | null> => {
+    try {
+      const contributionBigInt = await burntPixArchives.contributions(contributor);
+      const contribution = Number(contributionBigInt.toString());
+      const profileData = await getProfileData(contributor, rpcUrl);
+
+      let avatar = "";
+      if (profileData.profileImage && profileData.profileImage.length > 0) {
+        avatar = `${constants.IPFS_GATEWAY}/${profileData.profileImage[0].url.replace("ipfs://", "")}`;
+      }
+
+      return {
+        contributor,
+        contribution,
+        name: profileData.name,
+        avatar,
+      };
+    } catch (error) {
+      console.error("Error fetching data for contributor", contributor, error);
+      return null;
+    }
+  };
 
 
   const renderItem = (item: LeaderboardItemProps, index: number) => (
