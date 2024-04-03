@@ -34,24 +34,6 @@ async function main() {
   );
   await onchainArchives.waitForDeployment();
 
-  // Verify the contract after deployment
-  let stringArgs = "";
-  for (let i = 0; i < constructorArguments.length; i++) {
-      stringArgs += constructorArguments[i] + " ";
-  }
-  console.log(`to manually verify run: npx hardhat verify --network ${network} ${onchainArchives.target} ${stringArgs}`);
-  try {
-    await hre.run("verify:verify", {
-      address: onchainArchives.target,
-      network: network,
-      constructorArguments: [
-        ...constructorArguments,
-      ],
-    });
-    console.log("Contract verified");
-  } catch (error) {
-    console.error("Contract verification failed:", error);
-  }
   console.log('✅ Burnt Pix Archives deployed. Address:', onchainArchives.target);
   // registering issued asset
   const issuedAssets = [
@@ -91,6 +73,24 @@ async function main() {
   } catch (error) {
     console.error("Failled to add issued asset:", error);
   }
+   // Verify the contract after deployment
+   let stringArgs = "";
+   for (let i = 0; i < constructorArguments.length; i++) {
+       stringArgs += constructorArguments[i] + " ";
+   }
+   console.log(`to manually verify run: npx hardhat verify --network ${network} ${onchainArchives.target} ${stringArgs}`);
+   try {
+     await hre.run("verify:verify", {
+       address: onchainArchives.target,
+       network: network,
+       constructorArguments: [
+         ...constructorArguments,
+       ],
+     });
+     console.log("Contract verified");
+   } catch (error) {
+     console.error("Contract verification failed:", error);
+   }
 }
 
 main()
