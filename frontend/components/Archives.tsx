@@ -29,7 +29,7 @@ interface IArchive {
   isMinted: boolean;
 }
 
-const Archives = ({ images }: { images: string[] }) => {
+const Archives = () => {
   const walletContext = useContext(WalletContext);
   const { networkConfig, provider } = walletContext;
   const [archives, setArchives] = useState<IArchive[] | undefined>();
@@ -39,9 +39,9 @@ const Archives = ({ images }: { images: string[] }) => {
   const slideAmount = useBreakpointValue({ base: 1, md: 5 }) || 5; // 1 image for base (mobile), 5 for md (tablet) and up
 
   const nextSlide = () => {
-    setStartIndex((prevIndex) =>
-      Math.min(prevIndex + slideAmount, images.length - 1),
-    );
+    setStartIndex((prevIndex) => {
+      return Math.min(prevIndex + slideAmount, archives!.length - 1);
+    });
   };
 
   const prevSlide = () => {
@@ -56,36 +56,37 @@ const Archives = ({ images }: { images: string[] }) => {
   useEffect(() => {
     burntPixArchives
       .archiveCount()
-      .then((archiveCount) => {
+      .then(async (archiveCount) => {
         const fetchedArchives: IArchive[] = [];
-        return Promise.all(
+        await Promise.all(
           Array.from({ length: Number(archiveCount) }, async (_, i) => {
             const id = numberToBytes32(i + 1);
             const archive = await burntPixArchives.burntArchives(id);
             let isMinted = false;
-            let ownerName = undefined;
-            let ownerAddress = undefined;
+            let ownerAddress = archive.creator;
+            try {
+              ownerAddress = await burntPixArchives.tokenOwnerOf(id);
+              isMinted = true;
+            } catch (reason: any) {
+              if (reason.message.includes("LSP8NonExistentTokenId")) {
+                console.log(`token ${id} not minted yet`);
+              } else {
+                console.error("Error fetching owner", reason);
+                throw reason;
+              }
+            }
+
+            const ownerProfile = await getProfileData(
+              ownerAddress,
+              networkConfig.rpcUrl,
+            );
+
+            const ownerName = ownerProfile.name;
             let ownerAvatar = undefined;
-            await burntPixArchives
-              .tokenOwnerOf(id)
-              .then(async (ownerAddress) => {
-                isMinted = true;
-                return await getProfileData(ownerAddress, networkConfig.rpcUrl);
-              })
-              .then((ownerProfile) => {
-                if (ownerProfile.profileImage) {
-                  ownerAvatar = `${constants.IPFS_GATEWAY}/${ownerProfile.profileImage[0].url.replace("ipfs://", "")}`;
-                }
-                ownerName = ownerProfile.name;
-              })
-              .catch((reason) => {
-                if (reason.message.includes("LSP8NonExistentTokenId")) {
-                  console.log(`token ${id} not minted yet`);
-                } else {
-                  console.error("Error fetching owner", reason);
-                  throw reason;
-                }
-              });
+
+            if (ownerProfile.profileImage && ownerProfile.profileImage.length) {
+              ownerAvatar = `${constants.IPFS_GATEWAY}/${ownerProfile.profileImage[0].url.replace("ipfs://", "")}`;
+            }
 
             fetchedArchives.push({
               id: id,
@@ -95,11 +96,9 @@ const Archives = ({ images }: { images: string[] }) => {
               ownerAvatar: ownerAvatar,
               isMinted: isMinted,
             });
-            return archive;
           }),
-        ).then((value) => {
-          setArchives(fetchedArchives);
-        });
+        );
+        setArchives(fetchedArchives.sort((a, b) => a.id.localeCompare(b.id)));
       })
       .catch((reason) => {
         console.error("Error fetching archives", reason);
@@ -123,6 +122,7 @@ const Archives = ({ images }: { images: string[] }) => {
           icon={<FaArrowCircleLeft />}
           onClick={prevSlide}
           aria-label={"Previous"}
+          isDisabled={startIndex <= 0}
         ></IconButton>
         <Flex w={slideAmount === 1 ? "200px" : "100%"}>
           {archives
@@ -137,6 +137,7 @@ const Archives = ({ images }: { images: string[] }) => {
                   style={{
                     height: slideAmount === 1 ? "200px" : "100px",
                     width: slideAmount === 1 ? "200px" : "100px",
+                    filter: archive.isMinted ? "none" : "invert(100%)",
                   }}
                   dangerouslySetInnerHTML={{ __html: archive.image }}
                 />
@@ -180,6 +181,7 @@ const Archives = ({ images }: { images: string[] }) => {
           onClick={nextSlide}
           icon={<FaArrowCircleRight />}
           aria-label={"Next"}
+          isDisabled={startIndex + slideAmount >= archives!.length}
         />
       </HStack>
     </VStack>

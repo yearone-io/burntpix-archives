@@ -1,18 +1,17 @@
-const { ethers } = require("hardhat");
+import hre, { ethers } from 'hardhat';
 import * as dotenv from 'dotenv';
 import ArchiveHelpers from "../artifacts/contracts/ArchiveHelpers.sol/ArchiveHelpers.json";
 import config from '../hardhat.config';
 import { getNetworkAccountsConfig } from '../constants/network';
 
 // load env vars
-dotenv.config();
-const { NETWORK } = process.env;
-console.log('NETWORK: ', NETWORK);
-const { EOA_PRIVATE_KEY } = getNetworkAccountsConfig(NETWORK as string);
+const network = hre.network.name;
+console.log('NETWORK: ', network);
+const { EOA_PRIVATE_KEY } = getNetworkAccountsConfig(network as string);
 
 async function main() {
   // network setup
-  const provider = new ethers.JsonRpcProvider(config.networks[NETWORK].url);
+  const provider = new ethers.JsonRpcProvider(config.networks[network].url);
   const signer = new ethers.Wallet(EOA_PRIVATE_KEY as string, provider);
   // deployment config
   const ArchiveHelpersFactory = new ethers.ContractFactory(
@@ -21,16 +20,16 @@ async function main() {
   );
   const onchainArchives = await ArchiveHelpersFactory.connect(signer).deploy(
     {
-      gasLimit: 41_000_000n,
+      gasLimit: 41_000_000n
     }
   );
   await onchainArchives.waitForDeployment();
 
-  // Verify the contract after deployment
+  console.log(`to manually verify run: npx hardhat verify --network ${network} ${onchainArchives.target}`);
   try {
     await hre.run("verify:verify", {
       address: onchainArchives.target,
-      network: NETWORK
+      network
     });
     console.log("Contract verified");
   } catch (error) {
