@@ -86,9 +86,10 @@ contract BurntPixArchives is LSP8CappedSupply {
             _setData(bytes32(abi.encodePacked(_LSP4_CREATORS_MAP_KEY_PREFIX, hex"0000", _creator)) , hex"24871b3d00000000000000000000000000000000");
             // royalties
             _setData(0xc0569ca6c9180acc2c3590f36330a36ae19015a19f4e85c28a7631e3317e6b9d, abi.encodePacked(
+                hex"001c", // length of data
                 _INTERFACEID_LSP0,
                 _creator,
-                uint256(5_000)
+                uint32(5_000)
             ));
             _setData(0x580d62ad353782eca17b89e5900e7df3b13b6f4ca9bbc2f8af8bceb0c3d1ecc6, hex"01");
     }
