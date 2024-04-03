@@ -268,7 +268,7 @@ export default function Home() {
                 </Box>
                 <Divider borderColor={"#00000"} size={"md"} />
                 <Article title="LEADER BOARD">
-                  <Leaderboard items={leaderboardFakeStats} />
+                  <Leaderboard />
                 </Article>
               </Flex>
             </GridItem>
