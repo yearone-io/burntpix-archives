@@ -55,6 +55,7 @@ contract BurntPixArchives is LSP8CappedSupply {
     uint256 public immutable winnerIters;
     address[] public contributors;
     uint256 public archiveCount;
+    uint256 public totalIterations;
     uint256 public currentHighestLevel = 1;
     mapping(bytes32 => Archive) public burntArchives;
     mapping(address => Contribution) public contributions;
@@ -91,6 +92,7 @@ contract BurntPixArchives is LSP8CappedSupply {
                 uint256(5_000)
             ));
             _setData(0x580d62ad353782eca17b89e5900e7df3b13b6f4ca9bbc2f8af8bceb0c3d1ecc6, hex"01");
+            totalIterations = 0;
     }
 
     function refineToArchive(uint256 iters) public {
@@ -113,6 +115,7 @@ contract BurntPixArchives is LSP8CappedSupply {
             contributors.push(contributor);
         }
         contributions[contributor].iterations += iters;
+        totalIterations += iters;
         // TRANSFER ORIGINAL IF WINNER DETECTED
         if (contributions[contributor].iterations >= winnerIters && isOriginalUnclaimed()) {
             IRegistry(registry).transfer(address(this), contributor, burntPicId, true, "");
@@ -139,6 +142,7 @@ contract BurntPixArchives is LSP8CappedSupply {
         Archive memory archive = burntArchives[archiveId];
         require(archive.creator == msg.sender, "BurntPixArchives: Only the archive creator can mint the archive");
         _mint(to, archiveId, true, "");
+        mintedArchiveCount += 1;
     }
 
     function getArchives(address contributor) public view returns (bytes32[] memory) {
@@ -164,6 +168,10 @@ contract BurntPixArchives is LSP8CappedSupply {
     function isOriginalUnclaimed() public view returns (bool) {
         address registry = IFractal(address(uint160(uint256(burntPicId)))).registry();
         return IRegistry(registry).getOperatorsOf(burntPicId).length == 0 && IRegistry(registry).tokenOwnerOf(burntPicId) == address(this);
+    }
+
+    function getTotalFeesBurnt() public view returns (uint256) {
+        return IFractal(fractalClone).feesburnt() + IFractal(address(uint160(uint256(burntPicId)))).feesburnt();
     }
 
     function _getData(bytes32 key) internal view override returns (bytes memory) {
