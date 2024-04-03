@@ -46,6 +46,7 @@ export interface BurntPixArchivesInterface extends Interface {
       | "getDataForTokenId"
       | "getOperatorsOf"
       | "getTotalContributors"
+      | "getTotalFeesBurnt"
       | "isOperatorFor"
       | "isOriginalUnclaimed"
       | "mintArchive"
@@ -62,6 +63,7 @@ export interface BurntPixArchivesInterface extends Interface {
       | "tokenIdsOf"
       | "tokenOwnerOf"
       | "tokenSupplyCap"
+      | "totalIterations"
       | "totalSupply"
       | "transfer"
       | "transferBatch"
@@ -157,6 +159,10 @@ export interface BurntPixArchivesInterface extends Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "getTotalFeesBurnt",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "isOperatorFor",
     values: [AddressLike, BytesLike]
   ): string;
@@ -215,6 +221,10 @@ export interface BurntPixArchivesInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "tokenSupplyCap",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "totalIterations",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -307,6 +317,10 @@ export interface BurntPixArchivesInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "getTotalFeesBurnt",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "isOperatorFor",
     data: BytesLike
   ): Result;
@@ -359,6 +373,10 @@ export interface BurntPixArchivesInterface extends Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "tokenSupplyCap",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "totalIterations",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -639,6 +657,8 @@ export interface BurntPixArchives extends BaseContract {
 
   getTotalContributors: TypedContractMethod<[], [bigint], "view">;
 
+  getTotalFeesBurnt: TypedContractMethod<[], [bigint], "view">;
+
   isOperatorFor: TypedContractMethod<
     [operator: AddressLike, tokenId: BytesLike],
     [boolean],
@@ -719,6 +739,8 @@ export interface BurntPixArchives extends BaseContract {
   tokenOwnerOf: TypedContractMethod<[tokenId: BytesLike], [string], "view">;
 
   tokenSupplyCap: TypedContractMethod<[], [bigint], "view">;
+
+  totalIterations: TypedContractMethod<[], [bigint], "view">;
 
   totalSupply: TypedContractMethod<[], [bigint], "view">;
 
@@ -851,6 +873,9 @@ export interface BurntPixArchives extends BaseContract {
     nameOrSignature: "getTotalContributors"
   ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
+    nameOrSignature: "getTotalFeesBurnt"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
     nameOrSignature: "isOperatorFor"
   ): TypedContractMethod<
     [operator: AddressLike, tokenId: BytesLike],
@@ -934,6 +959,9 @@ export interface BurntPixArchives extends BaseContract {
   ): TypedContractMethod<[tokenId: BytesLike], [string], "view">;
   getFunction(
     nameOrSignature: "tokenSupplyCap"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "totalIterations"
   ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
     nameOrSignature: "totalSupply"
