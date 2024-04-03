@@ -14,24 +14,15 @@ import { WalletContext } from "./wallet/WalletContext";
 import { getProfileData } from "@/utils/universalProfile";
 import { constants } from "@/constants/constants";
 
-interface LeaderboardItemProps {
-  name: string;
-  avatar: string;
-  score: number;
-}
-
-interface LeaderboardProps {
-  items: LeaderboardItemProps[];
-}
 
 interface Contribution {
   contributor: string;
   contribution: number;
-  name: string;
-  avatar: string;
+  upName: string | null;
+  avatar: string | null;
 }
 
-const Leaderboard: React.FC<LeaderboardProps> = ({ items }) => {
+const Leaderboard: React.FC = () => {
   const margin = useBreakpointValue({ base: "0", md: "20px" });
   const walletContext = useContext(WalletContext);
   const { networkConfig, provider } = walletContext;
@@ -56,6 +47,8 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ items }) => {
     const fetchAllContributions = async () => {
       try {
         const contributors = await burntPixArchives.getContributors();
+        console.log("Contributors", contributors);  
+
         const rpcUrl = networkConfig.rpcUrl;
         const contributionsPromises = contributors.map((contributor) =>
           fetchContributionAndProfile(contributor, rpcUrl),
@@ -67,6 +60,7 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ items }) => {
         );
         validContributions.sort((a, b) => b.contribution - a.contribution);
         setSortedContributions(validContributions);
+        console.log("Contributions", validContributions);
       } catch (error) {
         console.error("Error getting contributors", error);
         setIsLoading(false);
@@ -84,17 +78,22 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ items }) => {
       const contributionBigInt =
         await burntPixArchives.contributions(contributor);
       const contribution = Number(contributionBigInt.toString());
-      const profileData = await getProfileData(contributor, rpcUrl);
 
-      let avatar = "";
-      if (profileData.profileImage && profileData.profileImage.length > 0) {
-        avatar = `${constants.IPFS_GATEWAY}/${profileData.profileImage[0].url.replace("ipfs://", "")}`;
+      let upName = null;
+      let avatar = null;
+      try {
+        const profileData = await getProfileData(contributor, rpcUrl);
+        if (profileData && profileData.profileImage && profileData.profileImage.length > 0) {
+          avatar = `${constants.IPFS_GATEWAY}/${profileData.profileImage[0].url.replace("ipfs://", "")}`;
+          upName = profileData.name;
+        }
+      } catch {
+        // If the profile data is not available, we'll just use the contributor address
       }
-
       return {
         contributor,
         contribution,
-        name: profileData.name,
+        upName,
         avatar,
       };
     } catch (error) {
@@ -103,7 +102,7 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ items }) => {
     }
   };
 
-  const renderItem = (item: LeaderboardItemProps, index: number) => (
+  const renderItem = (item: Contribution, index: number) => (
     <Flex
       key={index}
       alignItems="center"
@@ -120,12 +119,14 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ items }) => {
         >
           {index + 1}.
         </Text>
-        <Avatar
-          name={truncateName(item.name)}
-          src={item.avatar}
-          height="16px"
-          width="16px"
-        />
+        {item.avatar !== null && (
+          <Avatar
+            name={truncateName(item.upName || item.contributor)}
+            src={item.avatar}
+            height="16px"
+            width="16px"
+          />
+        )}
         <Text
           fontSize="md"
           fontWeight="normal"
@@ -135,22 +136,22 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ items }) => {
           fontFamily={inter.style.fontFamily}
           isTruncated // This ensures the name doesn't push the score out of view
         >
-          {truncateName(item.name)}
+          {truncateName(item.upName || item.contributor)}
         </Text>
       </Flex>
       <Box textAlign="left" minW="80px">
         {" "}
         {/* Ensure a minimum width for alignment */}
         <Text fontSize="md" fontWeight="bold">
-          {item.score.toLocaleString()}
+          {item.contribution.toLocaleString()}
         </Text>
       </Box>
     </Flex>
   );
 
   // Split the items into two columns
-  const columnOneItems = items.slice(0, 5);
-  const columnTwoItems = items.slice(5, 10);
+  const columnOneItems = sortedContributions.slice(0, 5);
+  const columnTwoItems = sortedContributions.slice(5, 10);
 
   const gridTemplateColumns = { base: "repeat(1, 1fr)", md: "repeat(2, 1fr)" };
 

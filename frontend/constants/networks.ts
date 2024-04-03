@@ -39,7 +39,7 @@ const NETWORKS = {
     artWebBaseUrl: "https://universalpage.dev/collections",
     profileWebBaseUrl: "https://universalpage.dev/profiles",
     burntPixId: "0x245f9A8Bea516165B45142f8b79eA204f97F8867",
-    burntPixArchivesAddress: "0xd7754a8bE5ee694008f67BA51F26095c5607162D",
+    burntPixArchivesAddress: "0xFf2F3e1cC7b96E7001db7b1792D57d8FeaA8dbA6",
   },
 } as {
   [key: string]: Network;
