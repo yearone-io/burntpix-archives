@@ -14,7 +14,6 @@ import { WalletContext } from "./wallet/WalletContext";
 import { getProfileData } from "@/utils/universalProfile";
 import { constants } from "@/constants/constants";
 
-
 interface Contribution {
   contributor: string;
   contribution: number;
@@ -47,7 +46,7 @@ const Leaderboard: React.FC = () => {
     const fetchAllContributions = async () => {
       try {
         const contributors = await burntPixArchives.getContributors();
-        console.log("Contributors", contributors);  
+        console.log("Contributors", contributors);
 
         const rpcUrl = networkConfig.rpcUrl;
         const contributionsPromises = contributors.map((contributor) =>
@@ -83,8 +82,14 @@ const Leaderboard: React.FC = () => {
       let avatar = null;
       try {
         const profileData = await getProfileData(contributor, rpcUrl);
-        if (profileData && profileData.profileImage && profileData.profileImage.length > 0) {
+        if (
+          profileData &&
+          profileData.profileImage &&
+          profileData.profileImage.length > 0
+        ) {
           avatar = `${constants.IPFS_GATEWAY}/${profileData.profileImage[0].url.replace("ipfs://", "")}`;
+        }
+        if (profileData && profileData.name) {
           upName = profileData.name;
         }
       } catch {
