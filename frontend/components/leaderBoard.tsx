@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Box,
   Avatar,
@@ -9,7 +9,6 @@ import {
 } from "@chakra-ui/react";
 import { inter } from "@/app/fonts"; // Make sure this import path is correct
 import { BurntPixArchives__factory } from "@/contracts";
-import { getNetworkConfig } from "@/constants/networks";
 import { WalletContext } from "./wallet/WalletContext";
 
 interface LeaderboardItemProps {
@@ -22,10 +21,16 @@ interface LeaderboardProps {
   items: LeaderboardItemProps[];
 }
 
+interface Contribution {
+  contributor: string;
+  contribution: number;
+}
+
 const Leaderboard: React.FC<LeaderboardProps> = ({ items }) => {
   const margin = useBreakpointValue({ base: "0", md: "20px" });
   const walletContext = useContext(WalletContext);
   const { networkConfig, provider } = walletContext;
+  const [sortedContributions, setSortedContributions] = useState<Contribution[]>([]);
 
   const truncateName = (name: string) => {
     if (name.length > 10) {
@@ -38,6 +43,31 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ items }) => {
     networkConfig.burntPixArchivesAddress,
     provider,
   );
+
+  useEffect(() => {
+    burntPixArchives.getContributors()
+      .then(async (contributors: string[]) => {
+        const contributionsPromises: Promise<Contribution | null>[] = contributors.map(contributor => 
+          burntPixArchives.contributions(contributor)
+            .then(contribution => ({ contributor, contribution } as Contribution))
+            .catch(error => {
+              console.error("Error getting score for contributor", contributor, error);
+              return null;
+            })
+        );
+
+        Promise.all(contributionsPromises)
+          .then(allContributions => {
+            const validContributions: Contribution[] = allContributions.filter((contribution): contribution is Contribution => contribution !== null);
+            const formattedContributions = validContributions.sort((a, b) => b.contribution - a.contribution);
+            setSortedContributions(formattedContributions);
+          });
+      })
+      .catch((error: any) => {
+        console.error("Error getting contributors", error);
+      });
+  }, []);
+
 
   const renderItem = (item: LeaderboardItemProps, index: number) => (
     <Flex
