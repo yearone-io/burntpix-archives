@@ -107,7 +107,7 @@ const Archives = () => {
 
   if (archives === undefined) {
     return (
-      <Stack>
+      <Stack mr="20px">
         <Skeleton height="30px" />
         <Skeleton height="30px" />
         <Skeleton height="30px" />
