@@ -23,6 +23,9 @@ import Leaderboard from "@/components/leaderBoard";
 import EditorsNote from "@/components/EditorsNote";
 import { FaExternalLinkAlt } from "react-icons/fa";
 import { inter } from "@/app/fonts";
+import { BurntPixArchives__factory } from "@/contracts";
+import { useContext, useEffect, useState } from "react";
+import { WalletContext } from "@/components/wallet/WalletContext";
 
 const newRockerFont = New_Rocker({
   weight: ["400"],
@@ -77,7 +80,35 @@ const leaderboardFakeStats = [
   },
 ];
 
+function divideBigIntTokenBalance(balance: bigint, decimals: number): string {
+  // Convert the number of decimals into a bigint representation of 10^decimals
+  const divisor = BigInt(10) ** BigInt(decimals);
+
+  // Perform the division
+  const quotient = balance / divisor;
+  const remainder = balance % divisor;
+
+  // Convert quotient to string
+  let result = quotient.toString();
+
+  // If there's a remainder, handle it for precision
+  if (remainder > 0) {
+    let remainderStr = remainder.toString();
+    // Pad the remainder with leading zeros if it's shorter than the number of decimals
+    while (remainderStr.length < decimals) {
+      remainderStr = "0" + remainderStr;
+    }
+    // Append the formatted remainder to the result
+    result += "." + remainderStr;
+  }
+
+  return result;
+}
+
 export default function Home() {
+  const walletContext = useContext(WalletContext);
+  const { networkConfig, provider } = walletContext;
+
   const date = new Date();
   const formattedDate = date.toLocaleDateString("en-US", {
     weekday: "long",
@@ -85,6 +116,16 @@ export default function Home() {
     month: "long",
     day: "numeric",
   });
+
+  const burntPixArchives = BurntPixArchives__factory.connect(
+    networkConfig.burntPixArchivesAddress,
+    provider,
+  );
+
+  const [iterations, setIterations] = useState<string>("--");
+  const [contributors, setContributors] = useState<string>("--");
+  const [archiveMints, setArchiveMints] = useState<string>("--");
+  const [lyxBurned, setLyxBurned] = useState<string>("--");
 
   const yourArchivesTitle = (
     <Box
@@ -131,17 +172,12 @@ export default function Home() {
     </Box>
   );
 
-  const mainStats =
-    // TODO Generate function that returns the dynamic stats
-    [
-      { label: "Iterations:", value: "3330".toLocaleString() },
-      { label: "Contributors:", value: "230".toLocaleString() },
-      {
-        label: "Archive Mints:",
-        value: `${"324230".toLocaleString()} / ${"423420".toLocaleString()}`,
-      },
-      { label: "LYX Burned:", value: `${"4232340"} LYX` },
-    ];
+  const mainStats = [
+    { label: "Iterations:", value: iterations },
+    { label: "Contributors:", value: contributors },
+    { label: "Archive Mints::", value: archiveMints },
+    { label: "LYX Burned:", value: lyxBurned },
+  ];
 
   const userStats =
     // TODO Generate function that returns the dynamic stats
@@ -156,6 +192,22 @@ export default function Home() {
     ];
   const gridTemplateColumns = { base: "repeat(1, 2fr)", md: "repeat(2, 1fr)" };
 
+  useEffect(() => {
+    const fetchStats = async () => {
+      const iterations = await burntPixArchives.totalIterations();
+      const contributors = await burntPixArchives.getTotalContributors();
+      const totalSupply = await burntPixArchives.totalSupply();
+      const supplyCap = await burntPixArchives.tokenSupplyCap();
+      const lyxBurned = await burntPixArchives.getTotalFeesBurnt();
+
+      setIterations(iterations.toString());
+      setContributors(contributors.toString());
+      setArchiveMints(`${totalSupply.toString()} / ${supplyCap.toString()}`);
+      setLyxBurned(`${divideBigIntTokenBalance(lyxBurned, 18).toString()} LYX`);
+    };
+
+    fetchStats();
+  }, []);
   return (
     <main className={styles.main}>
       <Flex width="100%" direction={"column"} maxW={"2000px"}>
