@@ -50,7 +50,7 @@ struct Contribution {
 // Registry implements the NFT existence and ownership tracking.
 contract BurntPixArchives is LSP8CappedSupply {
     address public immutable fractalClone;
-    address public immutable archiveHelpers;
+    address public immutable archiveHelpers; //do we need a setter for this in case we want to fix some logic later? but I guess it'd be less trustworthy
     bytes32 public immutable burntPicId;
     uint256 public immutable winnerIters;
     address[] public contributors;
@@ -99,13 +99,19 @@ contract BurntPixArchives is LSP8CappedSupply {
     }
 
     function refineToArchive(uint256 iters, address contributor) public {
-        require(iters > 0);
+        //should we stop refining if the original is claimed?
+        require(iters > 0); //do we want a minimum iteration amount?
         // BALANCE FRACTAL ITERATIONS
         address registry = IFractal(address(uint160(uint256(burntPicId)))).registry();
         uint256 diff = IFractal(address(uint160(uint256(burntPicId)))).iterations() - IFractal(fractalClone).iterations();
         // no matter whether original & clone are in sync we refine the clone
         IFractal(fractalClone).refine(iters);
         // original and clone get synced if no difference or original needs to catch up to current clone iters
+        /*
+            iters 10 diff 0, refines original by whole iters
+            iters 10 diff 5,  refines original by partial iters
+            iters 10 diff 10, does not refine original
+        */
         if (diff == 0 || iters > diff) {
             IRegistry(registry).refine(burntPicId, iters - diff);
         }
@@ -137,6 +143,7 @@ contract BurntPixArchives is LSP8CappedSupply {
     }
 
     function mintArchive(bytes32 archiveId, address to) public {
+        //do we want an overloaded function that does not take a "to" address and just mints to the caller?
         Archive memory archive = burntArchives[archiveId];
         require(archive.creator == msg.sender, "BurntPixArchives: Only the archive creator can mint the archive");
         _mint(to, archiveId, true, "");
