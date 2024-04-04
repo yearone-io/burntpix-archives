@@ -28,6 +28,8 @@ import { BurntPixArchives__factory } from "@/contracts";
 import { useContext, useEffect, useState } from "react";
 import { WalletContext } from "@/components/wallet/WalletContext";
 import { divideBigIntTokenBalance } from "@/utils/numberUtils";
+import { getNextIterationsGoal } from "@/utils/burntPixUtils";
+import { AddressLike } from "ethers";
 
 const newRockerFont = New_Rocker({
   weight: ["400"],
@@ -51,10 +53,20 @@ export default function Home() {
     provider,
   );
 
+  // immutables
+  const [burntPicId, setBurntPicId] = useState<string>("--");
+  const [winnerIterations, setWinnerIterations] = useState<string>("--");
+  const [supplyCap, setSupplyCap] = useState<number>(0);
+
   const [iterations, setIterations] = useState<string>("--");
   const [contributors, setContributors] = useState<string>("--");
   const [archiveMints, setArchiveMints] = useState<string>("--");
   const [lyxBurned, setLyxBurned] = useState<string>("--");
+
+  const [userIterations, setUserIterations] = useState<string>("--");
+  const [userArchives, setUserArchives] = useState<string[]>([]);
+  const [userOwnedArchiveMints, setUserOwnedArchiveMints] = useState<string[]>([]);
+  const [userIterationsGoal, setUserIterationsGoal] = useState<string>("--");
 
   const yourArchivesTitle = (
     <Box
@@ -108,35 +120,65 @@ export default function Home() {
     { label: "LYX Burned:", value: lyxBurned },
   ];
 
-  const userStats =
-    // TODO Generate function that returns the dynamic stats
-    [
-      { label: "Iterations:", value: "0".toLocaleString() },
-      { label: "Archive Unlocks:", value: "0".toLocaleString() },
-      {
-        label: "Archive Mints:",
-        value: "0".toLocaleString(),
-      },
-      { label: "Iters Till Next Archive:", value: "0".toLocaleString() },
-    ];
+  const userStats = [
+    { label: "Iterations:", value: userIterations },
+    { label: "Archive Unlocks:", value: userArchives.length },
+    { label: "Archive Mints:", value: userOwnedArchiveMints.length },
+    { label: "Iters Till Next Archive:", value: userIterationsGoal },
+  ];
+
+  const fetchCollectionCurrentSupply = async (maxSupply: number) => {
+    const totalSupply = await burntPixArchives.totalSupply();
+    setArchiveMints(`${new Intl.NumberFormat('en-US').format(Number(totalSupply))} / ${new Intl.NumberFormat('en-US').format(maxSupply)}`);
+  };
+
+  const fetchCollectionStats = async () => {
+    await fetchCollectionCurrentSupply(supplyCap);
+    const iterations = await burntPixArchives.getTotalIterations();
+    const contributors = await burntPixArchives.getTotalContributors();
+    const lyxBurned = await burntPixArchives.getTotalFeesBurnt();
+
+    setIterations(iterations.toString());
+    setContributors(contributors.toString());
+    setLyxBurned(`${divideBigIntTokenBalance(lyxBurned, 18).toString()} LYX`);
+  };
+
+  const fetchUserStats = async (account: string) => {
+    if (!account) return;
+    const userIterations = await burntPixArchives.getContributions([account as AddressLike]);
+    const userArchives = await burntPixArchives.getArchives(account);
+    const userOwnedArchiveMints = await burntPixArchives.tokenIdsOf(account);
+    const userIterationsGoal = getNextIterationsGoal(userArchives.length + 1, Number(userIterations[0]));
+
+    setUserIterations(new Intl.NumberFormat('en-US').format(Number(userIterations)));
+    setUserArchives(userArchives);
+    setUserOwnedArchiveMints(userOwnedArchiveMints);
+    setUserIterationsGoal(new Intl.NumberFormat('en-US').format(Number(userIterationsGoal)));
+  }
+
   const gridTemplateColumns = { base: "repeat(1, 2fr)", md: "repeat(2, 1fr)" };
 
   useEffect(() => {
-    const fetchStats = async () => {
-      const iterations = await burntPixArchives.getTotalIterations();
-      const contributors = await burntPixArchives.getTotalContributors();
-      const totalSupply = await burntPixArchives.totalSupply();
+    const fetchImmutableStats = async () => {
+      const burntPicId = await burntPixArchives.burntPicId();
+      const winnerIterations = await burntPixArchives.winnerIters();
       const supplyCap = await burntPixArchives.tokenSupplyCap();
-      const lyxBurned = await burntPixArchives.getTotalFeesBurnt();
-
-      setIterations(iterations.toString());
-      setContributors(contributors.toString());
-      setArchiveMints(`${totalSupply.toString()} / ${supplyCap.toString()}`);
-      setLyxBurned(`${divideBigIntTokenBalance(lyxBurned, 18).toString()} LYX`);
+      setBurntPicId(burntPicId);
+      setWinnerIterations(new Intl.NumberFormat('en-US').format(Number(winnerIterations)));
+      setSupplyCap(Number(supplyCap));
     };
 
-    fetchStats();
+    fetchImmutableStats();
   }, []);
+
+  useEffect(() => {
+    fetchCollectionStats();
+  }, [supplyCap]);
+
+  useEffect(() => {
+    fetchUserStats(account as string);
+  }, [account]);
+
   return (
     <main className={styles.main}>
       <Flex width="100%" direction={"column"} maxW={"2000px"}>
@@ -196,7 +238,7 @@ export default function Home() {
               </Box>
               <Box flex="1" textAlign="right" pr={"20px"}>
                 <Text color="#000000" fontWeight="400">
-                  To Unlock Original Contribute: XX,XX,XXX Iterations
+                  {`To Unlock Original Contribute: ${winnerIterations} Iterations`}
                 </Text>
               </Box>
             </Flex>
