@@ -219,7 +219,7 @@ export default function Home() {
                   </Article>
                 </Box>
                 <Divider borderColor={"#00000"} size={"md"} />
-                <Article title="LEADER BOARD">
+                <Article title="LEADERBOARD">
                   <Leaderboard />
                 </Article>
               </Flex>
