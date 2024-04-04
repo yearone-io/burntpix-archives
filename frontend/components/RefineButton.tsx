@@ -99,7 +99,7 @@ const RefineButton: React.FC = () => {
                   <NumberInput
                     mb="4"
                     defaultValue={defaultIterations}
-                    min={0}
+                    min={1}
                     max={maxIterations}
                     maxW="100px"
                     mr="2rem"
@@ -117,7 +117,7 @@ const RefineButton: React.FC = () => {
                   <Slider
                     flex="1"
                     defaultValue={defaultIterations}
-                    min={0}
+                    min={1}
                     max={maxIterations}
                     step={1}
                     focusThumbOnChange={false}
