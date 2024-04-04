@@ -26,9 +26,7 @@ import { inter } from "@/app/fonts";
 import { BurntPixArchives__factory } from "@/contracts";
 import { useContext, useEffect, useState } from "react";
 import { WalletContext } from "@/components/wallet/WalletContext";
-import {
-  divideBigIntTokenBalance,
-} from "@/utils/numberUtils";
+import { divideBigIntTokenBalance } from "@/utils/numberUtils";
 
 const newRockerFont = New_Rocker({
   weight: ["400"],
