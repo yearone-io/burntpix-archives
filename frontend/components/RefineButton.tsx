@@ -14,15 +14,30 @@ const RefineButton: React.FC = () => {
   const buttonBgColor = account ? "#FE005B" : "grey";
   const hoverBgColor = account ? "red.600" : "grey";
   const buttonText = account ? "REFINE" : "CONNECT WALLET";
-
   const toast = useToast();
-
   const burntPixArchives = BurntPixArchives__factory.connect(
     networkConfig.burntPixArchivesAddress,
     provider,
   );
 
-  const refine = async () => {};
+  const selectedIteractions = 1;
+  const refine = async () => {
+    try {
+     await burntPixArchives["refineToArchive(uint256)"](selectedIteractions)
+    } catch (error: any) {
+      toast({
+        title: `Error refining. ${error.message}`,
+        status: "error",
+        position: "bottom-left",
+        duration: 5000,
+        isClosable: true,
+      });
+      return;
+    }
+  };
+
+  const clickOnSettings = () => {
+  }
 
   return (
     <Box>
@@ -55,8 +70,7 @@ const RefineButton: React.FC = () => {
         </Flex>
       ) : (
         <Flex align="center" justify="right">
-
-        <SignInButton />
+         <SignInButton />
         </Flex>
       )}
     </Box>
