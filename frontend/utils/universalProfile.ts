@@ -40,3 +40,9 @@ export const getProfileData = async (
   return (profileData!.value as { LSP3Profile: Record<string, any> })
     .LSP3Profile as LSP3ProfileMetadata;
 };
+
+export const formatAddress = (address: string | null) => {
+  if (!address) return '0x';
+  if (address.length < 10) return address; // '0x' is an address
+  return `${address.slice(0, 5)}...${address.slice(-4)}`;
+};

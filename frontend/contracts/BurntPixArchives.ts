@@ -46,6 +46,8 @@ export interface BurntPixArchivesInterface extends Interface {
       | "getDataForTokenId"
       | "getOperatorsOf"
       | "getTotalContributors"
+      | "getTotalFeesBurnt"
+      | "getTotalIterations"
       | "isOperatorFor"
       | "isOriginalUnclaimed"
       | "mintArchive"
@@ -154,6 +156,14 @@ export interface BurntPixArchivesInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getTotalContributors",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getTotalFeesBurnt",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getTotalIterations",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -304,6 +314,14 @@ export interface BurntPixArchivesInterface extends Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getTotalContributors",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getTotalFeesBurnt",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getTotalIterations",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -639,6 +657,10 @@ export interface BurntPixArchives extends BaseContract {
 
   getTotalContributors: TypedContractMethod<[], [bigint], "view">;
 
+  getTotalFeesBurnt: TypedContractMethod<[], [bigint], "view">;
+
+  getTotalIterations: TypedContractMethod<[], [bigint], "view">;
+
   isOperatorFor: TypedContractMethod<
     [operator: AddressLike, tokenId: BytesLike],
     [boolean],
@@ -849,6 +871,12 @@ export interface BurntPixArchives extends BaseContract {
   ): TypedContractMethod<[tokenId: BytesLike], [string[]], "view">;
   getFunction(
     nameOrSignature: "getTotalContributors"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "getTotalFeesBurnt"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "getTotalIterations"
   ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
     nameOrSignature: "isOperatorFor"
