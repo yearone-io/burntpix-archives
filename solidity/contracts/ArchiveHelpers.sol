@@ -109,41 +109,46 @@ contract ArchiveHelpers {
 
     function getVerifiableURI(bytes memory rawMetadata) internal pure returns (bytes memory) {
         return bytes.concat(
-            hex'00006f357c6a0020', 
-            keccak256(rawMetadata),
-            abi.encodePacked(
+            hex'00006f357c6a0020', // 0000 (verifiable URI Identifier) + 6f357c6a ("keccak256(utf8)") + 0020 (length of the hash)
+            keccak256(rawMetadata), //  + verification data (hash)
+            abi.encodePacked( //  + encoded URI
                 "data:application/json;charset=UTF-8,",
                 rawMetadata
             )
         );
     }
 
-    function getCoreMetadata(bytes memory image, bytes32 burntPicId) internal pure returns (bytes memory) {
+    function getCoreMetadata(bytes memory image, address burntPicFractal, string memory children) internal pure returns (bytes memory) {
         bytes memory encodedImage = abi.encodePacked(
             'data:image/svg+xml;base64,',
             Base64.encode(image)
         );
         return abi.encodePacked(
-            '{"LSP4Metadata": {"name": "Burnt Pix Archives: Season 1", "description": "We burn together, we rise together. A community built archive of Burnt Pix # ',toHexString(burntPicId, 32),'",',
-            '"images": [[{"height": 768, "width": 768, "url": "',encodedImage,'", "verification": {"method": "keccak256(bytes)", "data": "',toHexString(keccak256(image), 32),'"}}]],',
-            '"links": [{"title": "Burnt Pix Archives", "url": "https://burntpix.cc" }]'
+            '{"LSP4Metadata": {',
+                '"name": "Burnt Pix Archives: Season 1",',
+                '"description": "We burn together, we rise together. A community built archive of BurntPix Fractal ',addressToString(burntPicFractal),'",',
+                '"images": [[{"height": 768, "width": 768, "url": "',encodedImage,'", "verification": {"method": "keccak256(bytes)", "data": "',toHexString(keccak256(image), 32),'"}}]],',
+                '"links": [{"title": "Burnt Pix Archives", "url": "https://burntpix.cc" }]',
+                children,
+            '}}'
         );
     } 
 
-    function generateCollectionMetadata(address fractalClone, bytes32 burntPicId) external view returns (bytes memory) {
+    function generateCollectionMetadata(address fractalClone, address burntPicFractal) external view returns (bytes memory) {
         bytes memory image = alterImageBasedOnLevel(IFractal(fractalClone).getData(keccak256("image")), 1, 1);
-        bytes memory _rawMetadata = abi.encodePacked(
-            getCoreMetadata(image, burntPicId),
-            '}}'
-        );
+        bytes memory _rawMetadata = getCoreMetadata(image, burntPicFractal, "");
         return getVerifiableURI(_rawMetadata);
     }
 
-    function generateArchiveMetadata(Archive memory archive, bytes32 burntPicId, uint256 highestLevel) external pure returns (bytes memory) {
+    function generateArchiveMetadata(Archive memory archive, address burntPicFractal, uint256 highestLevel) external pure returns (bytes memory) {
         bytes memory image = alterImageBasedOnLevel(archive.image, archive.level, highestLevel);
-        bytes memory _rawMetadata = abi.encodePacked(
-            getCoreMetadata(image, burntPicId),
-            ',"attributes": [{"key": "Level", "type": "number", "value": ',uintToString(archive.level),'}, {"key": "Block Number", "type": "number", "value": ',uintToString(archive.blockNumber),'}, {"key": "Iterations", "type": "number", "value": ',uintToString(archive.iterations),'}, {"key": "Creator", "type": "string", "value": "',addressToString(archive.creator),'"}]}}'
+        string memory children = string(abi.encodePacked(
+            ',"attributes": [{"key": "Level", "type": "number", "value": ',uintToString(archive.level),'}, {"key": "Block Number", "type": "number", "value": ',uintToString(archive.blockNumber),'}, {"key": "Iterations", "type": "number", "value": ',uintToString(archive.iterations),'}, {"key": "Creator", "type": "string", "value": "',addressToString(archive.creator),'"}]'
+        ));
+        bytes memory _rawMetadata = getCoreMetadata(
+            image,
+            burntPicFractal,
+            children
         );
         return getVerifiableURI(_rawMetadata);
     }

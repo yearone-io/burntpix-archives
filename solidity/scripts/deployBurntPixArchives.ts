@@ -11,7 +11,7 @@ import { INTERFACE_IDS } from '@lukso/lsp-smart-contracts';
 // load env vars
 const network = hre.network.name;
 console.log('network: ', network);
-const { EOA_PRIVATE_KEY, UP_ADDR_CONTROLLED_BY_EOA, CODEHUB, ARCHIVE_HELPERS } = getNetworkAccountsConfig(network as string);
+const { EOA_PRIVATE_KEY, UP_ADDR_CONTROLLED_BY_EOA, CODEHUB, ARCHIVE_HELPERS, BURNTPIC_ID, MAX_SUPPLY, WINNER_ITERATIONS } = getNetworkAccountsConfig(network as string);
 
 async function main() {
   // network setup
@@ -19,9 +19,9 @@ async function main() {
   const signer = new ethers.Wallet(EOA_PRIVATE_KEY as string, provider);
   // deployment config
   const contractOwner = UP_ADDR_CONTROLLED_BY_EOA;
-  const burntpicId = "0x000000000000000000000000245f9a8bea516165b45142f8b79ea204f97f8867";
-  const maxSupply = 10000;
-  const winnerGoal = 69_000;
+  const burntpicId = BURNTPIC_ID;
+  const maxSupply = MAX_SUPPLY;
+  const winnerGoal = WINNER_ITERATIONS;
   const constructorArguments = [CODEHUB, ARCHIVE_HELPERS, contractOwner, burntpicId, maxSupply, winnerGoal];
   const BurntPixArchivesFactory = new ethers.ContractFactory(
     BurntPixArchives.abi,
