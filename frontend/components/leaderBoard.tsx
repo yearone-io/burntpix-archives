@@ -42,67 +42,58 @@ const Leaderboard: React.FC = () => {
     provider,
   );
 
+
+
   useEffect(() => {
-    const fetchAllContributions = async () => {
+    const fetchContributions = async () => {
       try {
-        const contributors = await burntPixArchives.getContributors();
-        console.log("Contributors", contributors);
+        const contributorsResponse = await burntPixArchives.getContributors();
+        const contributors = [...contributorsResponse];
+        const contributionsResponse = await burntPixArchives.getContributions(contributors);
+        const contributionsBigInt = [...contributionsResponse];
 
-        const rpcUrl = networkConfig.rpcUrl;
-        const contributionsPromises = contributors.map((contributor) =>
-          fetchContributionAndProfile(contributor, rpcUrl),
-        );
+        let contributions = contributors.map((address, index) => ({
+          contributor: address,
+          contribution: Number(contributionsBigInt[index].toString()),
+        }));
 
-        const allContributions = await Promise.all(contributionsPromises);
-        const validContributions = allContributions.filter(
-          (contribution): contribution is Contribution => contribution !== null,
-        );
-        validContributions.sort((a, b) => b.contribution - a.contribution);
-        setSortedContributions(validContributions);
-        console.log("Contributions", validContributions);
+        contributions.sort((a, b) => b.contribution - a.contribution);
+        const topContributions = contributions.slice(0, 10);
+
+        const profiles = await Promise.all(topContributions.map(contrib =>
+          fetchProfileData(contrib.contributor, networkConfig.rpcUrl)
+        ));
+        const contributionsWithProfiles = topContributions.map((contrib, index) => ({
+          ...contrib,
+          upName: profiles[index]?.upName || null,
+          avatar: profiles[index]?.avatar || null,
+        }));
+
+        setSortedContributions(contributionsWithProfiles);
       } catch (error) {
-        console.error("Error getting contributors", error);
+        console.error("Error fetching contributions", error);
+      } finally {
         setIsLoading(false);
       }
     };
+      fetchContributions();
+  }, []); // NOTE: adding dependencies will cause duplicated calls
 
-    fetchAllContributions().finally(() => setIsLoading(false));
-  }, []);
-
-  const fetchContributionAndProfile = async (
-    contributor: string,
-    rpcUrl: string,
-  ): Promise<Contribution | null> => {
+  const fetchProfileData = async (contributor: string, rpcUrl: string): Promise<{ upName: string | null, avatar: string | null } | null> => {
     try {
-      const contributionBigInt =
-        await burntPixArchives.contributions(contributor);
-      const contribution = Number(contributionBigInt.toString());
+      const profileData = await getProfileData(contributor, rpcUrl);
+      let upName = null, avatar = null;
 
-      let upName = null;
-      let avatar = null;
-      try {
-        const profileData = await getProfileData(contributor, rpcUrl);
-        if (
-          profileData &&
-          profileData.profileImage &&
-          profileData.profileImage.length > 0
-        ) {
+      if (profileData) {
+        if (profileData.profileImage && profileData.profileImage.length > 0) {
           avatar = `${constants.IPFS_GATEWAY}/${profileData.profileImage[0].url.replace("ipfs://", "")}`;
         }
-        if (profileData && profileData.name) {
-          upName = profileData.name;
-        }
-      } catch {
-        // If the profile data is not available, we'll just use the contributor address
+        upName = profileData.name;
       }
-      return {
-        contributor,
-        contribution,
-        upName,
-        avatar,
-      };
+
+      return { upName, avatar };
     } catch (error) {
-      console.error("Error fetching data for contributor", contributor, error);
+      console.error("Error fetching profile data for", contributor, error);
       return null;
     }
   };
@@ -146,7 +137,6 @@ const Leaderboard: React.FC = () => {
       </Flex>
       <Box textAlign="left" minW="80px">
         {" "}
-        {/* Ensure a minimum width for alignment */}
         <Text fontSize="md" fontWeight="bold">
           {item.contribution.toLocaleString()}
         </Text>
