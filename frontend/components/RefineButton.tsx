@@ -28,21 +28,6 @@ import { BurntPixArchives__factory } from "@/contracts";
 import SignInButton from "./SignInButton";
 import { inter } from "@/app/fonts";
 
-const debounce = <F extends (...args: any[]) => any>(
-  func: F,
-  wait: number,
-): ((...args: Parameters<F>) => void) => {
-  let timeout: ReturnType<typeof setTimeout> | null = null;
-  return function executedFunction(...args: Parameters<F>) {
-    const later = () => {
-      clearTimeout(timeout!);
-      func(...args);
-    };
-    clearTimeout(timeout!);
-    timeout = setTimeout(later, wait);
-  };
-};
-
 const RefineButton: React.FC = () => {
   const walletContext = useContext(WalletContext);
   const { account, provider, networkConfig } = walletContext;
@@ -52,26 +37,14 @@ const RefineButton: React.FC = () => {
   const toast = useToast();
   const maxIterations = 10000;
   const defaultRed = "#FE005B";
-  const [inputValue, setInputValue] = useState(defaultIterations.toString());
   const burntPixArchives = BurntPixArchives__factory.connect(
     networkConfig.burntPixArchivesAddress,
     provider,
   );
-  // Debounce the Number input field so multiple values can be entered
-  const debouncedSetSelectedIterations = debounce((value: number) => {
-    let newVal = Math.min(Math.max(0, value), maxIterations);
-    setSelectedIterations(newVal);
-  }, 800);
-
-  useEffect(() => {
-    const valueAsNumber = parseInt(inputValue, 10);
-    if (!isNaN(valueAsNumber)) {
-      debouncedSetSelectedIterations(valueAsNumber);
-    }
-  }, [inputValue]);
 
   const refine = async () => {
     try {
+      console.log("Refining with iterations: ", selectedIterations);
       const signer = await provider.getSigner();
       await burntPixArchives
         .connect(signer)
@@ -85,10 +58,6 @@ const RefineButton: React.FC = () => {
         isClosable: true,
       });
     }
-  };
-
-  const handleInputChange = (valueAsString: string) => {
-    setInputValue(valueAsString);
   };
 
   return (
@@ -109,7 +78,6 @@ const RefineButton: React.FC = () => {
           >
             REFINE
           </Button>
-
           <Popover placement="top">
             <PopoverTrigger>
               <Button size="sm" variant="ghost" p={0} ml={2}>
@@ -127,36 +95,41 @@ const RefineButton: React.FC = () => {
                 >
                   Adjust Iterations:
                 </Text>
-                <NumberInput
-                  mb="4"
-                  defaultValue={defaultIterations}
-                  min={0}
-                  max={maxIterations}
-                  value={inputValue}
-                  onChange={(valueAsString) => handleInputChange(valueAsString)}
-                >
-                  <NumberInputField />
-                  <NumberInputStepper>
-                    <NumberIncrementStepper />
-                    <NumberDecrementStepper />
-                  </NumberInputStepper>
-                </NumberInput>
-                <Slider
-                  defaultValue={defaultIterations}
-                  min={0}
-                  max={maxIterations}
-                  step={1}
-                  value={selectedIterations}
-                  onChange={(val) => {
-                    setSelectedIterations(val);
-                    setInputValue(val.toString());
-                  }}
-                >
-                  <SliderTrack bg="gray.200">
-                    <SliderFilledTrack bg={defaultRed} />
-                  </SliderTrack>
-                  <SliderThumb boxSize={6} bg={defaultRed} />
-                </Slider>
+                <Flex flexDir="column">
+                  <NumberInput
+                    mb="4"
+                    defaultValue={defaultIterations}
+                    min={0}
+                    max={maxIterations}
+                    maxW="100px"
+                    mr="2rem"
+                    value={selectedIterations}
+                    onChange={(value: string) => {
+                      setSelectedIterations(Number(value));
+                    }}
+                  >
+                    <NumberInputField />
+                    <NumberInputStepper>
+                      <NumberIncrementStepper />
+                      <NumberDecrementStepper />
+                    </NumberInputStepper>
+                  </NumberInput>
+                  <Slider
+                    flex="1"
+                    defaultValue={defaultIterations}
+                    min={0}
+                    max={maxIterations}
+                    step={1}
+                    focusThumbOnChange={false}
+                    value={selectedIterations}
+                    onChange={setSelectedIterations}
+                  >
+                    <SliderTrack bg="gray.200">
+                      <SliderFilledTrack bg={defaultRed} />
+                    </SliderTrack>
+                    <SliderThumb boxSize="15px" bg={defaultRed} />
+                  </Slider>
+                </Flex>
               </PopoverBody>
             </PopoverContent>
           </Popover>
