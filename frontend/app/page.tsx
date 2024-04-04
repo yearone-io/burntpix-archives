@@ -23,6 +23,7 @@ import Leaderboard from "@/components/leaderBoard";
 import EditorsNote from "@/components/EditorsNote";
 import { FaExternalLinkAlt } from "react-icons/fa";
 import { inter } from "@/app/fonts";
+import SignInBox from "@/components/SigninBox";
 import { BurntPixArchives__factory } from "@/contracts";
 import { useContext, useEffect, useState } from "react";
 import { WalletContext } from "@/components/wallet/WalletContext";
@@ -83,7 +84,7 @@ const leaderboardFakeStats = [
 
 export default function Home() {
   const walletContext = useContext(WalletContext);
-  const { networkConfig, provider } = walletContext;
+  const { account, networkConfig, provider } = walletContext;
 
   const date = new Date();
   const formattedDate = date.toLocaleDateString("en-US", {
@@ -301,14 +302,27 @@ export default function Home() {
               </Flex>
             </GridItem>
             <GridItem w="1/3">
-              <Flex flexDir="column">
+              {account ? (
+                <Flex flexDir="column">
+                  <Article title="YOUR CONTRIBUTIONS">
+                    <MainStatsList stats={userStats} />
+                  </Article>
+                  <Article title={yourArchivesTitle}>
+                    <Archives />
+                  </Article>
+                </Flex>
+              ) : (
                 <Article title="YOUR CONTRIBUTIONS">
-                  <MainStatsList stats={userStats} />
+                  <Flex
+                    height="100%"
+                    w="100%"
+                    alignContent="center"
+                    justifyContent="center"
+                  >
+                    <SignInBox />
+                  </Flex>
                 </Article>
-                <Article title={yourArchivesTitle}>
-                  <Archives />
-                </Article>
-              </Flex>
+              )}
             </GridItem>
           </Grid>
         </Box>
