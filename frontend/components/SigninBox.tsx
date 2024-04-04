@@ -4,13 +4,10 @@ import SignInButton from "@/components/SignInButton";
 import { inter } from "@/app/fonts";
 
 const SignInBox: React.FC = () => {
-  const bgColor = useColorModeValue("light.green.brand", "dark.purple.200"); // Adjusts color based on the theme
-
   return (
     <VStack
       spacing={4}
       p={5}
-      backgroundColor={bgColor}
       boxShadow="md"
       borderRadius="lg"
       width="350px"
