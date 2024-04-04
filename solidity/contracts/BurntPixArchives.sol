@@ -28,8 +28,8 @@ interface IFractal {
 
 interface IArchiveHelpers {
     function createFractalClone(address registry, address codehub, uint256 seed) external returns (address);
-    function generateCollectionMetadata(address fractalClone, bytes32 burntPicId) external pure returns (bytes memory);
-    function generateArchiveMetadata(Archive memory archive, bytes32 burntPicId, uint256 highestLevel) external pure returns (bytes memory);
+    function generateCollectionMetadata(address fractalClone, address burntPicFractal) external pure returns (bytes memory);
+    function generateArchiveMetadata(Archive memory archive, address burntPicFractal, uint256 highestLevel) external pure returns (bytes memory);
     function fibonacciIterations(uint256 n) external pure returns (uint256);
     function getAlteredStringImage(bytes memory image) external pure returns (string memory);
 }
@@ -86,9 +86,10 @@ contract BurntPixArchives is LSP8CappedSupply {
             _setData(bytes32(abi.encodePacked(_LSP4_CREATORS_MAP_KEY_PREFIX, hex"0000", _creator)) , hex"24871b3d00000000000000000000000000000000");
             // royalties
             _setData(0xc0569ca6c9180acc2c3590f36330a36ae19015a19f4e85c28a7631e3317e6b9d, abi.encodePacked(
+                hex"001c", // length of data
                 _INTERFACEID_LSP0,
                 _creator,
-                uint256(5_000)
+                uint32(5_000)
             ));
             _setData(0x580d62ad353782eca17b89e5900e7df3b13b6f4ca9bbc2f8af8bceb0c3d1ecc6, hex"01");
     }
@@ -157,8 +158,16 @@ contract BurntPixArchives is LSP8CappedSupply {
         return values;
     }
 
+    function getTotalIterations() public view returns (uint256) {
+        return IFractal(fractalClone).iterations();
+    }
+
     function getTotalContributors() public view returns (uint256) {
         return contributors.length;
+    }
+
+    function getTotalFeesBurnt() public view returns (uint256) {
+        return IFractal(fractalClone).feesburnt() + IFractal(address(uint160(uint256(burntPicId)))).feesburnt();
     }
 
     function isOriginalUnclaimed() public view returns (bool) {
@@ -168,7 +177,7 @@ contract BurntPixArchives is LSP8CappedSupply {
 
     function _getData(bytes32 key) internal view override returns (bytes memory) {
         if (key == _LSP4_METADATA_KEY) {
-            return IArchiveHelpers(archiveHelpers).generateCollectionMetadata(fractalClone, burntPicId);
+            return IArchiveHelpers(archiveHelpers).generateCollectionMetadata(fractalClone, address(uint160(uint256(burntPicId))));
         }
         return super._getData(key);
     }
@@ -176,7 +185,7 @@ contract BurntPixArchives is LSP8CappedSupply {
     function _getDataForTokenId(bytes32 archiveId, bytes32 key) internal view override returns (bytes memory dataValues) {
         require(_exists(archiveId));
         if (key == _LSP4_METADATA_KEY) {
-            return IArchiveHelpers(archiveHelpers).generateArchiveMetadata(burntArchives[archiveId], burntPicId, currentHighestLevel);
+            return IArchiveHelpers(archiveHelpers).generateArchiveMetadata(burntArchives[archiveId], address(uint160(uint256(burntPicId))), currentHighestLevel);
         }
         return super._getData(key);
     }

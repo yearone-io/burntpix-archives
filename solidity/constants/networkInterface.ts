@@ -5,4 +5,7 @@ export interface Network {
   CODEHUB: string;
   REGISTRY: string;
   ARCHIVE_HELPERS: string;
+  BURNTPIC_ID: string;
+  MAX_SUPPLY: number;
+  WINNER_ITERATIONS: number;
 }
