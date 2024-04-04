@@ -1334,7 +1334,7 @@ type BurntPixArchivesConstructorParams =
   | ConstructorParameters<typeof ContractFactory>;
 
 const isSuperArgs = (
-  xs: BurntPixArchivesConstructorParams
+  xs: BurntPixArchivesConstructorParams,
 ): xs is ConstructorParameters<typeof ContractFactory> => xs.length > 1;
 
 export class BurntPixArchives__factory extends ContractFactory {
@@ -1353,7 +1353,7 @@ export class BurntPixArchives__factory extends ContractFactory {
     _burntPicId: BytesLike,
     _maxSupply: BigNumberish,
     _winnerIters: BigNumberish,
-    overrides?: NonPayableOverrides & { from?: string }
+    overrides?: NonPayableOverrides & { from?: string },
   ): Promise<ContractDeployTransaction> {
     return super.getDeployTransaction(
       _codehub,
@@ -1362,7 +1362,7 @@ export class BurntPixArchives__factory extends ContractFactory {
       _burntPicId,
       _maxSupply,
       _winnerIters,
-      overrides || {}
+      overrides || {},
     );
   }
   override deploy(
@@ -1372,7 +1372,7 @@ export class BurntPixArchives__factory extends ContractFactory {
     _burntPicId: BytesLike,
     _maxSupply: BigNumberish,
     _winnerIters: BigNumberish,
-    overrides?: NonPayableOverrides & { from?: string }
+    overrides?: NonPayableOverrides & { from?: string },
   ) {
     return super.deploy(
       _codehub,
@@ -1381,7 +1381,7 @@ export class BurntPixArchives__factory extends ContractFactory {
       _burntPicId,
       _maxSupply,
       _winnerIters,
-      overrides || {}
+      overrides || {},
     ) as Promise<
       BurntPixArchives & {
         deploymentTransaction(): ContractTransactionResponse;
@@ -1399,7 +1399,7 @@ export class BurntPixArchives__factory extends ContractFactory {
   }
   static connect(
     address: string,
-    runner?: ContractRunner | null
+    runner?: ContractRunner | null,
   ): BurntPixArchives {
     return new Contract(address, _abi, runner) as unknown as BurntPixArchives;
   }
