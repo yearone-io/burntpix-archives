@@ -26,6 +26,9 @@ import { inter } from "@/app/fonts";
 import { BurntPixArchives__factory } from "@/contracts";
 import { useContext, useEffect, useState } from "react";
 import { WalletContext } from "@/components/wallet/WalletContext";
+import {
+  divideBigIntTokenBalance,
+} from "@/utils/numberUtils";
 
 const newRockerFont = New_Rocker({
   weight: ["400"],
@@ -79,31 +82,6 @@ const leaderboardFakeStats = [
     score: 333,
   },
 ];
-
-function divideBigIntTokenBalance(balance: bigint, decimals: number): string {
-  // Convert the number of decimals into a bigint representation of 10^decimals
-  const divisor = BigInt(10) ** BigInt(decimals);
-
-  // Perform the division
-  const quotient = balance / divisor;
-  const remainder = balance % divisor;
-
-  // Convert quotient to string
-  let result = quotient.toString();
-
-  // If there's a remainder, handle it for precision
-  if (remainder > 0) {
-    let remainderStr = remainder.toString();
-    // Pad the remainder with leading zeros if it's shorter than the number of decimals
-    while (remainderStr.length < decimals) {
-      remainderStr = "0" + remainderStr;
-    }
-    // Append the formatted remainder to the result
-    result += "." + remainderStr;
-  }
-
-  return result;
-}
 
 export default function Home() {
   const walletContext = useContext(WalletContext);
