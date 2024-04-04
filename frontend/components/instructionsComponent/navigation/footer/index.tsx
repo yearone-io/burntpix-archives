@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import {
   Box,
   Flex,
@@ -10,10 +10,13 @@ import {
 import { FaExternalLinkAlt } from "react-icons/fa";
 import { inter } from "@/app/fonts";
 import { FaSquareGithub } from "react-icons/fa6";
-import { getNetworkConfig } from "@/constants/networks";
+import { formatAddress } from "@/utils/tokenUtils";
+import { WalletContext } from "@/components/wallet/WalletContext";
 
 const Footer: React.FC = () => {
   const displayMobileDesktop = useBreakpointValue({ base: "none", md: "flex" });
+  const walletContext = useContext(WalletContext);
+  const { networkConfig } = walletContext;
 
   return (
     <Box as="footer">
@@ -30,9 +33,7 @@ const Footer: React.FC = () => {
             <Select
               defaultValue={process.env.NEXT_PUBLIC_DEFAULT_NETWORK!}
               onChange={(event) =>
-                (window.location.href = getNetworkConfig(
-                  event.target.value,
-                ).baseUrl)
+                (window.location.href = networkConfig.baseUrl)
               }
             >
               <option value={"mainnet"}>LUKSO Mainnet</option>
@@ -46,9 +47,19 @@ const Footer: React.FC = () => {
               fontWeight={400}
               letterSpacing={1.5}
             >
-              SC: 0xd4E...Fa2
+              SC: {formatAddress(networkConfig.burntPixArchivesAddress)}
             </Text>
-            <Link href="#" isExternal ml="5px" size="14px" mt="4px">
+            <Link
+              href={
+                networkConfig.explorerURL +
+                "/address/" +
+                networkConfig.burntPixArchivesAddress
+              }
+              isExternal
+              ml="5px"
+              size="14px"
+              mt="4px"
+            >
               <FaExternalLinkAlt />
             </Link>
             <Link

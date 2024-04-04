@@ -38,7 +38,7 @@ export interface FractalInterface extends Interface {
       | "setData"
       | "setDataBatch"
       | "supportsInterface"
-      | "tipspaid"
+      | "tipspaid",
   ): FunctionFragment;
 
   getEvent(nameOrSignatureOrTopic: "DataChanged"): EventFragment;
@@ -48,33 +48,33 @@ export interface FractalInterface extends Interface {
   encodeFunctionData(functionFragment: "getData", values: [BytesLike]): string;
   encodeFunctionData(
     functionFragment: "getDataBatch",
-    values: [BytesLike[]]
+    values: [BytesLike[]],
   ): string;
   encodeFunctionData(functionFragment: "image", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "iterations",
-    values?: undefined
+    values?: undefined,
   ): string;
   encodeFunctionData(
     functionFragment: "migrate",
-    values: [AddressLike]
+    values: [AddressLike],
   ): string;
   encodeFunctionData(
     functionFragment: "refine",
-    values: [BigNumberish]
+    values: [BigNumberish],
   ): string;
   encodeFunctionData(functionFragment: "registry", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "setData",
-    values: [BytesLike, BytesLike]
+    values: [BytesLike, BytesLike],
   ): string;
   encodeFunctionData(
     functionFragment: "setDataBatch",
-    values: [BytesLike[], BytesLike[]]
+    values: [BytesLike[], BytesLike[]],
   ): string;
   encodeFunctionData(
     functionFragment: "supportsInterface",
-    values: [BytesLike]
+    values: [BytesLike],
   ): string;
   encodeFunctionData(functionFragment: "tipspaid", values?: undefined): string;
 
@@ -83,7 +83,7 @@ export interface FractalInterface extends Interface {
   decodeFunctionResult(functionFragment: "getData", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getDataBatch",
-    data: BytesLike
+    data: BytesLike,
   ): Result;
   decodeFunctionResult(functionFragment: "image", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "iterations", data: BytesLike): Result;
@@ -93,11 +93,11 @@ export interface FractalInterface extends Interface {
   decodeFunctionResult(functionFragment: "setData", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setDataBatch",
-    data: BytesLike
+    data: BytesLike,
   ): Result;
   decodeFunctionResult(
     functionFragment: "supportsInterface",
-    data: BytesLike
+    data: BytesLike,
   ): Result;
   decodeFunctionResult(functionFragment: "tipspaid", data: BytesLike): Result;
 }
@@ -124,38 +124,38 @@ export interface Fractal extends BaseContract {
   queryFilter<TCEvent extends TypedContractEvent>(
     event: TCEvent,
     fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined
+    toBlock?: string | number | undefined,
   ): Promise<Array<TypedEventLog<TCEvent>>>;
   queryFilter<TCEvent extends TypedContractEvent>(
     filter: TypedDeferredTopicFilter<TCEvent>,
     fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined
+    toBlock?: string | number | undefined,
   ): Promise<Array<TypedEventLog<TCEvent>>>;
 
   on<TCEvent extends TypedContractEvent>(
     event: TCEvent,
-    listener: TypedListener<TCEvent>
+    listener: TypedListener<TCEvent>,
   ): Promise<this>;
   on<TCEvent extends TypedContractEvent>(
     filter: TypedDeferredTopicFilter<TCEvent>,
-    listener: TypedListener<TCEvent>
+    listener: TypedListener<TCEvent>,
   ): Promise<this>;
 
   once<TCEvent extends TypedContractEvent>(
     event: TCEvent,
-    listener: TypedListener<TCEvent>
+    listener: TypedListener<TCEvent>,
   ): Promise<this>;
   once<TCEvent extends TypedContractEvent>(
     filter: TypedDeferredTopicFilter<TCEvent>,
-    listener: TypedListener<TCEvent>
+    listener: TypedListener<TCEvent>,
   ): Promise<this>;
 
   listeners<TCEvent extends TypedContractEvent>(
-    event: TCEvent
+    event: TCEvent,
   ): Promise<Array<TypedListener<TCEvent>>>;
   listeners(eventName?: string): Promise<Array<Listener>>;
   removeAllListeners<TCEvent extends TypedContractEvent>(
-    event?: TCEvent
+    event?: TCEvent,
   ): Promise<this>;
 
   feesburnt: TypedContractMethod<[], [bigint], "view">;
@@ -197,55 +197,55 @@ export interface Fractal extends BaseContract {
   tipspaid: TypedContractMethod<[], [bigint], "view">;
 
   getFunction<T extends ContractMethod = ContractMethod>(
-    key: string | FunctionFragment
+    key: string | FunctionFragment,
   ): T;
 
   getFunction(
-    nameOrSignature: "feesburnt"
+    nameOrSignature: "feesburnt",
   ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
-    nameOrSignature: "gasused"
+    nameOrSignature: "gasused",
   ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
-    nameOrSignature: "getData"
+    nameOrSignature: "getData",
   ): TypedContractMethod<[key: BytesLike], [string], "view">;
   getFunction(
-    nameOrSignature: "getDataBatch"
+    nameOrSignature: "getDataBatch",
   ): TypedContractMethod<[keys: BytesLike[]], [string[]], "view">;
   getFunction(
-    nameOrSignature: "image"
+    nameOrSignature: "image",
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
-    nameOrSignature: "iterations"
+    nameOrSignature: "iterations",
   ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
-    nameOrSignature: "migrate"
+    nameOrSignature: "migrate",
   ): TypedContractMethod<[_registry: AddressLike], [void], "nonpayable">;
   getFunction(
-    nameOrSignature: "refine"
+    nameOrSignature: "refine",
   ): TypedContractMethod<[iters: BigNumberish], [void], "nonpayable">;
   getFunction(
-    nameOrSignature: "registry"
+    nameOrSignature: "registry",
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
-    nameOrSignature: "setData"
+    nameOrSignature: "setData",
   ): TypedContractMethod<[arg0: BytesLike, arg1: BytesLike], [void], "payable">;
   getFunction(
-    nameOrSignature: "setDataBatch"
+    nameOrSignature: "setDataBatch",
   ): TypedContractMethod<
     [arg0: BytesLike[], arg1: BytesLike[]],
     [void],
     "payable"
   >;
   getFunction(
-    nameOrSignature: "supportsInterface"
+    nameOrSignature: "supportsInterface",
   ): TypedContractMethod<[interfaceID: BytesLike], [boolean], "view">;
   getFunction(
-    nameOrSignature: "tipspaid"
+    nameOrSignature: "tipspaid",
   ): TypedContractMethod<[], [bigint], "view">;
 
   getEvent(
-    key: "DataChanged"
+    key: "DataChanged",
   ): TypedContractEvent<
     DataChangedEvent.InputTuple,
     DataChangedEvent.OutputTuple,
