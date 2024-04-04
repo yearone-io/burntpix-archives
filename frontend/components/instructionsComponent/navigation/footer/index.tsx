@@ -19,7 +19,6 @@ const Footer: React.FC = () => {
   const walletContext = useContext(WalletContext);
   const { networkConfig } = walletContext;
 
-
   return (
     <Box as="footer">
       <Flex
@@ -53,9 +52,18 @@ const Footer: React.FC = () => {
             >
               SC: {formatAddress(networkConfig.burntPixArchivesAddress)}
             </Text>
-            <Link href={
-              getNetworkConfig(process.env.NEXT_PUBLIC_DEFAULT_NETWORK!).explorerURL + "/address/" + networkConfig.burntPixArchivesAddress
-                } isExternal ml="5px" size="14px" mt="4px">
+            <Link
+              href={
+                getNetworkConfig(process.env.NEXT_PUBLIC_DEFAULT_NETWORK!)
+                  .explorerURL +
+                "/address/" +
+                networkConfig.burntPixArchivesAddress
+              }
+              isExternal
+              ml="5px"
+              size="14px"
+              mt="4px"
+            >
               <FaExternalLinkAlt />
             </Link>
             <Link

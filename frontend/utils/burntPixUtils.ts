@@ -10,6 +10,6 @@ export const refineToArchive = async (
   return BurntPixArchives__factory.connect(
     burntPixArchivesAddress,
     signer,
-  // @ts-ignore: not picking up this definition although it exists
+    // @ts-ignore: not picking up this definition although it exists
   ).refineToArchive(iters);
 };
