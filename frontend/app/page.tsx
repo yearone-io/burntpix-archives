@@ -194,7 +194,7 @@ export default function Home() {
 
   useEffect(() => {
     const fetchStats = async () => {
-      const iterations = await burntPixArchives.totalIterations();
+      const iterations = await burntPixArchives.getTotalIterations();
       const contributors = await burntPixArchives.getTotalContributors();
       const totalSupply = await burntPixArchives.totalSupply();
       const supplyCap = await burntPixArchives.tokenSupplyCap();
