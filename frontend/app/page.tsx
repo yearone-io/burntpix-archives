@@ -23,6 +23,11 @@ import Leaderboard from "@/components/leaderBoard";
 import EditorsNote from "@/components/EditorsNote";
 import { FaExternalLinkAlt } from "react-icons/fa";
 import { inter } from "@/app/fonts";
+import SignInBox from "@/components/SigninBox";
+import { BurntPixArchives__factory } from "@/contracts";
+import { useContext, useEffect, useState } from "react";
+import { WalletContext } from "@/components/wallet/WalletContext";
+import { divideBigIntTokenBalance } from "@/utils/numberUtils";
 
 const newRockerFont = New_Rocker({
   weight: ["400"],
@@ -78,6 +83,9 @@ const leaderboardFakeStats = [
 ];
 
 export default function Home() {
+  const walletContext = useContext(WalletContext);
+  const { account, networkConfig, provider } = walletContext;
+
   const date = new Date();
   const formattedDate = date.toLocaleDateString("en-US", {
     weekday: "long",
@@ -85,6 +93,16 @@ export default function Home() {
     month: "long",
     day: "numeric",
   });
+
+  const burntPixArchives = BurntPixArchives__factory.connect(
+    networkConfig.burntPixArchivesAddress,
+    provider,
+  );
+
+  const [iterations, setIterations] = useState<string>("--");
+  const [contributors, setContributors] = useState<string>("--");
+  const [archiveMints, setArchiveMints] = useState<string>("--");
+  const [lyxBurned, setLyxBurned] = useState<string>("--");
 
   const yourArchivesTitle = (
     <Box
@@ -131,17 +149,12 @@ export default function Home() {
     </Box>
   );
 
-  const mainStats =
-    // TODO Generate function that returns the dynamic stats
-    [
-      { label: "Iterations:", value: "3330".toLocaleString() },
-      { label: "Contributors:", value: "230".toLocaleString() },
-      {
-        label: "Archive Mints:",
-        value: `${"324230".toLocaleString()} / ${"423420".toLocaleString()}`,
-      },
-      { label: "LYX Burned:", value: `${"4232340"} LYX` },
-    ];
+  const mainStats = [
+    { label: "Iterations:", value: iterations },
+    { label: "Contributors:", value: contributors },
+    { label: "Archive Mints::", value: archiveMints },
+    { label: "LYX Burned:", value: lyxBurned },
+  ];
 
   const userStats =
     // TODO Generate function that returns the dynamic stats
@@ -156,6 +169,22 @@ export default function Home() {
     ];
   const gridTemplateColumns = { base: "repeat(1, 2fr)", md: "repeat(2, 1fr)" };
 
+  useEffect(() => {
+    const fetchStats = async () => {
+      const iterations = await burntPixArchives.getTotalIterations();
+      const contributors = await burntPixArchives.getTotalContributors();
+      const totalSupply = await burntPixArchives.totalSupply();
+      const supplyCap = await burntPixArchives.tokenSupplyCap();
+      const lyxBurned = await burntPixArchives.getTotalFeesBurnt();
+
+      setIterations(iterations.toString());
+      setContributors(contributors.toString());
+      setArchiveMints(`${totalSupply.toString()} / ${supplyCap.toString()}`);
+      setLyxBurned(`${divideBigIntTokenBalance(lyxBurned, 18).toString()} LYX`);
+    };
+
+    fetchStats();
+  }, []);
   return (
     <main className={styles.main}>
       <Flex width="100%" direction={"column"} maxW={"2000px"}>
@@ -273,14 +302,27 @@ export default function Home() {
               </Flex>
             </GridItem>
             <GridItem w="1/3">
-              <Flex flexDir="column">
+              {account ? (
+                <Flex flexDir="column">
+                  <Article title="YOUR CONTRIBUTIONS">
+                    <MainStatsList stats={userStats} />
+                  </Article>
+                  <Article title={yourArchivesTitle}>
+                    <Archives />
+                  </Article>
+                </Flex>
+              ) : (
                 <Article title="YOUR CONTRIBUTIONS">
-                  <MainStatsList stats={userStats} />
+                  <Flex
+                    height="100%"
+                    w="100%"
+                    alignContent="center"
+                    justifyContent="center"
+                  >
+                    <SignInBox />
+                  </Flex>
                 </Article>
-                <Article title={yourArchivesTitle}>
-                  <Archives />
-                </Article>
-              </Flex>
+              )}
             </GridItem>
           </Grid>
         </Box>

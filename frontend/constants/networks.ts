@@ -38,8 +38,8 @@ const NETWORKS = {
       "https://universalpage.dev/collections/0x12167f1c2713aC4f740B4700c4C72bC2de6C686f",
     artWebBaseUrl: "https://universalpage.dev/collections",
     profileWebBaseUrl: "https://universalpage.dev/profiles",
-    burntPixId: "0x245f9A8Bea516165B45142f8b79eA204f97F8867",
-    burntPixArchivesAddress: "0xC2d8fE5A798697EC76E23C2afb99B1DFD7C33166",
+    burntPixId: "0xbed27360c8f087e05d0f7d996303467e520b950d",
+    burntPixArchivesAddress: "0x4b8cCCF15514e136beD7d07365D8FA48353e7947",
   },
 } as {
   [key: string]: Network;

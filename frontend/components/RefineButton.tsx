@@ -23,7 +23,8 @@ const RefineButton: React.FC = () => {
   const selectedIteractions = 1;
   const refine = async () => {
     try {
-     await burntPixArchives["refineToArchive(uint256)"](selectedIteractions)
+     const signer = await provider.getSigner();
+     await burntPixArchives.connect(signer)["refineToArchive(uint256)"](selectedIteractions)
     } catch (error: any) {
       toast({
         title: `Error refining. ${error.message}`,

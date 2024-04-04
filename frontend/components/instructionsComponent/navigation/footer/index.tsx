@@ -10,7 +10,6 @@ import {
 import { FaExternalLinkAlt } from "react-icons/fa";
 import { inter } from "@/app/fonts";
 import { FaSquareGithub } from "react-icons/fa6";
-import { getNetworkConfig } from "@/constants/networks";
 import { formatAddress } from "@/utils/tokenUtils";
 import { WalletContext } from "@/components/wallet/WalletContext";
 
@@ -34,9 +33,7 @@ const Footer: React.FC = () => {
             <Select
               defaultValue={process.env.NEXT_PUBLIC_DEFAULT_NETWORK!}
               onChange={(event) =>
-                (window.location.href = getNetworkConfig(
-                  event.target.value,
-                ).baseUrl)
+                (window.location.href = networkConfig.baseUrl)
               }
             >
               <option value={"mainnet"}>LUKSO Mainnet</option>
@@ -54,8 +51,7 @@ const Footer: React.FC = () => {
             </Text>
             <Link
               href={
-                getNetworkConfig(process.env.NEXT_PUBLIC_DEFAULT_NETWORK!)
-                  .explorerURL +
+                networkConfig.explorerURL +
                 "/address/" +
                 networkConfig.burntPixArchivesAddress
               }

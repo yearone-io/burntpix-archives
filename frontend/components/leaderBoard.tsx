@@ -7,7 +7,7 @@ import {
   Grid,
   useBreakpointValue,
 } from "@chakra-ui/react";
-import { inter } from "@/app/fonts"; // Make sure this import path is correct
+import { inter } from "@/app/fonts";
 
 interface LeaderboardItemProps {
   name: string;
