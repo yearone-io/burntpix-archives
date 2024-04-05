@@ -36,7 +36,7 @@ const newRockerFont = New_Rocker({
 
 export default function Home() {
   const walletContext = useContext(WalletContext);
-  const { account } = walletContext;
+  const { account, networkConfig, provider } = walletContext;
 
   const date = new Date();
   const formattedDate = date.toLocaleDateString("en-US", {
@@ -45,6 +45,16 @@ export default function Home() {
     month: "long",
     day: "numeric",
   });
+
+  const burntPixArchives = BurntPixArchives__factory.connect(
+    networkConfig.burntPixArchivesAddress,
+    provider,
+  );
+
+  const [iterations, setIterations] = useState<string>("--");
+  const [contributors, setContributors] = useState<string>("--");
+  const [archiveMints, setArchiveMints] = useState<string>("--");
+  const [lyxBurned, setLyxBurned] = useState<string>("--");
 
   const yourArchivesTitle = (
     <Box
@@ -91,8 +101,42 @@ export default function Home() {
     </Box>
   );
 
+  const mainStats = [
+    { label: "Iterations:", value: iterations },
+    { label: "Contributors:", value: contributors },
+    { label: "Archive Mints::", value: archiveMints },
+    { label: "LYX Burned:", value: lyxBurned },
+  ];
+
+  const userStats =
+    // TODO Generate function that returns the dynamic stats
+    [
+      { label: "Iterations:", value: "0".toLocaleString() },
+      { label: "Archive Unlocks:", value: "0".toLocaleString() },
+      {
+        label: "Archive Mints:",
+        value: "0".toLocaleString(),
+      },
+      { label: "Iters Till Next Archive:", value: "0".toLocaleString() },
+    ];
   const gridTemplateColumns = { base: "repeat(1, 2fr)", md: "repeat(2, 1fr)" };
 
+  useEffect(() => {
+    const fetchStats = async () => {
+      const iterations = await burntPixArchives.getTotalIterations();
+      const contributors = await burntPixArchives.getTotalContributors();
+      const totalSupply = await burntPixArchives.totalSupply();
+      const supplyCap = await burntPixArchives.tokenSupplyCap();
+      const lyxBurned = await burntPixArchives.getTotalFeesBurnt();
+
+      setIterations(iterations.toString());
+      setContributors(contributors.toString());
+      setArchiveMints(`${totalSupply.toString()} / ${supplyCap.toString()}`);
+      setLyxBurned(`${divideBigIntTokenBalance(lyxBurned, 18).toString()} LYX`);
+    };
+
+    fetchStats();
+  }, []);
   return (
     <main className={styles.main}>
       <Flex width="100%" direction={"column"} maxW={"2000px"}>
@@ -173,7 +217,7 @@ export default function Home() {
                     title="LIVE VIEW"
                     description="In a First, LUKSO Community Works to Refine and Archive the Same Burnt Pic Together"
                   >
-                    <MainStatsList />
+                    <MainStatsList stats={mainStats} />
                     <RefineButton />
                   </Article>
                 </Box>
@@ -213,7 +257,7 @@ export default function Home() {
               {account ? (
                 <Flex flexDir="column">
                   <Article title="YOUR CONTRIBUTIONS">
-                    <MainStatsList />
+                    <MainStatsList stats={userStats} />
                   </Article>
                   <Article title={yourArchivesTitle}>
                     <Archives />
