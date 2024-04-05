@@ -56,7 +56,8 @@ const Archives: React.FC<ArchivesProps> = ({ fetchArchives }) => {
   const [ownerProfiles, setOwnerProfiles] = useState<IOwners>({});
 
   // Use the useBreakpointValue hook to determine the number of images to slide
-  const slideAmount = useBreakpointValue({ base: 3, md: 5 }) || 5; // 1 image for base (mobile), 5 for md (tablet) and up
+  const responsiveSlideValues = { base: 3, md: 5 };
+  const slideAmount = useBreakpointValue(responsiveSlideValues) || 5;
 
   const burntPixArchives = BurntPixArchives__factory.connect(
     networkConfig.burntPixArchivesAddress,
@@ -102,24 +103,24 @@ const Archives: React.FC<ArchivesProps> = ({ fetchArchives }) => {
           isDisabled={startIndex <= 0}
           backgroundColor={"transparent"}
         ></IconButton>
-        <Flex w={slideAmount === 1 ? "200px" : "100%"}>
+        <Flex w={slideAmount === responsiveSlideValues.base ? "200px" : "100%"}>
           {archives
             .slice(startIndex, startIndex + slideAmount)
             .map((archive, index) => (
               <VStack
                 alignItems={"left"}
                 key={index}
-                width={slideAmount === 1 ? "100%" : "20%"}
+                width={slideAmount === responsiveSlideValues.base ? "100%" : "20%"}
               >
                 <div
                   style={{
-                    height: slideAmount === 1 ? "200px" : "100px",
-                    width: slideAmount === 1 ? "200px" : "100px",
+                    height: slideAmount === responsiveSlideValues.base ? "200px" : "100px",
+                    width: slideAmount === responsiveSlideValues.base ? "200px" : "100px",
                     filter: archive.isMinted ? "none" : "invert(100%)",
                   }}
                   dangerouslySetInnerHTML={{ __html: archive.image }}
                 />
-                <Flex width={slideAmount === 1 ? "200px" : "100px"}>
+                <Flex width={slideAmount === responsiveSlideValues.base ? "200px" : "100px"}>
                   <Link
                     href={
                       archive.id

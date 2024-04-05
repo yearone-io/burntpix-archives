@@ -29,7 +29,17 @@ const SignInButton: React.FC = () => {
         return;
       }
     }
-    await connect();
+    try {
+      await connect();
+    } catch (error: any) {
+      toast({
+        title: `Failed to connect wallet: ${error.message}`,
+        status: "error",
+        position: "bottom-left",
+        duration: 5000,
+        isClosable: true,
+      });
+    }
   };
 
   return (

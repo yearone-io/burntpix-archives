@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useCallback, useContext } from 'react';
 import { WalletContext } from "@/components/wallet/WalletContext";
-import { Box, Flex, IconButton, Link} from '@chakra-ui/react';
+import { Box, Flex, IconButton, Link, useToast } from '@chakra-ui/react';
 import { FaExternalLinkAlt } from "react-icons/fa";
 import { inter } from "@/app/fonts";
 import { AddressLike } from 'ethers';
@@ -10,7 +10,7 @@ import Archives, { IArchive, IFetchArchives } from './Archives';
 import SignInBox from './SigninBox';
 import { BurntPixArchives } from '@/contracts/BurntPixArchives';
 import { getNextIterationsGoal } from '@/utils/burntPixUtils';
-import { numberToBytes32, hexToText } from '@/utils/hexUtils';
+import { hexToText } from '@/utils/hexUtils';
 import { getProfileData } from '@/utils/universalProfile';
 import { constants } from "@/constants/constants";
 
@@ -21,6 +21,7 @@ interface IYourContributionsProps {
 
 const YourContributions = ({account, burntPixArchives}: IYourContributionsProps) => {
     const walletContext = useContext(WalletContext);
+    const toast = useToast();
     const { networkConfig } = walletContext;
     const [userArchives, setUserArchives] = useState<string[]>([]);
     const [userOwnedArchiveMints, setUserOwnedArchiveMints] = useState<string[]>([]);
@@ -33,19 +34,28 @@ const YourContributions = ({account, burntPixArchives}: IYourContributionsProps)
 
     const fetchUserStats = async (account: string) => {
         if (!account) return;
-        console.log("fetching user stats", account)
-        const userIterations = await burntPixArchives.getContributions([account as AddressLike]);
-        const userArchives = await burntPixArchives.getArchives(account);
-        const userOwnedArchiveMints = await burntPixArchives.tokenIdsOf(account);
-        const userIterationsGoal = getNextIterationsGoal(userArchives.length + 1, Number(userIterations[0]));
-        setUserArchives(userArchives);
-        setUserOwnedArchiveMints(userOwnedArchiveMints);
-        setUserStats([
-            { label: "Iterations:", value: new Intl.NumberFormat('en-US').format(Number(userIterations[0]))},
-            { label: "Archive Unlocks:", value: userArchives.length },
-            { label: "Archive Mints:", value: userOwnedArchiveMints.length },
-            { label: "Iters Till Next Archive:", value: userIterationsGoal },
-        ]);
+        try {
+          const userIterations = await burntPixArchives.getContributions([account as AddressLike]);
+          const userArchives = await burntPixArchives.getArchives(account);
+          const userOwnedArchiveMints = await burntPixArchives.tokenIdsOf(account);
+          const userIterationsGoal = getNextIterationsGoal(userArchives.length + 1, Number(userIterations[0]));
+          setUserArchives(userArchives);
+          setUserOwnedArchiveMints(userOwnedArchiveMints);
+          setUserStats([
+              { label: "Iterations:", value: new Intl.NumberFormat('en-US').format(Number(userIterations[0]))},
+              { label: "Archive Unlocks:", value: userArchives.length },
+              { label: "Archive Mints:", value: userOwnedArchiveMints.length },
+              { label: "Iters Till Next Archive:", value: userIterationsGoal },
+          ]);
+        } catch (error: any) {
+          toast({
+            title: `Failed to fetch your contribution stats: ${error.message}`,
+            status: "error",
+            position: "bottom-left",
+            duration: 5000,
+            isClosable: true,
+          });
+        }
     }
 
     useEffect(() => {
@@ -78,42 +88,54 @@ const YourContributions = ({account, burntPixArchives}: IYourContributionsProps)
     const externalFetchArchives: IFetchArchives = useCallback(async (startFrom, amount, setArchives, setLoadedIndices, ownerProfiles, setOwnerProfiles) => {
         const end = Math.min(startFrom + amount, userArchives.length);
         const newArchives: IArchive[] = [];
-    
-        for (let i = startFrom; i < end; i++) {
-          const archive = await burntPixArchives.burntArchives(userArchives[i]);
-          let isMinted = false;
-          let ownerAddress = archive.creator;
-    
-          try {
-            ownerAddress = await burntPixArchives.tokenOwnerOf(userArchives[i]);
-            isMinted = true;
-          } catch (error) {
-            console.log(`archive ${userArchives[i]} not minted yet or error fetching owner`);
+        try {
+          for (let i = startFrom; i < end; i++) {
+            const archive = await burntPixArchives.burntArchives(userArchives[i]);
+            let isMinted = false;
+            let ownerAddress = archive.creator;
+      
+            try {
+              ownerAddress = await burntPixArchives.tokenOwnerOf(userArchives[i]);
+              isMinted = true;
+            } catch (error) {
+              console.log(`archive ${userArchives[i]} not minted yet or error fetching owner`);
+            }
+      
+            let ownerProfile = ownerProfiles[ownerAddress];
+            if (!ownerProfile) { // Check if the profile is not already fetched
+              try {
+                ownerProfile = await getProfileData(ownerAddress, networkConfig.rpcUrl);
+              } catch (error: any) {
+                ownerProfile = { name: "EOA" };
+              }
+              setOwnerProfiles(prevProfiles => ({...prevProfiles, [ownerAddress]: ownerProfile}));
+            }
+            let ownerAvatar;
+            if (ownerProfile.profileImage && ownerProfile.profileImage.length) {
+              ownerAvatar = `${constants.IPFS_GATEWAY}/${ownerProfile.profileImage[0].url.replace("ipfs://", "")}`;
+            }
+      
+            newArchives.push({
+              id: userArchives[i],
+              image: hexToText(archive.image),
+              ownerAddress,
+              ownerName: ownerProfile.name,
+              ownerAvatar,
+              isMinted,
+            });
           }
-    
-          let ownerProfile = ownerProfiles[ownerAddress];
-          if (!ownerProfile) { // Check if the profile is not already fetched
-            ownerProfile = await getProfileData(ownerAddress, networkConfig.rpcUrl);
-            setOwnerProfiles(prevProfiles => ({...prevProfiles, [ownerAddress]: ownerProfile}));
-          }
-          let ownerAvatar;
-    
-          if (ownerProfile.profileImage && ownerProfile.profileImage.length) {
-            ownerAvatar = `${constants.IPFS_GATEWAY}/${ownerProfile.profileImage[0].url.replace("ipfs://", "")}`;
-          }
-    
-          newArchives.push({
-            id: userArchives[i],
-            image: hexToText(archive.image),
-            ownerAddress,
-            ownerName: ownerProfile.name,
-            ownerAvatar,
-            isMinted,
+      
+          setArchives((prevArchives) => [...(Array.isArray(prevArchives) ? prevArchives : []), ...newArchives]);
+          setLoadedIndices(end);
+        } catch (error: any) {
+          toast({
+            title: `Failed to fetch your archives: ${error.message}`,
+            status: "error",
+            position: "bottom-left",
+            duration: 5000,
+            isClosable: true,
           });
         }
-    
-        setArchives((prevArchives) => [...(Array.isArray(prevArchives) ? prevArchives : []), ...newArchives]);
-        setLoadedIndices(end);
       }, [userArchives]);
 
     return (

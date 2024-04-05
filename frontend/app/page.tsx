@@ -11,6 +11,7 @@ import {
   IconButton,
   Link,
   Text,
+  useToast
 } from "@chakra-ui/react";
 import { New_Rocker } from "next/font/google";
 import BurntPixArt from "@/components/BurntPixArt";
@@ -40,6 +41,7 @@ const newRockerFont = New_Rocker({
 export default function Home() {
   const walletContext = useContext(WalletContext);
   const { account, networkConfig, provider } = walletContext;
+  const toast = useToast();
 
   const date = new Date();
   const formattedDate = date.toLocaleDateString("en-US", {
@@ -90,23 +92,41 @@ export default function Home() {
   );
 
   const fetchCollectionStats = async () => {
-    console.log("fetching collection stats");
-    const [totalSupply, iterations, contributors, lyxBurned] = await Promise.all([burntPixArchives.totalSupply(), burntPixArchives.getTotalIterations(), burntPixArchives.getTotalContributors(), burntPixArchives.getTotalFeesBurnt()]);
-    setCollectionStats([
-      { label: "Iterations:", value: iterations.toString() },
-      { label: "Contributors:", value: contributors.toString() },
-      { label: "Archive Mints:" , value: `${new Intl.NumberFormat('en-US').format(Number(totalSupply))} / ${new Intl.NumberFormat('en-US').format(supplyCap)}` },
-      { label: "LYX Burned:", value: `${divideBigIntTokenBalance(lyxBurned, 18).toString()} LYX` },
-    ])
+    try {
+      const [totalSupply, iterations, contributors, lyxBurned] = await Promise.all([burntPixArchives.totalSupply(), burntPixArchives.getTotalIterations(), burntPixArchives.getTotalContributors(), burntPixArchives.getTotalFeesBurnt()]);
+      setCollectionStats([
+        { label: "Iterations:", value: iterations.toString() },
+        { label: "Contributors:", value: contributors.toString() },
+        { label: "Archive Mints:" , value: `${new Intl.NumberFormat('en-US').format(Number(totalSupply))} / ${new Intl.NumberFormat('en-US').format(supplyCap)}` },
+        { label: "LYX Burned:", value: `${divideBigIntTokenBalance(lyxBurned, 18).toString()} LYX` },
+      ])
+    } catch (error: any) {
+      toast({
+        title: `Failed to fetch collection stats: ${error.message}`,
+        status: "error",
+        position: "bottom-left",
+        duration: 5000,
+        isClosable: true,
+      });
+    }
   };
 
   useEffect(() => {
     const fetchImmutableStats = async () => {
-      console.log("fetching immutable data");
-      const [burntPicId, winnerIterations, supplyCap] = await Promise.all([burntPixArchives.burntPicId(), burntPixArchives.winnerIters(), burntPixArchives.tokenSupplyCap()]);
-      setBurntPicId(burntPicId);
-      setWinnerIterations(new Intl.NumberFormat('en-US').format(Number(winnerIterations)));
-      setSupplyCap(Number(supplyCap));
+      try {
+        const [burntPicId, winnerIterations, supplyCap] = await Promise.all([burntPixArchives.burntPicId(), burntPixArchives.winnerIters(), burntPixArchives.tokenSupplyCap()]);
+        setBurntPicId(burntPicId);
+        setWinnerIterations(new Intl.NumberFormat('en-US').format(Number(winnerIterations)));
+        setSupplyCap(Number(supplyCap));
+      } catch (error: any) {
+        toast({
+          title: `Failed to fetch collection constants: ${error.message}`,
+          status: "error",
+          position: "bottom-left",
+          duration: 5000,
+          isClosable: true,
+        });
+      }
     };
 
     fetchImmutableStats();
@@ -117,47 +137,61 @@ export default function Home() {
   }, [supplyCap]);
 
   const externalFetchArchives: IFetchArchives = useCallback(async (startFrom, amount, setArchives, setLoadedIndices, ownerProfiles, setOwnerProfiles) => {
-    const archiveCount = await burntPixArchives.archiveCount();
-    const count = Number(archiveCount);
-    const end = Math.min(startFrom + amount, count);
-    const newArchives: IArchive[] = [];
+    try {
+      const archiveCount = await burntPixArchives.archiveCount();
+      const count = Number(archiveCount);
+      const end = Math.min(startFrom + amount, count);
+      const newArchives: IArchive[] = [];
 
-    for (let i = startFrom; i < end; i++) {
-      const id = numberToBytes32(i + 1);
-      const archive = await burntPixArchives.burntArchives(id);
-      let isMinted = false;
-      let ownerAddress = archive.creator;
+      for (let i = startFrom; i < end; i++) {
+        const id = numberToBytes32(i + 1);
+        const archive = await burntPixArchives.burntArchives(id);
+        let isMinted = false;
+        let ownerAddress = archive.creator;
 
-      try {
-        ownerAddress = await burntPixArchives.tokenOwnerOf(id);
-        isMinted = true;
-      } catch (error) {
-        console.log(`archive ${id} not minted yet or error fetching owner`);
+        try {
+          ownerAddress = await burntPixArchives.tokenOwnerOf(id);
+          isMinted = true;
+        } catch (error) {
+          console.log(`archive ${id} not minted yet or error fetching owner`);
+        }
+
+        let ownerProfile = ownerProfiles[ownerAddress];
+        if (!ownerProfile) { // Check if the profile is not already fetched
+          try {
+            ownerProfile = await getProfileData(ownerAddress, networkConfig.rpcUrl);
+          } catch (error: any) {
+            ownerProfile = { name: "EOA" };
+          }
+          setOwnerProfiles(prevProfiles => ({...prevProfiles, [ownerAddress]: ownerProfile}));
+        }
+        let ownerAvatar;
+
+        if (ownerProfile.profileImage && ownerProfile.profileImage.length) {
+          ownerAvatar = `${constants.IPFS_GATEWAY}/${ownerProfile.profileImage[0].url.replace("ipfs://", "")}`;
+        }
+
+        newArchives.push({
+          id,
+          image: hexToText(archive.image),
+          ownerAddress,
+          ownerName: ownerProfile.name,
+          ownerAvatar,
+          isMinted,
+        });
       }
 
-      let ownerProfile = ownerProfiles[ownerAddress];
-      if (!ownerProfile) { // Check if the profile is not already fetched
-        ownerProfile = await getProfileData(ownerAddress, networkConfig.rpcUrl);
-        setOwnerProfiles(prevProfiles => ({...prevProfiles, [ownerAddress]: ownerProfile}));
-      }
-      let ownerAvatar;
-
-      if (ownerProfile.profileImage && ownerProfile.profileImage.length) {
-        ownerAvatar = `${constants.IPFS_GATEWAY}/${ownerProfile.profileImage[0].url.replace("ipfs://", "")}`;
-      }
-
-      newArchives.push({
-        id,
-        image: hexToText(archive.image),
-        ownerAddress,
-        ownerName: ownerProfile.name,
-        ownerAvatar,
-        isMinted,
+      setArchives((prevArchives) => [...(Array.isArray(prevArchives) ? prevArchives : []), ...newArchives]);
+      setLoadedIndices(end);
+    } catch (error: any) {
+      toast({
+        title: `Failed to fetch archives: ${error.message}`,
+        status: "error",
+        position: "bottom-left",
+        duration: 5000,
+        isClosable: true,
       });
     }
-
-    setArchives((prevArchives) => [...(Array.isArray(prevArchives) ? prevArchives : []), ...newArchives]);
-    setLoadedIndices(end);
   }, [/* dependencies */]);
 
   return (
