@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     images: [`${constants.DOMAIN}/images/logo.png`],
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
   },
 };
 
