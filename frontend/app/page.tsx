@@ -36,7 +36,7 @@ const newRockerFont = New_Rocker({
 
 export default function Home() {
   const walletContext = useContext(WalletContext);
-  const { account, networkConfig, provider } = walletContext;
+  const { account } = walletContext;
 
   const date = new Date();
   const formattedDate = date.toLocaleDateString("en-US", {
@@ -45,11 +45,6 @@ export default function Home() {
     month: "long",
     day: "numeric",
   });
-
-  const burntPixArchives = BurntPixArchives__factory.connect(
-    networkConfig.burntPixArchivesAddress,
-    provider,
-  );
 
   const yourArchivesTitle = (
     <Box
@@ -96,17 +91,6 @@ export default function Home() {
     </Box>
   );
 
-  const userStats =
-    // TODO Generate function that returns the dynamic stats
-    [
-      { label: "Iterations:", value: "0".toLocaleString() },
-      { label: "Archive Unlocks:", value: "0".toLocaleString() },
-      {
-        label: "Archive Mints:",
-        value: "0".toLocaleString(),
-      },
-      { label: "Iters Till Next Archive:", value: "0".toLocaleString() },
-    ];
   const gridTemplateColumns = { base: "repeat(1, 2fr)", md: "repeat(2, 1fr)" };
 
   return (
@@ -229,7 +213,7 @@ export default function Home() {
               {account ? (
                 <Flex flexDir="column">
                   <Article title="YOUR CONTRIBUTIONS">
-                    <MainStatsList stats={userStats} />
+                    <MainStatsList />
                   </Article>
                   <Article title={yourArchivesTitle}>
                     <Archives />

@@ -1,3 +1,4 @@
+"use client";
 import { ptSerifBold, inter } from "@/app/fonts";
 import { Box, useBreakpointValue } from "@chakra-ui/react";
 import React, { ReactNode } from "react";
