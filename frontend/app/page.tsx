@@ -28,6 +28,7 @@ import { BurntPixArchives__factory } from "@/contracts";
 import { useContext, useEffect, useState } from "react";
 import { WalletContext } from "@/components/wallet/WalletContext";
 import { divideBigIntTokenBalance } from "@/utils/numberUtils";
+import { ethers } from "ethers";
 
 const newRockerFont = New_Rocker({
   weight: ["400"],
@@ -50,6 +51,18 @@ export default function Home() {
     networkConfig.burntPixArchivesAddress,
     provider,
   );
+
+  
+
+
+// const contractAddress = 'YOUR_CONTRACT_ADDRESS';
+// const contractABI = [...] // ABI of your contract
+
+const contract = new ethers.Contract(networkConfig.burntPixArchivesAddress, BurntPixArchives__factory.abi, provider);
+
+contract.on('MyEvent', (sender, value) => {
+    console.log('yeeeeeeee')
+});
 
   const [iterations, setIterations] = useState<string>("--");
   const [contributors, setContributors] = useState<string>("--");
