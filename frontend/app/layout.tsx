@@ -15,9 +15,14 @@ export const metadata: Metadata = {
     description: description,
     type: "website",
     url: `${constants.DOMAIN}`,
-    images: [`${constants.DOMAIN}/images/logo.png`],
+    images: {
+      url: `${constants.DOMAIN}/images/logo.png`,
+    },
   },
   twitter: {
+    images: {
+      url: `${constants.DOMAIN}/images/logo.png`,
+    },
     card: "summary_large_image",
   },
 };
