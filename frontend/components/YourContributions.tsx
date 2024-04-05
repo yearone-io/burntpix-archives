@@ -1,14 +1,18 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useCallback, useContext } from 'react';
+import { WalletContext } from "@/components/wallet/WalletContext";
 import { Box, Flex, IconButton, Link} from '@chakra-ui/react';
 import { FaExternalLinkAlt } from "react-icons/fa";
 import { inter } from "@/app/fonts";
 import { AddressLike } from 'ethers';
 import Article from './Article';
 import MainStatsList, { StatsItem } from './MainStatsList';
-import Archives from './Archives';
+import Archives, { IArchive, IFetchArchives } from './Archives';
 import SignInBox from './SigninBox';
 import { BurntPixArchives } from '@/contracts/BurntPixArchives';
 import { getNextIterationsGoal } from '@/utils/burntPixUtils';
+import { numberToBytes32, hexToText } from '@/utils/hexUtils';
+import { getProfileData } from '@/utils/universalProfile';
+import { constants } from "@/constants/constants";
 
 interface IYourContributionsProps {
     readonly account: string | null;
@@ -16,6 +20,8 @@ interface IYourContributionsProps {
 }
 
 const YourContributions = ({account, burntPixArchives}: IYourContributionsProps) => {
+    const walletContext = useContext(WalletContext);
+    const { networkConfig } = walletContext;
     const [userArchives, setUserArchives] = useState<string[]>([]);
     const [userOwnedArchiveMints, setUserOwnedArchiveMints] = useState<string[]>([]);
     const [userStats, setUserStats] = useState<StatsItem[]>([
@@ -69,6 +75,47 @@ const YourContributions = ({account, burntPixArchives}: IYourContributionsProps)
         </Box>
     );
 
+    const externalFetchArchives: IFetchArchives = useCallback(async (startFrom, amount, setArchives, setLoadedIndices, ownerProfiles, setOwnerProfiles) => {
+        const end = Math.min(startFrom + amount, userArchives.length);
+        const newArchives: IArchive[] = [];
+    
+        for (let i = startFrom; i < end; i++) {
+          const archive = await burntPixArchives.burntArchives(userArchives[i]);
+          let isMinted = false;
+          let ownerAddress = archive.creator;
+    
+          try {
+            ownerAddress = await burntPixArchives.tokenOwnerOf(userArchives[i]);
+            isMinted = true;
+          } catch (error) {
+            console.log(`archive ${userArchives[i]} not minted yet or error fetching owner`);
+          }
+    
+          let ownerProfile = ownerProfiles[ownerAddress];
+          if (!ownerProfile) { // Check if the profile is not already fetched
+            ownerProfile = await getProfileData(ownerAddress, networkConfig.rpcUrl);
+            setOwnerProfiles(prevProfiles => ({...prevProfiles, [ownerAddress]: ownerProfile}));
+          }
+          let ownerAvatar;
+    
+          if (ownerProfile.profileImage && ownerProfile.profileImage.length) {
+            ownerAvatar = `${constants.IPFS_GATEWAY}/${ownerProfile.profileImage[0].url.replace("ipfs://", "")}`;
+          }
+    
+          newArchives.push({
+            id: userArchives[i],
+            image: hexToText(archive.image),
+            ownerAddress,
+            ownerName: ownerProfile.name,
+            ownerAvatar,
+            isMinted,
+          });
+        }
+    
+        setArchives((prevArchives) => [...(Array.isArray(prevArchives) ? prevArchives : []), ...newArchives]);
+        setLoadedIndices(end);
+      }, [userArchives]);
+
     return (
         <>
             {account ? (
@@ -79,7 +126,7 @@ const YourContributions = ({account, burntPixArchives}: IYourContributionsProps)
                     </Box>
                   </Article>
                   <Article title={yourArchivesTitle}>
-                    <Archives />
+                    <Archives fetchArchives={externalFetchArchives}/>
                   </Article>
                 </Flex>
               ) : (
@@ -99,3 +146,4 @@ const YourContributions = ({account, burntPixArchives}: IYourContributionsProps)
 };
 
 export default YourContributions;
+

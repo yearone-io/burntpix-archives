@@ -14,7 +14,7 @@ import {
 } from "@chakra-ui/react";
 import { New_Rocker } from "next/font/google";
 import BurntPixArt from "@/components/BurntPixArt";
-import Archives from "@/components/Archives";
+import Archives, { IArchive, IFetchArchives } from "@/components/Archives";
 import WalletConnector from "@/components/wallet/WalletConnector";
 import Article from "@/components/Article";
 import MainStatsList, { StatsItem } from "@/components/MainStatsList";
@@ -24,10 +24,13 @@ import EditorsNote from "@/components/EditorsNote";
 import { FaExternalLinkAlt } from "react-icons/fa";
 import { inter } from "@/app/fonts";
 import { BurntPixArchives__factory } from "@/contracts";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useCallback } from "react";
 import { WalletContext } from "@/components/wallet/WalletContext";
 import { divideBigIntTokenBalance } from "@/utils/numberUtils";
 import YourContributions from "@/components/YourContributions";
+import { hexToText, numberToBytes32 } from "@/utils/hexUtils";
+import { getProfileData } from "@/utils/universalProfile";
+import { constants } from "@/constants/constants";
 
 const newRockerFont = New_Rocker({
   weight: ["400"],
@@ -97,7 +100,6 @@ export default function Home() {
     ])
   };
 
-
   useEffect(() => {
     const fetchImmutableStats = async () => {
       console.log("fetching immutable data");
@@ -113,6 +115,50 @@ export default function Home() {
   useEffect(() => {
     supplyCap && fetchCollectionStats();
   }, [supplyCap]);
+
+  const externalFetchArchives: IFetchArchives = useCallback(async (startFrom, amount, setArchives, setLoadedIndices, ownerProfiles, setOwnerProfiles) => {
+    const archiveCount = await burntPixArchives.archiveCount();
+    const count = Number(archiveCount);
+    const end = Math.min(startFrom + amount, count);
+    const newArchives: IArchive[] = [];
+
+    for (let i = startFrom; i < end; i++) {
+      const id = numberToBytes32(i + 1);
+      const archive = await burntPixArchives.burntArchives(id);
+      let isMinted = false;
+      let ownerAddress = archive.creator;
+
+      try {
+        ownerAddress = await burntPixArchives.tokenOwnerOf(id);
+        isMinted = true;
+      } catch (error) {
+        console.log(`archive ${id} not minted yet or error fetching owner`);
+      }
+
+      let ownerProfile = ownerProfiles[ownerAddress];
+      if (!ownerProfile) { // Check if the profile is not already fetched
+        ownerProfile = await getProfileData(ownerAddress, networkConfig.rpcUrl);
+        setOwnerProfiles(prevProfiles => ({...prevProfiles, [ownerAddress]: ownerProfile}));
+      }
+      let ownerAvatar;
+
+      if (ownerProfile.profileImage && ownerProfile.profileImage.length) {
+        ownerAvatar = `${constants.IPFS_GATEWAY}/${ownerProfile.profileImage[0].url.replace("ipfs://", "")}`;
+      }
+
+      newArchives.push({
+        id,
+        image: hexToText(archive.image),
+        ownerAddress,
+        ownerName: ownerProfile.name,
+        ownerAvatar,
+        isMinted,
+      });
+    }
+
+    setArchives((prevArchives) => [...(Array.isArray(prevArchives) ? prevArchives : []), ...newArchives]);
+    setLoadedIndices(end);
+  }, [/* dependencies */]);
 
   return (
     <main className={styles.main}>
@@ -217,7 +263,7 @@ export default function Home() {
               >
                 <Box >
                   <Article title={archivesTitle}>
-                    <Archives />
+                    <Archives fetchArchives={externalFetchArchives}/>
                   </Article>
                 </Box>
                 <Divider borderColor={"#00000"} size={"md"} />
