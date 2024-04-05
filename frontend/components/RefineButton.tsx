@@ -89,12 +89,20 @@ const RefineButton: React.FC = () => {
             fontWeight={700}
             onClick={refine}
             fontFamily={inter.style.fontFamily}
+            loadingText={"REFINING..."}
+            isLoading={isRefining}
           >
-            {isRefining ? "REFINING..." : "REFINE TO ARCHIVE"}
+            REFINE TO ARCHIVE
           </Button>
           <Popover placement="top">
             <PopoverTrigger>
-              <Button size="sm" variant="ghost" p={0} ml={2}>
+              <Button
+                size="sm"
+                variant="ghost"
+                p={0}
+                ml={2}
+                isLoading={isRefining}
+              >
                 <Icon as={MdSettings} boxSize="24px" color={defaultRed} />
               </Button>
             </PopoverTrigger>
