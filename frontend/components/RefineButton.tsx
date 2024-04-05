@@ -44,7 +44,6 @@ const RefineButton: React.FC = () => {
   );
 
   const refine = async () => {
-    if (isRefining) return;
     setIsRefining(true);
     try {
       console.log("Refining with iterations: ", selectedIterations);
