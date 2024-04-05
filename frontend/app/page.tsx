@@ -51,11 +51,6 @@ export default function Home() {
     provider,
   );
 
-  const [iterations, setIterations] = useState<string>("--");
-  const [contributors, setContributors] = useState<string>("--");
-  const [archiveMints, setArchiveMints] = useState<string>("--");
-  const [lyxBurned, setLyxBurned] = useState<string>("--");
-
   const yourArchivesTitle = (
     <Box
       color="#FE005B"
@@ -101,13 +96,6 @@ export default function Home() {
     </Box>
   );
 
-  const mainStats = [
-    { label: "Iterations:", value: iterations },
-    { label: "Contributors:", value: contributors },
-    { label: "Archive Mints::", value: archiveMints },
-    { label: "LYX Burned:", value: lyxBurned },
-  ];
-
   const userStats =
     // TODO Generate function that returns the dynamic stats
     [
@@ -121,22 +109,6 @@ export default function Home() {
     ];
   const gridTemplateColumns = { base: "repeat(1, 2fr)", md: "repeat(2, 1fr)" };
 
-  useEffect(() => {
-    const fetchStats = async () => {
-      const iterations = await burntPixArchives.getTotalIterations();
-      const contributors = await burntPixArchives.getTotalContributors();
-      const totalSupply = await burntPixArchives.totalSupply();
-      const supplyCap = await burntPixArchives.tokenSupplyCap();
-      const lyxBurned = await burntPixArchives.getTotalFeesBurnt();
-
-      setIterations(iterations.toString());
-      setContributors(contributors.toString());
-      setArchiveMints(`${totalSupply.toString()} / ${supplyCap.toString()}`);
-      setLyxBurned(`${divideBigIntTokenBalance(lyxBurned, 18).toString()} LYX`);
-    };
-
-    fetchStats();
-  }, []);
   return (
     <main className={styles.main}>
       <Flex width="100%" direction={"column"} maxW={"2000px"}>
@@ -217,7 +189,7 @@ export default function Home() {
                     title="LIVE VIEW"
                     description="In a First, LUKSO Community Works to Refine and Archive the Same Burnt Pic Together"
                   >
-                    <MainStatsList stats={mainStats} />
+                    <MainStatsList />
                     <RefineButton />
                   </Article>
                 </Box>

@@ -42,14 +42,13 @@ const Leaderboard: React.FC = () => {
     provider,
   );
 
-
-
   useEffect(() => {
     const fetchContributions = async () => {
       try {
         const contributorsResponse = await burntPixArchives.getContributors();
         const contributors = [...contributorsResponse];
-        const contributionsResponse = await burntPixArchives.getContributions(contributors);
+        const contributionsResponse =
+          await burntPixArchives.getContributions(contributors);
         const contributionsBigInt = [...contributionsResponse];
 
         let contributions = contributors.map((address, index) => ({
@@ -60,14 +59,18 @@ const Leaderboard: React.FC = () => {
         contributions.sort((a, b) => b.contribution - a.contribution);
         const topContributions = contributions.slice(0, 10);
 
-        const profiles = await Promise.all(topContributions.map(contrib =>
-          fetchProfileData(contrib.contributor, networkConfig.rpcUrl)
-        ));
-        const contributionsWithProfiles = topContributions.map((contrib, index) => ({
-          ...contrib,
-          upName: profiles[index]?.upName || null,
-          avatar: profiles[index]?.avatar || null,
-        }));
+        const profiles = await Promise.all(
+          topContributions.map((contrib) =>
+            fetchProfileData(contrib.contributor, networkConfig.rpcUrl),
+          ),
+        );
+        const contributionsWithProfiles = topContributions.map(
+          (contrib, index) => ({
+            ...contrib,
+            upName: profiles[index]?.upName || null,
+            avatar: profiles[index]?.avatar || null,
+          }),
+        );
 
         setSortedContributions(contributionsWithProfiles);
       } catch (error) {
@@ -76,13 +79,17 @@ const Leaderboard: React.FC = () => {
         setIsLoading(false);
       }
     };
-      fetchContributions();
+    fetchContributions();
   }, []); // NOTE: adding dependencies will cause duplicated calls
 
-  const fetchProfileData = async (contributor: string, rpcUrl: string): Promise<{ upName: string | null, avatar: string | null } | null> => {
+  const fetchProfileData = async (
+    contributor: string,
+    rpcUrl: string,
+  ): Promise<{ upName: string | null; avatar: string | null } | null> => {
     try {
       const profileData = await getProfileData(contributor, rpcUrl);
-      let upName = null, avatar = null;
+      let upName = null,
+        avatar = null;
 
       if (profileData) {
         if (profileData.profileImage && profileData.profileImage.length > 0) {

@@ -1,19 +1,48 @@
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Grid, Box, Text, List, ListItem } from "@chakra-ui/react";
 import { MdLens } from "react-icons/md";
 import { inter } from "@/app/fonts";
+import { divideBigIntTokenBalance } from "@/utils/numberUtils";
+import { WalletContext } from "@/components/wallet/WalletContext";
+import { BurntPixArchives__factory } from "@/contracts";
 
-interface StatsItem {
-  label: string;
-  value: string;
-}
-
-interface StatsListProps {
-  stats: StatsItem[];
-}
-
-const MainStatsList: React.FC<StatsListProps> = ({ stats }) => {
+const MainStatsList: React.FC = () => {
   const bulletColor = "#FE005B";
+  const walletContext = useContext(WalletContext);
+  const { networkConfig, provider } = walletContext;
+
+  const burntPixArchives = BurntPixArchives__factory.connect(
+    networkConfig.burntPixArchivesAddress,
+    provider,
+  );
+  const [iterations, setIterations] = useState<string>("--");
+  const [contributors, setContributors] = useState<string>("--");
+  const [archiveMints, setArchiveMints] = useState<string>("--");
+  const [lyxBurned, setLyxBurned] = useState<string>("--");
+
+  const stats = [
+    { label: "Iterations:", value: iterations },
+    { label: "Contributors:", value: contributors },
+    { label: "Archive Mints::", value: archiveMints },
+    { label: "LYX Burned:", value: lyxBurned },
+  ];
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      const iterations = await burntPixArchives.getTotalIterations();
+      const contributors = await burntPixArchives.getTotalContributors();
+      const totalSupply = await burntPixArchives.totalSupply();
+      const supplyCap = await burntPixArchives.tokenSupplyCap();
+      const lyxBurned = await burntPixArchives.getTotalFeesBurnt();
+
+      setIterations(iterations.toString());
+      setContributors(contributors.toString());
+      setArchiveMints(`${totalSupply.toString()} / ${supplyCap.toString()}`);
+      setLyxBurned(`${divideBigIntTokenBalance(lyxBurned, 18).toString()} LYX`);
+    };
+
+    fetchStats();
+  }, []);
 
   return (
     <Box p="20px 10%" w="100%">
