@@ -136,6 +136,10 @@ contract BurntPixArchives is LSP8CappedSupply {
         }
     }
 
+    function mintArchive(bytes32 archiveId) public {
+        mintArchive(archiveId, msg.sender);
+    }
+
     function mintArchive(bytes32 archiveId, address to) public {
         Archive memory archive = burntArchives[archiveId];
         require(archive.creator == msg.sender, "BurntPixArchives: Only the archive creator can mint the archive");

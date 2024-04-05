@@ -23,13 +23,11 @@ import Leaderboard from "@/components/Leaderboard";
 import EditorsNote from "@/components/EditorsNote";
 import { FaExternalLinkAlt } from "react-icons/fa";
 import { inter } from "@/app/fonts";
-import SignInBox from "@/components/SigninBox";
 import { BurntPixArchives__factory } from "@/contracts";
 import { useContext, useEffect, useState } from "react";
 import { WalletContext } from "@/components/wallet/WalletContext";
 import { divideBigIntTokenBalance } from "@/utils/numberUtils";
-import { getNextIterationsGoal } from "@/utils/burntPixUtils";
-import { AddressLike } from "ethers";
+import YourContributions from "@/components/YourContributions";
 
 const newRockerFont = New_Rocker({
   weight: ["400"],
@@ -63,33 +61,6 @@ export default function Home() {
   const [archiveMints, setArchiveMints] = useState<string>("--");
   const [lyxBurned, setLyxBurned] = useState<string>("--");
 
-  const [userIterations, setUserIterations] = useState<string>("--");
-  const [userArchives, setUserArchives] = useState<string[]>([]);
-  const [userOwnedArchiveMints, setUserOwnedArchiveMints] = useState<string[]>([]);
-  const [userIterationsGoal, setUserIterationsGoal] = useState<string>("--");
-
-  const yourArchivesTitle = (
-    <Box
-      color="#FE005B"
-      fontWeight={900}
-      fontSize="md"
-      lineHeight="17px"
-      letterSpacing={1.5}
-      fontFamily={inter.style.fontFamily}
-    >
-      {" "}
-      YOUR ARCHIVES
-      <Link isExternal={true} href={"/"}>
-        <IconButton
-          aria-label="View archives"
-          color={"lukso.pink"}
-          icon={<FaExternalLinkAlt />}
-          size="sm"
-          variant="ghost"
-        />
-      </Link>
-    </Box>
-  );
 
   const archivesTitle = (
     <Box
@@ -120,13 +91,6 @@ export default function Home() {
     { label: "LYX Burned:", value: lyxBurned },
   ];
 
-  const userStats = [
-    { label: "Iterations:", value: userIterations },
-    { label: "Archive Unlocks:", value: userArchives.length },
-    { label: "Archive Mints:", value: userOwnedArchiveMints.length },
-    { label: "Iters Till Next Archive:", value: userIterationsGoal },
-  ];
-
   const fetchCollectionCurrentSupply = async (maxSupply: number) => {
     const totalSupply = await burntPixArchives.totalSupply();
     setArchiveMints(`${new Intl.NumberFormat('en-US').format(Number(totalSupply))} / ${new Intl.NumberFormat('en-US').format(maxSupply)}`);
@@ -143,20 +107,6 @@ export default function Home() {
     setLyxBurned(`${divideBigIntTokenBalance(lyxBurned, 18).toString()} LYX`);
   };
 
-  const fetchUserStats = async (account: string) => {
-    if (!account) return;
-    const userIterations = await burntPixArchives.getContributions([account as AddressLike]);
-    const userArchives = await burntPixArchives.getArchives(account);
-    const userOwnedArchiveMints = await burntPixArchives.tokenIdsOf(account);
-    const userIterationsGoal = getNextIterationsGoal(userArchives.length + 1, Number(userIterations[0]));
-
-    setUserIterations(new Intl.NumberFormat('en-US').format(Number(userIterations)));
-    setUserArchives(userArchives);
-    setUserOwnedArchiveMints(userOwnedArchiveMints);
-    setUserIterationsGoal(new Intl.NumberFormat('en-US').format(Number(userIterationsGoal)));
-  }
-
-  const gridTemplateColumns = { base: "repeat(1, 2fr)", md: "repeat(2, 1fr)" };
 
   useEffect(() => {
     const fetchImmutableStats = async () => {
@@ -175,13 +125,9 @@ export default function Home() {
     fetchCollectionStats();
   }, [supplyCap]);
 
-  useEffect(() => {
-    fetchUserStats(account as string);
-  }, [account]);
-
   return (
     <main className={styles.main}>
-      <Flex width="100%" direction={"column"} maxW={"2000px"}>
+      <Flex width="100%" direction={"column"} maxW={"2000px"} p={"0px 25px"}>
         <header>
           <Flex
             flexDir={{
@@ -191,8 +137,6 @@ export default function Home() {
             justifyContent="center"
             alignItems="center"
             width={"100%"}
-            pr="20px"
-            pl="20px"
           >
             <Flex flex="1" justifyContent="flex-end"></Flex>
             <Flex
@@ -226,7 +170,7 @@ export default function Home() {
         </header>
         <Box mt={4} pl={"20px"} pr={"20px"} width={"100%"}>
           <Box width="100%">
-            <Divider mb={2} borderColor={"#00000"} />
+            <Divider mb={2} borderColor={"#000000"} opacity={1} />
             <Flex justifyContent="center" alignItems="center" w="100%">
               <Box flex="1" textAlign="left" pl={"20px"}>
                 <Text color="#000000" fontWeight="400">
@@ -242,13 +186,9 @@ export default function Home() {
                 </Text>
               </Box>
             </Flex>
-            <Divider borderColor={"#00000"} size={"lg"} />
+            <Divider  opacity={1} borderColor={"#00000"} size={"lg"} />
           </Box>
-          <Grid
-            templateColumns={{ base: "1fr", md: "2fr 1fr" }}
-            gap={2}
-            mt="20px"
-          >
+          <Grid width={"100%"} mt="20px" templateColumns={{ base: "4fr 9fr", md: "9fr 4fr"}}>
             <GridItem
               borderRight={{ base: "none", md: "1px solid #000000" }}
               pb="20px"
@@ -259,7 +199,9 @@ export default function Home() {
                     title="LIVE VIEW"
                     description="In a First, LUKSO Community Works to Refine and Archive the Same Burnt Pic Together"
                   >
-                    <MainStatsList stats={mainStats} />
+                    <Box p="20px 10%" w="100%">
+                      <MainStatsList stats={mainStats} />
+                    </Box>
                     <RefineButton />
                   </Article>
                 </Box>
@@ -278,13 +220,13 @@ export default function Home() {
             </GridItem>
           </Grid>
           <Divider borderColor={"#00000"} size={"md"} />
-          <Grid templateColumns={gridTemplateColumns}>
-            <GridItem w="2/3" mr="20px">
+          <Grid width={"100%"} templateColumns={{ base: "1fr", md: "9fr 4fr"}}>
+            <GridItem w="100%" overflow={"hidden"}>
               <Flex
                 flexDir="column"
                 borderRight={{ base: "none", md: "1px solid #000000" }}
               >
-                <Box w="100%">
+                <Box >
                   <Article title={archivesTitle}>
                     <Archives />
                   </Article>
@@ -295,28 +237,8 @@ export default function Home() {
                 </Article>
               </Flex>
             </GridItem>
-            <GridItem w="1/3">
-              {account ? (
-                <Flex flexDir="column">
-                  <Article title="YOUR CONTRIBUTIONS">
-                    <MainStatsList stats={userStats} />
-                  </Article>
-                  <Article title={yourArchivesTitle}>
-                    <Archives />
-                  </Article>
-                </Flex>
-              ) : (
-                <Article title="YOUR CONTRIBUTIONS">
-                  <Flex
-                    height="100%"
-                    w="100%"
-                    alignContent="center"
-                    justifyContent="center"
-                  >
-                    <SignInBox />
-                  </Flex>
-                </Article>
-              )}
+            <GridItem w="100%" overflow={"hidden"}>
+              <YourContributions account={account} burntPixArchives={burntPixArchives} />
             </GridItem>
           </Grid>
         </Box>
