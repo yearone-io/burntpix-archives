@@ -1,4 +1,4 @@
-// General Feedback:
+// TODO: General Feedback:
 // ReentrancyGuard ? reentrancy issue in IRegistry(registry).refine() and IFractal(fractalClone).refine()?.
 // Nice to have: break down refineToArchive
 
