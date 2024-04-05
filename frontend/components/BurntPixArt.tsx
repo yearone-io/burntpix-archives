@@ -1,4 +1,4 @@
-import { Fractal__factory } from "@/contracts";
+import { BurntPixArchives, Fractal__factory } from "@/contracts";
 import React, { useContext, useEffect, useState } from "react";
 import { WalletContext } from "@/components/wallet/WalletContext";
 import {
@@ -15,22 +15,28 @@ import { formatAddress } from "@/utils/tokenUtils";
 import { inter } from "@/app/fonts";
 import { FaExternalLinkAlt } from "react-icons/fa";
 
-export default function BurntPixArt() {
+interface IOriginalArtProps {
+  readonly burntPicId: string;
+}
+
+export default function BurntPixArt({burntPicId}: IOriginalArtProps) {
   const [burntPix, setBurntPix] = useState<string | undefined>();
   const walletContext = useContext(WalletContext);
   const { networkConfig, provider } = walletContext;
-  const burntPixFractal = Fractal__factory.connect(
-    networkConfig.burntPixId,
-    provider,
-  );
 
   useEffect(() => {
     const fetchBurntPix = async () => {
+      const burntPixFractal = Fractal__factory.connect(
+        burntPicId.replace("000000000000000000000000", ""),
+        provider,
+      );
       const image = await burntPixFractal.image();
       setBurntPix(image);
+      burntPixFractal
     };
-    fetchBurntPix();
-  }, []);
+    burntPicId && fetchBurntPix();
+  }, [burntPicId]);
+
   return (
     <VStack alignItems={"left"}>
       <Box width={320} height={320}>
@@ -60,7 +66,7 @@ export default function BurntPixArt() {
         </Text>
         <Link
           isExternal={true}
-          href={`${networkConfig.burntPixWebUrl}/${networkConfig.burntPixId}`}
+          href={`${networkConfig.originalBurntPicUrl}/${burntPicId}`}
         >
           <Flex>
             <Text
@@ -70,7 +76,7 @@ export default function BurntPixArt() {
               fontFamily={inter.style.fontFamily}
               mr="2px"
             >
-              {formatAddress(networkConfig.burntPixId)}
+              {formatAddress(burntPicId)}
             </Text>
             <Text fontSize={"12px"} ml="2px" mt="4px">
               <FaExternalLinkAlt />

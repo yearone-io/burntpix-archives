@@ -123,6 +123,7 @@ const Archives = () => {
           onClick={prevSlide}
           aria-label={"Previous"}
           isDisabled={startIndex <= 0}
+          backgroundColor={"transparent"}
         ></IconButton>
         <Flex w={slideAmount === 1 ? "200px" : "100%"}>
           {archives
@@ -182,6 +183,7 @@ const Archives = () => {
           icon={<FaArrowCircleRight />}
           aria-label={"Next"}
           isDisabled={startIndex + slideAmount >= archives!.length}
+          backgroundColor={"transparent"}
         />
       </HStack>
     </VStack>

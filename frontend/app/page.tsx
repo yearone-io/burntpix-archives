@@ -17,7 +17,7 @@ import BurntPixArt from "@/components/BurntPixArt";
 import Archives from "@/components/Archives";
 import WalletConnector from "@/components/wallet/WalletConnector";
 import Article from "@/components/Article";
-import MainStatsList from "@/components/MainStatsList";
+import MainStatsList, { StatsItem } from "@/components/MainStatsList";
 import RefineButton from "@/components/RefineButton";
 import Leaderboard from "@/components/Leaderboard";
 import EditorsNote from "@/components/EditorsNote";
@@ -52,14 +52,16 @@ export default function Home() {
   );
 
   // immutables
-  const [burntPicId, setBurntPicId] = useState<string>("--");
+  const [burntPicId, setBurntPicId] = useState<string>("");
   const [winnerIterations, setWinnerIterations] = useState<string>("--");
   const [supplyCap, setSupplyCap] = useState<number>(0);
 
-  const [iterations, setIterations] = useState<string>("--");
-  const [contributors, setContributors] = useState<string>("--");
-  const [archiveMints, setArchiveMints] = useState<string>("--");
-  const [lyxBurned, setLyxBurned] = useState<string>("--");
+  const [collectionStats, setCollectionStats] = useState<StatsItem[]>([
+    { label: "Iterations:", value: "--" },
+    { label: "Contributors:", value: "--" },
+    { label: "Archive Mints:", value: "--" },
+    { label: "LYX Burned:", value: "--" }
+  ]);
 
 
   const archivesTitle = (
@@ -84,35 +86,22 @@ export default function Home() {
     </Box>
   );
 
-  const mainStats = [
-    { label: "Iterations:", value: iterations },
-    { label: "Contributors:", value: contributors },
-    { label: "Archive Mints::", value: archiveMints },
-    { label: "LYX Burned:", value: lyxBurned },
-  ];
-
-  const fetchCollectionCurrentSupply = async (maxSupply: number) => {
-    const totalSupply = await burntPixArchives.totalSupply();
-    setArchiveMints(`${new Intl.NumberFormat('en-US').format(Number(totalSupply))} / ${new Intl.NumberFormat('en-US').format(maxSupply)}`);
-  };
-
   const fetchCollectionStats = async () => {
-    await fetchCollectionCurrentSupply(supplyCap);
-    const iterations = await burntPixArchives.getTotalIterations();
-    const contributors = await burntPixArchives.getTotalContributors();
-    const lyxBurned = await burntPixArchives.getTotalFeesBurnt();
-
-    setIterations(iterations.toString());
-    setContributors(contributors.toString());
-    setLyxBurned(`${divideBigIntTokenBalance(lyxBurned, 18).toString()} LYX`);
+    console.log("fetching collection stats");
+    const [totalSupply, iterations, contributors, lyxBurned] = await Promise.all([burntPixArchives.totalSupply(), burntPixArchives.getTotalIterations(), burntPixArchives.getTotalContributors(), burntPixArchives.getTotalFeesBurnt()]);
+    setCollectionStats([
+      { label: "Iterations:", value: iterations.toString() },
+      { label: "Contributors:", value: contributors.toString() },
+      { label: "Archive Mints:" , value: `${new Intl.NumberFormat('en-US').format(Number(totalSupply))} / ${new Intl.NumberFormat('en-US').format(supplyCap)}` },
+      { label: "LYX Burned:", value: `${divideBigIntTokenBalance(lyxBurned, 18).toString()} LYX` },
+    ])
   };
 
 
   useEffect(() => {
     const fetchImmutableStats = async () => {
-      const burntPicId = await burntPixArchives.burntPicId();
-      const winnerIterations = await burntPixArchives.winnerIters();
-      const supplyCap = await burntPixArchives.tokenSupplyCap();
+      console.log("fetching immutable data");
+      const [burntPicId, winnerIterations, supplyCap] = await Promise.all([burntPixArchives.burntPicId(), burntPixArchives.winnerIters(), burntPixArchives.tokenSupplyCap()]);
       setBurntPicId(burntPicId);
       setWinnerIterations(new Intl.NumberFormat('en-US').format(Number(winnerIterations)));
       setSupplyCap(Number(supplyCap));
@@ -122,7 +111,7 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    fetchCollectionStats();
+    supplyCap && fetchCollectionStats();
   }, [supplyCap]);
 
   return (
@@ -174,7 +163,7 @@ export default function Home() {
             <Flex justifyContent="center" alignItems="center" w="100%">
               <Box flex="1" textAlign="left" pl={"20px"}>
                 <Text color="#000000" fontWeight="400">
-                  All the Pixels, That Are Fit To Burn
+                  "All the Pixels, That Are Fit To Burn"
                 </Text>
               </Box>
               <Box flex="0" minWidth="max-content" px={5}>
@@ -200,7 +189,7 @@ export default function Home() {
                     description="In a First, LUKSO Community Works to Refine and Archive the Same Burnt Pic Together"
                   >
                     <Box p="20px 10%" w="100%">
-                      <MainStatsList stats={mainStats} />
+                      <MainStatsList stats={collectionStats} />
                     </Box>
                     <RefineButton />
                   </Article>
@@ -211,7 +200,7 @@ export default function Home() {
                   mt={{ base: 4, md: 0 }}
                   justifyContent="center"
                 >
-                  <BurntPixArt />
+                  <BurntPixArt burntPicId={burntPicId}/>
                 </Flex>
               </Flex>
             </GridItem>
