@@ -1,20 +1,28 @@
+// General Feedback:
+// ReentrancyGuard ? reentrancy issue in IRegistry(registry).refine() and IFractal(fractalClone).refine()?.
+// Nice to have: break down refineToArchive
+
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.24;
-import {
-    LSP8IdentifiableDigitalAsset
-} from "@lukso/lsp-smart-contracts/contracts/LSP8IdentifiableDigitalAsset/LSP8IdentifiableDigitalAsset.sol";
-import {
-    LSP8CappedSupply
-} from "@lukso/lsp-smart-contracts/contracts/LSP8IdentifiableDigitalAsset/extensions/LSP8CappedSupply.sol";
-import {_LSP8_TOKENID_FORMAT_NUMBER}  from "@lukso/lsp-smart-contracts/contracts/LSP8IdentifiableDigitalAsset/LSP8Constants.sol";
+import {LSP8IdentifiableDigitalAsset} from "@lukso/lsp-smart-contracts/contracts/LSP8IdentifiableDigitalAsset/LSP8IdentifiableDigitalAsset.sol";
+import {LSP8CappedSupply} from "@lukso/lsp-smart-contracts/contracts/LSP8IdentifiableDigitalAsset/extensions/LSP8CappedSupply.sol";
+import {_LSP8_TOKENID_FORMAT_NUMBER} from "@lukso/lsp-smart-contracts/contracts/LSP8IdentifiableDigitalAsset/LSP8Constants.sol";
 import {_LSP4_TOKEN_TYPE_COLLECTION, _LSP4_METADATA_KEY, _LSP4_CREATORS_ARRAY_KEY, _LSP4_CREATORS_MAP_KEY_PREFIX} from "@lukso/lsp-smart-contracts/contracts/LSP4DigitalAssetMetadata/LSP4Constants.sol";
 import {_INTERFACEID_LSP0} from "@lukso/lsp-smart-contracts/contracts/LSP0ERC725Account/LSP0Constants.sol";
 
 interface IRegistry {
     function refine(bytes32 archiveId, uint256 iters) external;
     function seeds(address fractal) external view returns (uint32);
-    function transfer(address from, address to, bytes32 tokenId, bool force, bytes memory data) external;
-    function getOperatorsOf(bytes32 tokenId) external view returns (address[] memory);
+    function transfer(
+        address from,
+        address to,
+        bytes32 tokenId,
+        bool force,
+        bytes memory data
+    ) external;
+    function getOperatorsOf(
+        bytes32 tokenId
+    ) external view returns (address[] memory);
     function tokenOwnerOf(bytes32 tokenId) external view returns (address);
 }
 
@@ -27,11 +35,24 @@ interface IFractal {
 }
 
 interface IArchiveHelpers {
-    function createFractalClone(address registry, address codehub, uint256 seed) external returns (address);
-    function generateCollectionMetadata(address fractalClone, address burntPicFractal) external pure returns (bytes memory);
-    function generateArchiveMetadata(Archive memory archive, address burntPicFractal, uint256 highestLevel) external pure returns (bytes memory);
+    function createFractalClone(
+        address registry,
+        address codehub,
+        uint256 seed
+    ) external returns (address);
+    function generateCollectionMetadata(
+        address fractalClone,
+        address burntPicFractal
+    ) external pure returns (bytes memory);
+    function generateArchiveMetadata(
+        Archive memory archive,
+        address burntPicFractal,
+        uint256 highestLevel
+    ) external pure returns (bytes memory);
     function fibonacciIterations(uint256 n) external pure returns (uint256);
-    function getAlteredStringImage(bytes memory image) external pure returns (string memory);
+    function getAlteredStringImage(
+        bytes memory image
+    ) external pure returns (string memory);
 }
 
 struct Archive {
@@ -69,29 +90,57 @@ contract BurntPixArchives is LSP8CappedSupply {
     )
         LSP8CappedSupply(_maxSupply)
         LSP8IdentifiableDigitalAsset(
-            'Burnt Pix Archives: Season 1',
-            'BURNT1',
+            "Burnt Pix Archives: Season 1",
+            "BURNT1",
             msg.sender,
             _LSP4_TOKEN_TYPE_COLLECTION,
             _LSP8_TOKENID_FORMAT_NUMBER
-        ) {
-            address fractal = address(uint160(uint256(_burntPicId)));
-            address registry = IFractal(fractal).registry();
-            archiveHelpers = _archiveHelpers;
-            burntPicId = _burntPicId;
-            winnerIters = _winnerIters;
-            fractalClone = IArchiveHelpers(_archiveHelpers).createFractalClone(address(this), _codehub, uint256(IRegistry(registry).seeds(fractal)));
-            _setData(_LSP4_CREATORS_ARRAY_KEY, hex"00000000000000000000000000000001");
-            _setData(0x114bd03b3a46d48759680d81ebb2b41400000000000000000000000000000000, abi.encodePacked(_creator));
-            _setData(bytes32(abi.encodePacked(_LSP4_CREATORS_MAP_KEY_PREFIX, hex"0000", _creator)) , hex"24871b3d00000000000000000000000000000000");
-            // royalties
-            _setData(0xc0569ca6c9180acc2c3590f36330a36ae19015a19f4e85c28a7631e3317e6b9d, abi.encodePacked(
+        )
+    {
+        address fractal = address(uint160(uint256(_burntPicId)));
+        address registry = IFractal(fractal).registry();
+        archiveHelpers = _archiveHelpers;
+        burntPicId = _burntPicId;
+        winnerIters = _winnerIters;
+        fractalClone = IArchiveHelpers(_archiveHelpers).createFractalClone(
+            address(this),
+            _codehub,
+            uint256(IRegistry(registry).seeds(fractal))
+        );
+        _setData(
+            _LSP4_CREATORS_ARRAY_KEY,
+            hex"00000000000000000000000000000001"
+        );
+        _setData(
+            //todo: it would be good if we document somewhere internally what these keys represent
+            0x114bd03b3a46d48759680d81ebb2b41400000000000000000000000000000000,
+            abi.encodePacked(_creator)
+        );
+        _setData(
+            bytes32(
+                abi.encodePacked(
+                    _LSP4_CREATORS_MAP_KEY_PREFIX,
+                    hex"0000",
+                    _creator
+                )
+            ),
+            hex"24871b3d00000000000000000000000000000000"
+        );
+
+        // royalties
+        _setData(
+            0xc0569ca6c9180acc2c3590f36330a36ae19015a19f4e85c28a7631e3317e6b9d,
+            abi.encodePacked(
                 hex"001c", // length of data
                 _INTERFACEID_LSP0,
-                _creator,
+                _creator, // TODO: should we separate royalties  reciepients from creator?
                 uint32(5_000)
-            ));
-            _setData(0x580d62ad353782eca17b89e5900e7df3b13b6f4ca9bbc2f8af8bceb0c3d1ecc6, hex"01");
+            )
+        );
+        _setData(
+            0x580d62ad353782eca17b89e5900e7df3b13b6f4ca9bbc2f8af8bceb0c3d1ecc6,
+            hex"01"
+        );
     }
 
     function refineToArchive(uint256 iters) public {
@@ -100,9 +149,14 @@ contract BurntPixArchives is LSP8CappedSupply {
 
     function refineToArchive(uint256 iters, address contributor) public {
         require(iters > 0);
+        // todo: add descriptive error:
+        // require(iters > 0, "Iterations must be greater than zero");
+
         // BALANCE FRACTAL ITERATIONS
-        address registry = IFractal(address(uint160(uint256(burntPicId)))).registry();
-        uint256 diff = IFractal(address(uint160(uint256(burntPicId)))).iterations() - IFractal(fractalClone).iterations();
+        address registry = IFractal(address(uint160(uint256(burntPicId))))
+            .registry();
+        uint256 diff = IFractal(address(uint160(uint256(burntPicId))))
+            .iterations() - IFractal(fractalClone).iterations();
         // no matter whether original & clone are in sync we refine the clone
         IFractal(fractalClone).refine(iters);
         // original and clone get synced if no difference or original needs to catch up to current clone iters
@@ -115,12 +169,28 @@ contract BurntPixArchives is LSP8CappedSupply {
         }
         contributions[contributor].iterations += iters;
         // TRANSFER ORIGINAL IF WINNER DETECTED
-        if (contributions[contributor].iterations >= winnerIters && isOriginalUnclaimed()) {
-            IRegistry(registry).transfer(address(this), contributor, burntPicId, true, "");
+        if (
+            contributions[contributor].iterations >= winnerIters &&
+            isOriginalUnclaimed()
+        ) {
+            // todo: have we tested this scenario?
+            IRegistry(registry).transfer(
+                address(this),
+                contributor,
+                burntPicId,
+                true,
+                ""
+            );
         }
         // STORE ARCHIVE IF UNLOCKED
-        if (contributions[contributor].iterations >= IArchiveHelpers(archiveHelpers).fibonacciIterations(contributions[contributor].archiveIds.length + 1)) {
-            bytes32 archiveId = bytes32(++archiveCount);
+        // TODO: Document this here, so the user reading this contract knows when an archived is unlocked
+        if (
+            contributions[contributor].iterations >=
+            IArchiveHelpers(archiveHelpers).fibonacciIterations(
+                contributions[contributor].archiveIds.length + 1 // todo: why +1? to prevent 0?
+            )
+        ) {
+            bytes32 archiveId = bytes32(++archiveCount); // todo: I'm confused about this line
             contributions[contributor].archiveIds.push(archiveId);
             Archive memory archive = Archive({
                 image: IFractal(fractalClone).getData(keccak256("image")),
@@ -134,15 +204,23 @@ contract BurntPixArchives is LSP8CappedSupply {
             }
             burntArchives[archiveId] = archive;
         }
+        // TODO: emit event so we can update UI
     }
 
     function mintArchive(bytes32 archiveId, address to) public {
         Archive memory archive = burntArchives[archiveId];
-        require(archive.creator == msg.sender, "BurntPixArchives: Only the archive creator can mint the archive");
+        // todo: do you need to require that the archive id exists?
+        require(
+            archive.creator == msg.sender,
+            "BurntPixArchives: Only the archive creator can mint the archive"
+        );
         _mint(to, archiveId, true, "");
+        // todo: should we emit an event here too?
     }
 
-    function getArchives(address contributor) public view returns (bytes32[] memory) {
+    function getArchives(
+        address contributor
+    ) public view returns (bytes32[] memory) {
         return contributions[contributor].archiveIds;
     }
 
@@ -150,7 +228,12 @@ contract BurntPixArchives is LSP8CappedSupply {
         return contributors;
     }
 
-    function getContributions(address[] memory targetContributors) public view returns (uint256[] memory) {
+    // todo: This could be changed to 2 functions:
+    // getContributions by one address (already existing)
+    // getTop10Contributions with up address
+    function getContributions(
+        address[] memory targetContributors
+    ) public view returns (uint256[] memory) {
         uint256[] memory values = new uint256[](targetContributors.length);
         for (uint256 i = 0; i < targetContributors.length; i++) {
             values[i] = contributions[targetContributors[i]].iterations;
@@ -167,25 +250,45 @@ contract BurntPixArchives is LSP8CappedSupply {
     }
 
     function getTotalFeesBurnt() public view returns (uint256) {
-        return IFractal(fractalClone).feesburnt() + IFractal(address(uint160(uint256(burntPicId)))).feesburnt();
+        return
+            IFractal(fractalClone).feesburnt() +
+            IFractal(address(uint160(uint256(burntPicId)))).feesburnt();
     }
 
     function isOriginalUnclaimed() public view returns (bool) {
-        address registry = IFractal(address(uint160(uint256(burntPicId)))).registry();
-        return IRegistry(registry).getOperatorsOf(burntPicId).length == 0 && IRegistry(registry).tokenOwnerOf(burntPicId) == address(this);
+        address registry = IFractal(address(uint160(uint256(burntPicId))))
+            .registry();
+        return
+            IRegistry(registry).getOperatorsOf(burntPicId).length == 0 &&
+            IRegistry(registry).tokenOwnerOf(burntPicId) == address(this);
     }
 
-    function _getData(bytes32 key) internal view override returns (bytes memory) {
+    function _getData(
+        bytes32 key
+    ) internal view override returns (bytes memory) {
         if (key == _LSP4_METADATA_KEY) {
-            return IArchiveHelpers(archiveHelpers).generateCollectionMetadata(fractalClone, address(uint160(uint256(burntPicId))));
+            return
+                IArchiveHelpers(archiveHelpers).generateCollectionMetadata(
+                    fractalClone,
+                    address(uint160(uint256(burntPicId)))
+                );
         }
         return super._getData(key);
     }
-    
-    function _getDataForTokenId(bytes32 archiveId, bytes32 key) internal view override returns (bytes memory dataValues) {
-        require(_exists(archiveId));
+
+    function _getDataForTokenId(
+        bytes32 archiveId,
+        bytes32 key
+    ) internal view override returns (bytes memory dataValues) {
+        require(_exists(archiveId)); //todo: add descriptive error message
+        // require(_exists(archiveId), 'BurntPixArchives: Archive does not exist');
         if (key == _LSP4_METADATA_KEY) {
-            return IArchiveHelpers(archiveHelpers).generateArchiveMetadata(burntArchives[archiveId], address(uint160(uint256(burntPicId))), currentHighestLevel);
+            return
+                IArchiveHelpers(archiveHelpers).generateArchiveMetadata(
+                    burntArchives[archiveId],
+                    address(uint160(uint256(burntPicId))),
+                    currentHighestLevel
+                );
         }
         return super._getData(key);
     }
