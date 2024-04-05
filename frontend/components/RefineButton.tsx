@@ -34,6 +34,7 @@ const RefineButton: React.FC = () => {
   const defaultIterations = 100;
   const [selectedIterations, setSelectedIterations] =
     useState(defaultIterations);
+  const [isRefining, setIsRefining] = useState(false);
   const toast = useToast();
   const maxIterations = 10000;
   const defaultRed = "#FE005B";
@@ -43,15 +44,28 @@ const RefineButton: React.FC = () => {
   );
 
   const refine = async () => {
+    if (isRefining) return;
+    setIsRefining(true);
     try {
       console.log("Refining with iterations: ", selectedIterations);
       const signer = await provider.getSigner();
       await burntPixArchives
         .connect(signer)
         ["refineToArchive(uint256)"](selectedIterations);
+      setIsRefining(false);
     } catch (error: any) {
+      setIsRefining(false);
+      let message = "Error refining: ";
+      if (error.code === "ACTION_REJECTED") {
+        message += "Transaction rejected.";
+      } else if (error.action === "estimateGas") {
+        message +=
+          "Error estimating gas, try with a lower number of iterations.";
+      } else {
+        message += error.message;
+      }
       toast({
-        title: `Error refining. ${error.message}`,
+        title: message,
         status: "error",
         position: "bottom-left",
         duration: 5000,
@@ -76,7 +90,7 @@ const RefineButton: React.FC = () => {
             onClick={refine}
             fontFamily={inter.style.fontFamily}
           >
-            REFINE
+            {isRefining ? "REFINING..." : "REFINE TO ARCHIVE"}
           </Button>
           <Popover placement="top">
             <PopoverTrigger>
