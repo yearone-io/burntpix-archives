@@ -1,17 +1,37 @@
-"use client";
 import Footer from "@/components/instructionsComponent/navigation/footer";
-import { WalletProvider } from "@/components/wallet/WalletProvider";
 import Head from "next/head";
-import { ChakraProvider } from "@chakra-ui/react";
-import theme from "./theme";
+import { Providers } from "./providers";
+import { WalletProvider } from "@/components/wallet/WalletProvider";
+import { Metadata } from "next";
+import { constants } from "@/constants/constants";
+
+const title = "Burntpix Archives";
+const description = "All the Pixels, That Are Fit To Burn";
+export const metadata: Metadata = {
+  title: title,
+  description: description,
+  openGraph: {
+    title: title,
+    description: description,
+    type: "website",
+    url: `${constants.DOMAIN}`,
+    images: {
+      url: `${constants.DOMAIN}/images/logo.png`,
+    },
+  },
+  twitter: {
+    images: {
+      url: `${constants.DOMAIN}/images/logo.png`,
+    },
+    card: "summary_large_image",
+  },
+};
 
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  let title = "Burntpix Archives";
-
   return (
     <html lang="en">
       <Head>
@@ -19,16 +39,10 @@ export default function RootLayout({
           name="viewport"
           content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
         />
-        <title>{title}</title>
-        <meta property="og:title" content={title} />
-        <meta property="og:site_name" content={title} />
-        <meta property="og:type" content="website" />
-        <meta property="og:image" content={`./images/logo-text.png`} />
-        <meta name="twitter:card" content="summary"></meta>
       </Head>
       <WalletProvider>
         <body>
-          <ChakraProvider theme={theme}>
+          <Providers>
             <div
               style={{
                 display: "flex",
@@ -40,7 +54,7 @@ export default function RootLayout({
 
               <Footer />
             </div>
-          </ChakraProvider>
+          </Providers>
         </body>
       </WalletProvider>
     </html>
