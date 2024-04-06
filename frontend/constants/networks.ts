@@ -23,7 +23,7 @@ const NETWORKS = {
       "https://universal.page/collections/0x3983151E0442906000DAb83c8b1cF3f2D2535F82",
     artWebBaseUrl: "https://universal.page/collections",
     profileWebBaseUrl: "https://universal.page/profiles",
-    burntPixArchivesAddress: "",
+    burntPixArchivesAddress: "0x4b8cCCF15514e136beD7d07365D8FA48353e7947", //TODO update this
   },
   testnet: {
     chainId: 4201,
