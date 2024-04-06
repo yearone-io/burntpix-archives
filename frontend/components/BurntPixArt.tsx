@@ -10,7 +10,7 @@ import {
   Flex,
   Stack,
   Skeleton,
-  useToast
+  useToast,
 } from "@chakra-ui/react";
 import { formatAddress } from "@/utils/tokenUtils";
 import { inter } from "@/app/fonts";
@@ -20,7 +20,7 @@ interface IOriginalArtProps {
   readonly burntPicId: string;
 }
 
-export default function BurntPixArt({burntPicId}: IOriginalArtProps) {
+export default function BurntPixArt({ burntPicId }: IOriginalArtProps) {
   const [burntPix, setBurntPix] = useState<string | undefined>();
   const walletContext = useContext(WalletContext);
   const toast = useToast();
@@ -35,7 +35,7 @@ export default function BurntPixArt({burntPicId}: IOriginalArtProps) {
         );
         const image = await burntPixFractal.image();
         setBurntPix(image);
-        burntPixFractal
+        burntPixFractal;
       } catch (error: any) {
         toast({
           title: `Failed to fetch burntpix original image: ${error.message}`,

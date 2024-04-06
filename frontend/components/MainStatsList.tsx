@@ -16,42 +16,42 @@ const MainStatsList: React.FC<StatsListProps> = ({ stats }) => {
   const bulletColor = "#FE005B";
 
   return (
-      <List spacing={1}>
-        {stats.map((item, index) => (
-          <ListItem key={index}>
-            {/* Setting up the grid with two columns: one for the label and icon, another for the value */}
-            <Grid templateColumns="repeat(2, 1fr)" alignItems="center" gap={2}>
-              <Box display="flex" alignItems="center">
-                <Box as={MdLens} color={bulletColor} mr="2" size="9px" />
-                <Text
-                  as="span"
-                  fontWeight="500"
-                  fontSize="16px"
-                  lineHeight="26px"
-                  fontFamily={inter.style.fontFamily}
-                  letterSpacing="1.5"
-                  whiteSpace="nowrap"
-                  overflow="hidden"
-                  textOverflow="ellipsis"
-                >
-                  {item.label}
-                </Text>
-              </Box>
+    <List spacing={1}>
+      {stats.map((item, index) => (
+        <ListItem key={index}>
+          {/* Setting up the grid with two columns: one for the label and icon, another for the value */}
+          <Grid templateColumns="repeat(2, 1fr)" alignItems="center" gap={2}>
+            <Box display="flex" alignItems="center">
+              <Box as={MdLens} color={bulletColor} mr="2" size="9px" />
               <Text
                 as="span"
-                textAlign="right"
-                fontWeight="800"
+                fontWeight="500"
                 fontSize="16px"
                 lineHeight="26px"
                 fontFamily={inter.style.fontFamily}
                 letterSpacing="1.5"
+                whiteSpace="nowrap"
+                overflow="hidden"
+                textOverflow="ellipsis"
               >
-                {item.value}
+                {item.label}
               </Text>
-            </Grid>
-          </ListItem>
-        ))}
-      </List>
+            </Box>
+            <Text
+              as="span"
+              textAlign="right"
+              fontWeight="800"
+              fontSize="16px"
+              lineHeight="26px"
+              fontFamily={inter.style.fontFamily}
+              letterSpacing="1.5"
+            >
+              {item.value}
+            </Text>
+          </Grid>
+        </ListItem>
+      ))}
+    </List>
   );
 };
 
