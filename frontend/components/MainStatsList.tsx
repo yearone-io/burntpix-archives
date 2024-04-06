@@ -3,12 +3,12 @@ import { Grid, Box, Text, List, ListItem } from "@chakra-ui/react";
 import { MdLens } from "react-icons/md";
 import { inter } from "@/app/fonts";
 
-interface StatsItem {
+export interface StatsItem {
   label: string;
-  value: string;
+  value: string | number;
 }
 
-interface StatsListProps {
+export interface StatsListProps {
   stats: StatsItem[];
 }
 
@@ -16,7 +16,6 @@ const MainStatsList: React.FC<StatsListProps> = ({ stats }) => {
   const bulletColor = "#FE005B";
 
   return (
-    <Box p="20px 10%" w="100%">
       <List spacing={1}>
         {stats.map((item, index) => (
           <ListItem key={index}>
@@ -53,7 +52,6 @@ const MainStatsList: React.FC<StatsListProps> = ({ stats }) => {
           </ListItem>
         ))}
       </List>
-    </Box>
   );
 };
 

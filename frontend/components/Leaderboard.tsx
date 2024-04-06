@@ -7,6 +7,7 @@ import {
   Grid,
   useBreakpointValue,
   Skeleton,
+  useToast,
 } from "@chakra-ui/react";
 import { inter } from "@/app/fonts"; // Make sure this import path is correct
 import { BurntPixArchives__factory } from "@/contracts";
@@ -24,6 +25,7 @@ interface Contribution {
 const Leaderboard: React.FC = () => {
   const margin = useBreakpointValue({ base: "0", md: "20px" });
   const walletContext = useContext(WalletContext);
+  const toast = useToast();
   const { networkConfig, provider } = walletContext;
   const [sortedContributions, setSortedContributions] = useState<
     Contribution[]
@@ -73,8 +75,14 @@ const Leaderboard: React.FC = () => {
         );
 
         setSortedContributions(contributionsWithProfiles);
-      } catch (error) {
-        console.error("Error fetching contributions", error);
+      } catch (error: any) {
+        toast({
+          title: `Failed to fetch leaderboard contributions: ${error.message}`,
+          status: "error",
+          position: "bottom-left",
+          duration: 5000,
+          isClosable: true,
+        });
       } finally {
         setIsLoading(false);
       }
