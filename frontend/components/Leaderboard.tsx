@@ -7,6 +7,7 @@ import {
   Grid,
   useBreakpointValue,
   Skeleton,
+  useToast,
 } from "@chakra-ui/react";
 import { inter } from "@/app/fonts"; // Make sure this import path is correct
 import { BurntPixArchives__factory } from "@/contracts";
@@ -24,6 +25,7 @@ interface Contribution {
 const Leaderboard: React.FC = () => {
   const margin = useBreakpointValue({ base: "0", md: "20px" });
   const walletContext = useContext(WalletContext);
+  const toast = useToast();
   const { networkConfig, provider } = walletContext;
   const [sortedContributions, setSortedContributions] = useState<
     Contribution[]
@@ -42,14 +44,13 @@ const Leaderboard: React.FC = () => {
     provider,
   );
 
-
-
   useEffect(() => {
     const fetchContributions = async () => {
       try {
         const contributorsResponse = await burntPixArchives.getContributors();
         const contributors = [...contributorsResponse];
-        const contributionsResponse = await burntPixArchives.getContributions(contributors);
+        const contributionsResponse =
+          await burntPixArchives.getContributions(contributors);
         const contributionsBigInt = [...contributionsResponse];
 
         let contributions = contributors.map((address, index) => ({
@@ -60,29 +61,43 @@ const Leaderboard: React.FC = () => {
         contributions.sort((a, b) => b.contribution - a.contribution);
         const topContributions = contributions.slice(0, 10);
 
-        const profiles = await Promise.all(topContributions.map(contrib =>
-          fetchProfileData(contrib.contributor, networkConfig.rpcUrl)
-        ));
-        const contributionsWithProfiles = topContributions.map((contrib, index) => ({
-          ...contrib,
-          upName: profiles[index]?.upName || null,
-          avatar: profiles[index]?.avatar || null,
-        }));
+        const profiles = await Promise.all(
+          topContributions.map((contrib) =>
+            fetchProfileData(contrib.contributor, networkConfig.rpcUrl),
+          ),
+        );
+        const contributionsWithProfiles = topContributions.map(
+          (contrib, index) => ({
+            ...contrib,
+            upName: profiles[index]?.upName || null,
+            avatar: profiles[index]?.avatar || null,
+          }),
+        );
 
         setSortedContributions(contributionsWithProfiles);
-      } catch (error) {
-        console.error("Error fetching contributions", error);
+      } catch (error: any) {
+        toast({
+          title: `Failed to fetch leaderboard contributions: ${error.message}`,
+          status: "error",
+          position: "bottom-left",
+          duration: 5000,
+          isClosable: true,
+        });
       } finally {
         setIsLoading(false);
       }
     };
-      fetchContributions();
+    fetchContributions();
   }, []); // NOTE: adding dependencies will cause duplicated calls
 
-  const fetchProfileData = async (contributor: string, rpcUrl: string): Promise<{ upName: string | null, avatar: string | null } | null> => {
+  const fetchProfileData = async (
+    contributor: string,
+    rpcUrl: string,
+  ): Promise<{ upName: string | null; avatar: string | null } | null> => {
     try {
       const profileData = await getProfileData(contributor, rpcUrl);
-      let upName = null, avatar = null;
+      let upName = null,
+        avatar = null;
 
       if (profileData) {
         if (profileData.profileImage && profileData.profileImage.length > 0) {

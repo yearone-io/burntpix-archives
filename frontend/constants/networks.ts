@@ -4,8 +4,7 @@ export interface Network {
   symbol: string;
   rpcUrl: string;
   explorerURL: string;
-  burntPixWebUrl: string;
-  burntPixId: string;
+  originalBurntPicUrl: string;
   burntPixArchivesAddress: string;
   artWebBaseUrl: string;
   profileWebBaseUrl: string;
@@ -20,11 +19,10 @@ const NETWORKS = {
     rpcUrl: "https://lukso.rpc.thirdweb.com",
     explorerURL: "https://explorer.execution.mainnet.lukso.network",
     baseUrl: "https://burntpix-archives.netlify.app",
-    burntPixWebUrl:
+    originalBurntPicUrl:
       "https://universal.page/collections/0x3983151E0442906000DAb83c8b1cF3f2D2535F82",
     artWebBaseUrl: "https://universal.page/collections",
     profileWebBaseUrl: "https://universal.page/profiles",
-    burntPixId: "",
     burntPixArchivesAddress: "",
   },
   testnet: {
@@ -34,11 +32,10 @@ const NETWORKS = {
     rpcUrl: "https://lukso-testnet.rpc.thirdweb.com",
     explorerURL: "https://explorer.execution.testnet.lukso.network",
     baseUrl: "https://testnet--burntpix-archives.netlify.app",
-    burntPixWebUrl:
+    originalBurntPicUrl:
       "https://universalpage.dev/collections/0x12167f1c2713aC4f740B4700c4C72bC2de6C686f",
     artWebBaseUrl: "https://universalpage.dev/collections",
     profileWebBaseUrl: "https://universalpage.dev/profiles",
-    burntPixId: "0xbed27360c8f087e05d0f7d996303467e520b950d",
     burntPixArchivesAddress: "0x4b8cCCF15514e136beD7d07365D8FA48353e7947",
   },
 } as {

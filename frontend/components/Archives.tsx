@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useCallback, Dispatch, SetStateAction } from "react";
 import {
   Avatar,
   Flex,
@@ -12,15 +12,13 @@ import {
   Stack,
   Skeleton,
 } from "@chakra-ui/react";
-import { FaArrowCircleLeft, FaCheckCircle } from "react-icons/fa";
-import { FaArrowCircleRight } from "react-icons/fa";
+import { FaArrowCircleLeft, FaArrowCircleRight, FaCheckCircle } from "react-icons/fa";
 import { BurntPixArchives__factory } from "@/contracts";
 import { WalletContext } from "@/components/wallet/WalletContext";
-import { hexToText, numberToBytes32 } from "@/utils/hexUtils";
-import { getProfileData } from "@/utils/universalProfile";
-import { constants } from "@/constants/constants";
+import { LSP3ProfileMetadata } from "@lukso/lsp3-contracts";
 
-interface IArchive {
+
+export interface IArchive {
   id: string;
   image: string;
   ownerName?: string;
@@ -29,24 +27,37 @@ interface IArchive {
   isMinted: boolean;
 }
 
-const Archives = () => {
+export interface IFetchArchives {
+  (
+    startFrom: number,
+    amount: number,
+    setArchives: React.Dispatch<React.SetStateAction<IArchive[]>>,
+    setLoadedIndices: React.Dispatch<React.SetStateAction<number>>,
+    ownerProfiles: { [key: string]: any },
+    setOwnerProfiles: React.Dispatch<React.SetStateAction<{ [key: string]: any }>>
+  ): Promise<void>;
+}
+
+interface IOwners {
+  [key: string]: LSP3ProfileMetadata;
+}
+
+interface ArchivesProps {
+  fetchArchives: IFetchArchives;
+}
+
+
+const Archives: React.FC<ArchivesProps> = ({ fetchArchives }) => {
   const walletContext = useContext(WalletContext);
   const { networkConfig, provider } = walletContext;
-  const [archives, setArchives] = useState<IArchive[] | undefined>();
+  const [archives, setArchives] = useState<IArchive[]>();
   const [startIndex, setStartIndex] = useState(0);
+  const [loadedIndices, setLoadedIndices] = useState<number>(0);
+  const [ownerProfiles, setOwnerProfiles] = useState<IOwners>({});
 
   // Use the useBreakpointValue hook to determine the number of images to slide
-  const slideAmount = useBreakpointValue({ base: 1, md: 5 }) || 5; // 1 image for base (mobile), 5 for md (tablet) and up
-
-  const nextSlide = () => {
-    setStartIndex((prevIndex) => {
-      return Math.min(prevIndex + slideAmount, archives!.length - 1);
-    });
-  };
-
-  const prevSlide = () => {
-    setStartIndex((prevIndex) => Math.max(prevIndex - slideAmount, 0));
-  };
+  const responsiveSlideValues = { base: 3, md: 5 };
+  const slideAmount = useBreakpointValue(responsiveSlideValues) || 5;
 
   const burntPixArchives = BurntPixArchives__factory.connect(
     networkConfig.burntPixArchivesAddress,
@@ -54,56 +65,23 @@ const Archives = () => {
   );
 
   useEffect(() => {
-    burntPixArchives
-      .archiveCount()
-      .then(async (archiveCount) => {
-        const fetchedArchives: IArchive[] = [];
-        await Promise.all(
-          Array.from({ length: Number(archiveCount) }, async (_, i) => {
-            const id = numberToBytes32(i + 1);
-            const archive = await burntPixArchives.burntArchives(id);
-            let isMinted = false;
-            let ownerAddress = archive.creator;
-            try {
-              ownerAddress = await burntPixArchives.tokenOwnerOf(id);
-              isMinted = true;
-            } catch (reason: any) {
-              if (reason.message.includes("LSP8NonExistentTokenId")) {
-                console.log(`token ${id} not minted yet`);
-              } else {
-                console.error("Error fetching owner", reason);
-                throw reason;
-              }
-            }
+    // Use the passed-in fetchArchives function with necessary arguments
+    fetchArchives(startIndex, slideAmount, setArchives as Dispatch<SetStateAction<IArchive[]>>, setLoadedIndices, ownerProfiles, setOwnerProfiles);
+  }, [fetchArchives, slideAmount]);
 
-            const ownerProfile = await getProfileData(
-              ownerAddress,
-              networkConfig.rpcUrl,
-            );
+  const nextSlide = () => {
+    setStartIndex((prevIndex) => {
+      const nextIndex = Math.min(prevIndex + slideAmount, loadedIndices - 1);
+      if (nextIndex + slideAmount > loadedIndices && loadedIndices < Number(burntPixArchives.archiveCount())) {
+        fetchArchives(startIndex, slideAmount, setArchives as Dispatch<SetStateAction<IArchive[]>>, setLoadedIndices, ownerProfiles, setOwnerProfiles);
+      }
+      return nextIndex;
+    });
+  };
 
-            const ownerName = ownerProfile.name;
-            let ownerAvatar = undefined;
-
-            if (ownerProfile.profileImage && ownerProfile.profileImage.length) {
-              ownerAvatar = `${constants.IPFS_GATEWAY}/${ownerProfile.profileImage[0].url.replace("ipfs://", "")}`;
-            }
-
-            fetchedArchives.push({
-              id: id,
-              image: hexToText(archive.image),
-              ownerAddress: ownerAddress,
-              ownerName: ownerName,
-              ownerAvatar: ownerAvatar,
-              isMinted: isMinted,
-            });
-          }),
-        );
-        setArchives(fetchedArchives.sort((a, b) => a.id.localeCompare(b.id)));
-      })
-      .catch((reason) => {
-        console.error("Error fetching archives", reason);
-      });
-  }, []);
+  const prevSlide = () => {
+    setStartIndex((prevIndex) => Math.max(prevIndex - slideAmount, 0));
+  };
 
   if (archives === undefined) {
     return (
@@ -123,25 +101,26 @@ const Archives = () => {
           onClick={prevSlide}
           aria-label={"Previous"}
           isDisabled={startIndex <= 0}
+          backgroundColor={"transparent"}
         ></IconButton>
-        <Flex w={slideAmount === 1 ? "200px" : "100%"}>
+        <Flex w={slideAmount === responsiveSlideValues.base ? "200px" : "100%"}>
           {archives
             .slice(startIndex, startIndex + slideAmount)
             .map((archive, index) => (
               <VStack
                 alignItems={"left"}
                 key={index}
-                width={slideAmount === 1 ? "100%" : "20%"}
+                width={slideAmount === responsiveSlideValues.base ? "100%" : "20%"}
               >
                 <div
                   style={{
-                    height: slideAmount === 1 ? "200px" : "100px",
-                    width: slideAmount === 1 ? "200px" : "100px",
+                    height: slideAmount === responsiveSlideValues.base ? "200px" : "100px",
+                    width: slideAmount === responsiveSlideValues.base ? "200px" : "100px",
                     filter: archive.isMinted ? "none" : "invert(100%)",
                   }}
                   dangerouslySetInnerHTML={{ __html: archive.image }}
                 />
-                <Flex width={slideAmount === 1 ? "200px" : "100px"}>
+                <Flex width={slideAmount === responsiveSlideValues.base ? "200px" : "100px"}>
                   <Link
                     href={
                       archive.id
@@ -182,6 +161,7 @@ const Archives = () => {
           icon={<FaArrowCircleRight />}
           aria-label={"Next"}
           isDisabled={startIndex + slideAmount >= archives!.length}
+          backgroundColor={"transparent"}
         />
       </HStack>
     </VStack>

@@ -144,7 +144,8 @@ contract BurntPixArchives is LSP8CappedSupply {
     }
 
     function refineToArchive(uint256 iters, address contributor) public {
-        require(iters > 0);
+        require(iters > 0, "BurntPixArchives: Iterations must be greater than 0");
+        require(totalSupply() < tokenSupplyCap() || isOriginalUnclaimed(), "gg: Burnt Pix Archives Season 1 has concluded");
         // BALANCE FRACTAL ITERATIONS
         address registry = IFractal(address(uint160(uint256(burntPicId))))
             .registry();
@@ -196,6 +197,10 @@ contract BurntPixArchives is LSP8CappedSupply {
             burntArchives[archiveId] = archive;
         }
         emit RefineToArchive(contributor, iters);
+    }
+
+    function mintArchive(bytes32 archiveId) public {
+        mintArchive(archiveId, msg.sender);
     }
 
     function mintArchive(bytes32 archiveId, address to) public {
