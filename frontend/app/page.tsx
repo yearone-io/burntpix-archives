@@ -14,12 +14,12 @@ export const metadata: Metadata = {
     type: "website",
     url: `${constants.DOMAIN}`,
     images: {
-      url: `https://23b45ebdf7b26e5273aed14cc594be1b.serveo.net/images/socials-logo.png`,
+      url: `${constants.DOMAIN}/images/socials-logo.png`,
     },
   },
   twitter: {
     images: {
-      url: `https://23b45ebdf7b26e5273aed14cc594be1b.serveo.net/images/socials-logo.png`,
+      url: `${constants.DOMAIN}/images/socials-logo.png`,
     },
     card: "summary_large_image",
   },
