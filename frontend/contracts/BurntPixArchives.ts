@@ -78,6 +78,7 @@ export interface BurntPixArchivesInterface extends Interface {
       | "OperatorAuthorizationChanged"
       | "OperatorRevoked"
       | "OwnershipTransferred"
+      | "RefineToArchive"
       | "TokenIdDataChanged"
       | "Transfer"
   ): EventFragment;
@@ -479,6 +480,19 @@ export namespace OwnershipTransferredEvent {
   export interface OutputObject {
     previousOwner: string;
     newOwner: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace RefineToArchiveEvent {
+  export type InputTuple = [contributor: AddressLike, iters: BigNumberish];
+  export type OutputTuple = [contributor: string, iters: bigint];
+  export interface OutputObject {
+    contributor: string;
+    iters: bigint;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -1046,6 +1060,13 @@ export interface BurntPixArchives extends BaseContract {
     OwnershipTransferredEvent.OutputObject
   >;
   getEvent(
+    key: "RefineToArchive"
+  ): TypedContractEvent<
+    RefineToArchiveEvent.InputTuple,
+    RefineToArchiveEvent.OutputTuple,
+    RefineToArchiveEvent.OutputObject
+  >;
+  getEvent(
     key: "TokenIdDataChanged"
   ): TypedContractEvent<
     TokenIdDataChangedEvent.InputTuple,
@@ -1103,6 +1124,17 @@ export interface BurntPixArchives extends BaseContract {
       OwnershipTransferredEvent.InputTuple,
       OwnershipTransferredEvent.OutputTuple,
       OwnershipTransferredEvent.OutputObject
+    >;
+
+    "RefineToArchive(address,uint256)": TypedContractEvent<
+      RefineToArchiveEvent.InputTuple,
+      RefineToArchiveEvent.OutputTuple,
+      RefineToArchiveEvent.OutputObject
+    >;
+    RefineToArchive: TypedContractEvent<
+      RefineToArchiveEvent.InputTuple,
+      RefineToArchiveEvent.OutputTuple,
+      RefineToArchiveEvent.OutputObject
     >;
 
     "TokenIdDataChanged(bytes32,bytes32,bytes)": TypedContractEvent<
