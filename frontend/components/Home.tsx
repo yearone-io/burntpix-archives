@@ -12,6 +12,7 @@ import {
   Link,
   Text,
   useToast,
+  Image,
 } from "@chakra-ui/react";
 import { New_Rocker } from "next/font/google";
 import BurntPixArt from "@/components/BurntPixArt";
@@ -259,18 +260,18 @@ export default function Home() {
                 fontFamily={newRockerFont.style.fontFamily}
                 m="0"
                 p="0"
+                fontWeight={400}
+                fontSize="4.5rem"
+                lineHeight="4.5rem"
+                textAlign={"center"}
               >
-                Burnt Pix
-                <br />
-                {"   Archives"}
+                Burnt Pix Archives
               </Heading>
-              <Heading fontSize="m" as="h3" m="0" p="0">
-                ON THE{" "}
-                <Heading fontSize="m" as="span" color="lukso.pink">
-                  LUKSO
-                </Heading>{" "}
-                CHAIN
-              </Heading>
+              <Flex gap={"5px"} alignItems={"center"}>
+                <Heading as="h3" fontSize="sm" fontWeight={700} m="0" p="0" letterSpacing={"1px"} style={{"wordSpacing": "2px"}}>ON THE</Heading>
+                <Heading as={Image} color="lukso.pink" height={"0.8rem"} src="/images/LUKSO_Wordmark_Fuchsia.svg" alt="LUKSO" />
+                <Heading as="h3" fontSize="sm" fontWeight={700} m="0" p="0" letterSpacing={"1.5px"}>CHAIN</Heading>
+              </Flex>
             </Flex>
             <Flex flex="1" justifyContent="flex-end">
               <Box>
