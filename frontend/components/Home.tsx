@@ -268,9 +268,34 @@ export default function Home() {
                 Burnt Pix Archives
               </Heading>
               <Flex gap={"5px"} alignItems={"center"}>
-                <Heading as="h3" fontSize="sm" fontWeight={700} m="0" p="0" letterSpacing={"1px"} style={{"wordSpacing": "2px"}}>ON THE</Heading>
-                <Heading as={Image} color="lukso.pink" height={"0.8rem"} src="/images/LUKSO_Wordmark_Fuchsia.svg" alt="LUKSO" />
-                <Heading as="h3" fontSize="sm" fontWeight={700} m="0" p="0" letterSpacing={"1.5px"}>CHAIN</Heading>
+                <Heading
+                  as="h3"
+                  fontSize="sm"
+                  fontWeight={700}
+                  m="0"
+                  p="0"
+                  letterSpacing={"1px"}
+                  style={{ wordSpacing: "2px" }}
+                >
+                  ON THE
+                </Heading>
+                <Heading
+                  as={Image}
+                  color="lukso.pink"
+                  height={"0.8rem"}
+                  src="/images/LUKSO_Wordmark_Fuchsia.svg"
+                  alt="LUKSO"
+                />
+                <Heading
+                  as="h3"
+                  fontSize="sm"
+                  fontWeight={700}
+                  m="0"
+                  p="0"
+                  letterSpacing={"1.5px"}
+                >
+                  CHAIN
+                </Heading>
               </Flex>
             </Flex>
             <Flex flex="1" justifyContent="flex-end">
