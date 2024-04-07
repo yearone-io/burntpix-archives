@@ -7,24 +7,19 @@ import {
   Flex,
   Grid,
   GridItem,
-  Heading,
   IconButton,
   Link,
-  Text,
   useToast,
-  Image,
 } from "@chakra-ui/react";
-import { New_Rocker } from "next/font/google";
 import BurntPixArt from "@/components/BurntPixArt";
 import Archives, { IArchive, IFetchArchives } from "@/components/Archives";
-import WalletConnector from "@/components/wallet/WalletConnector";
 import Article from "@/components/Article";
 import MainStatsList, { StatsItem } from "@/components/MainStatsList";
 import RefineButton from "@/components/RefineButton";
 import Leaderboard from "@/components/Leaderboard";
 import EditorsNote from "@/components/EditorsNote";
 import { FaExternalLinkAlt } from "react-icons/fa";
-import { ptSerifNormal, inter, interBold } from "@/app/fonts";
+import { inter } from "@/app/fonts";
 import { BurntPixArchives__factory } from "@/contracts";
 import { useContext, useEffect, useState, useCallback } from "react";
 import { WalletContext } from "@/components/wallet/WalletContext";
@@ -33,11 +28,7 @@ import YourContributions from "@/components/YourContributions";
 import { hexToText, numberToBytes32 } from "@/utils/hexUtils";
 import { getProfileData } from "@/utils/universalProfile";
 import { constants } from "@/constants/constants";
-
-const newRockerFont = New_Rocker({
-  weight: ["400"],
-  subsets: ["latin"],
-});
+import { Header } from "./Header";
 
 export default function Home() {
   const walletContext = useContext(WalletContext);
@@ -45,12 +36,6 @@ export default function Home() {
   const toast = useToast();
 
   const date = new Date();
-  const formattedDate = date.toLocaleDateString("en-US", {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
 
   const burntPixArchives = BurntPixArchives__factory.connect(
     networkConfig.burntPixArchivesAddress,
@@ -237,118 +222,7 @@ export default function Home() {
   return (
     <main className={styles.main}>
       <Flex width="100%" direction={"column"} maxW={"2000px"} p={"0px 25px"}>
-        <header>
-          <Flex
-            flexDir={{
-              base: "column-reverse",
-              md: "row",
-            }}
-            justifyContent="center"
-            alignItems={{
-              base: "flex-end",
-              md: "flex-start",
-            }}
-            width={"100%"}
-          >
-            <Flex flex="1" justifyContent="flex-end"></Flex>
-            <Flex
-              flex="2"
-              direction="column"
-              alignItems="center"
-              justifyContent="center"
-            >
-              <Heading
-                as="h1"
-                fontFamily={newRockerFont.style.fontFamily}
-                m="0"
-                p="0"
-                fontWeight={400}
-                fontSize="4.95rem"
-                lineHeight="4.95rem"
-                textAlign={"center"}
-              >
-                Burnt Pix Archives
-              </Heading>
-              <Flex gap={"5px"} alignItems={"center"}>
-                <Heading
-                  as="h3"
-                  fontSize="sm"
-                  fontStyle={interBold.style.fontStyle}
-                  m="0"
-                  p="0"
-                  letterSpacing={"1px"}
-                  style={{ wordSpacing: "2px" }}
-                >
-                  ON THE
-                </Heading>
-                <Heading
-                  as={Image}
-                  color="lukso.pink"
-                  height={"0.8rem"}
-                  src="/images/LUKSO_Wordmark_Fuchsia.svg"
-                  alt="LUKSO"
-                />
-                <Heading
-                  as="h3"
-                  fontSize="sm"
-                  fontStyle={interBold.style.fontStyle}
-                  m="0"
-                  p="0"
-                  letterSpacing={"1.5px"}
-                >
-                  CHAIN
-                </Heading>
-              </Flex>
-            </Flex>
-            <Flex flex="1" justifyContent="flex-end">
-              <Box
-                marginBottom={{
-                  base: "10px",
-                  md: "0px",
-                }}
-              >
-                <WalletConnector />
-              </Box>
-            </Flex>
-          </Flex>
-          <Flex
-            mt={"25px"}
-            borderTop={"1px solid #000000"}
-            borderBottom={"2px solid #000000"}
-            flexDir={{
-              base: "column",
-              md: "row",
-            }}
-            justifyContent="center"
-            alignItems="center"
-            width={"100%"}
-            p={"2px 25px"}
-          >
-            <Box flex="1">
-              <Text
-                color="#000000"
-                fontFamily={ptSerifNormal.style.fontFamily}
-                fontSize={"md"}
-              >
-                "All the Pixels, That Are Fit To Burn"
-              </Text>
-            </Box>
-            <Box flex="0" minWidth="max-content" px={5}>
-              <Text fontSize={"1.2rem"} as="b">
-                {formattedDate}
-              </Text>
-            </Box>
-            <Flex flex="1" justifyContent={"flex-end"} textAlign={"center"}>
-              <Text
-                color="#000000"
-                fontFamily={ptSerifNormal.style.fontFamily}
-                fontSize={"md"}
-              >
-                {`To Unlock Original Contribute: ${winnerIterations} Iterations`}
-              </Text>
-            </Flex>
-          </Flex>
-        </header>
+        <Header winnerIterations={winnerIterations} />
         <Box mt={4} width={"100%"}>
           <Grid
             width={"100%"}
