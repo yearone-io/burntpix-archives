@@ -2,30 +2,6 @@ import Footer from "@/components/instructionsComponent/navigation/footer";
 import Head from "next/head";
 import { Providers } from "./providers";
 import { WalletProvider } from "@/components/wallet/WalletProvider";
-import { Metadata } from "next";
-import { constants } from "@/constants/constants";
-
-const title = "Burntpix Archives";
-const description = "All the Pixels, That Are Fit To Burn";
-export const metadata: Metadata = {
-  title: title,
-  description: description,
-  openGraph: {
-    title: title,
-    description: description,
-    type: "website",
-    url: `${constants.DOMAIN}`,
-    images: {
-      url: `${constants.DOMAIN}/images/logo.png`,
-    },
-  },
-  twitter: {
-    images: {
-      url: `${constants.DOMAIN}/images/logo.png`,
-    },
-    card: "summary_large_image",
-  },
-};
 
 export default function RootLayout({
   children,

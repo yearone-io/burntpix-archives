@@ -1,4 +1,11 @@
-import React, { useContext, useEffect, useState, useCallback, Dispatch, SetStateAction } from "react";
+import React, {
+  useContext,
+  useEffect,
+  useState,
+  useCallback,
+  Dispatch,
+  SetStateAction,
+} from "react";
 import {
   Avatar,
   Flex,
@@ -12,11 +19,14 @@ import {
   Stack,
   Skeleton,
 } from "@chakra-ui/react";
-import { FaArrowCircleLeft, FaArrowCircleRight, FaCheckCircle } from "react-icons/fa";
+import {
+  FaArrowCircleLeft,
+  FaArrowCircleRight,
+  FaCheckCircle,
+} from "react-icons/fa";
 import { BurntPixArchives__factory } from "@/contracts";
 import { WalletContext } from "@/components/wallet/WalletContext";
 import { LSP3ProfileMetadata } from "@lukso/lsp3-contracts";
-
 
 export interface IArchive {
   id: string;
@@ -34,7 +44,9 @@ export interface IFetchArchives {
     setArchives: React.Dispatch<React.SetStateAction<IArchive[]>>,
     setLoadedIndices: React.Dispatch<React.SetStateAction<number>>,
     ownerProfiles: { [key: string]: any },
-    setOwnerProfiles: React.Dispatch<React.SetStateAction<{ [key: string]: any }>>
+    setOwnerProfiles: React.Dispatch<
+      React.SetStateAction<{ [key: string]: any }>
+    >,
   ): Promise<void>;
 }
 
@@ -45,7 +57,6 @@ interface IOwners {
 interface ArchivesProps {
   fetchArchives: IFetchArchives;
 }
-
 
 const Archives: React.FC<ArchivesProps> = ({ fetchArchives }) => {
   const walletContext = useContext(WalletContext);
@@ -66,14 +77,31 @@ const Archives: React.FC<ArchivesProps> = ({ fetchArchives }) => {
 
   useEffect(() => {
     // Use the passed-in fetchArchives function with necessary arguments
-    fetchArchives(startIndex, slideAmount, setArchives as Dispatch<SetStateAction<IArchive[]>>, setLoadedIndices, ownerProfiles, setOwnerProfiles);
+    fetchArchives(
+      startIndex,
+      slideAmount,
+      setArchives as Dispatch<SetStateAction<IArchive[]>>,
+      setLoadedIndices,
+      ownerProfiles,
+      setOwnerProfiles,
+    );
   }, [fetchArchives, slideAmount]);
 
   const nextSlide = () => {
     setStartIndex((prevIndex) => {
       const nextIndex = Math.min(prevIndex + slideAmount, loadedIndices - 1);
-      if (nextIndex + slideAmount > loadedIndices && loadedIndices < Number(burntPixArchives.archiveCount())) {
-        fetchArchives(startIndex, slideAmount, setArchives as Dispatch<SetStateAction<IArchive[]>>, setLoadedIndices, ownerProfiles, setOwnerProfiles);
+      if (
+        nextIndex + slideAmount > loadedIndices &&
+        loadedIndices < Number(burntPixArchives.archiveCount())
+      ) {
+        fetchArchives(
+          startIndex,
+          slideAmount,
+          setArchives as Dispatch<SetStateAction<IArchive[]>>,
+          setLoadedIndices,
+          ownerProfiles,
+          setOwnerProfiles,
+        );
       }
       return nextIndex;
     });
@@ -110,17 +138,31 @@ const Archives: React.FC<ArchivesProps> = ({ fetchArchives }) => {
               <VStack
                 alignItems={"left"}
                 key={index}
-                width={slideAmount === responsiveSlideValues.base ? "100%" : "20%"}
+                width={
+                  slideAmount === responsiveSlideValues.base ? "100%" : "20%"
+                }
               >
                 <div
                   style={{
-                    height: slideAmount === responsiveSlideValues.base ? "200px" : "100px",
-                    width: slideAmount === responsiveSlideValues.base ? "200px" : "100px",
+                    height:
+                      slideAmount === responsiveSlideValues.base
+                        ? "200px"
+                        : "100px",
+                    width:
+                      slideAmount === responsiveSlideValues.base
+                        ? "200px"
+                        : "100px",
                     filter: archive.isMinted ? "none" : "invert(100%)",
                   }}
                   dangerouslySetInnerHTML={{ __html: archive.image }}
                 />
-                <Flex width={slideAmount === responsiveSlideValues.base ? "200px" : "100px"}>
+                <Flex
+                  width={
+                    slideAmount === responsiveSlideValues.base
+                      ? "200px"
+                      : "100px"
+                  }
+                >
                   <Link
                     href={
                       archive.id
