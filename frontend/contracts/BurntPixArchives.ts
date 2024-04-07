@@ -45,6 +45,7 @@ export interface BurntPixArchivesInterface extends Interface {
       | "getDataBatchForTokenIds"
       | "getDataForTokenId"
       | "getOperatorsOf"
+      | "getTopTenContributors"
       | "getTotalContributors"
       | "getTotalFeesBurnt"
       | "getTotalIterations"
@@ -155,6 +156,10 @@ export interface BurntPixArchivesInterface extends Interface {
   encodeFunctionData(
     functionFragment: "getOperatorsOf",
     values: [BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getTopTenContributors",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "getTotalContributors",
@@ -316,6 +321,10 @@ export interface BurntPixArchivesInterface extends Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getOperatorsOf",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getTopTenContributors",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -678,6 +687,12 @@ export interface BurntPixArchives extends BaseContract {
 
   getOperatorsOf: TypedContractMethod<[tokenId: BytesLike], [string[]], "view">;
 
+  getTopTenContributors: TypedContractMethod<
+    [],
+    [[string[], bigint[]]],
+    "view"
+  >;
+
   getTotalContributors: TypedContractMethod<[], [bigint], "view">;
 
   getTotalFeesBurnt: TypedContractMethod<[], [bigint], "view">;
@@ -898,6 +913,9 @@ export interface BurntPixArchives extends BaseContract {
   getFunction(
     nameOrSignature: "getOperatorsOf"
   ): TypedContractMethod<[tokenId: BytesLike], [string[]], "view">;
+  getFunction(
+    nameOrSignature: "getTopTenContributors"
+  ): TypedContractMethod<[], [[string[], bigint[]]], "view">;
   getFunction(
     nameOrSignature: "getTotalContributors"
   ): TypedContractMethod<[], [bigint], "view">;
