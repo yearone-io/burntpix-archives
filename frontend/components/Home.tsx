@@ -24,7 +24,7 @@ import RefineButton from "@/components/RefineButton";
 import Leaderboard from "@/components/Leaderboard";
 import EditorsNote from "@/components/EditorsNote";
 import { FaExternalLinkAlt } from "react-icons/fa";
-import { inter } from "@/app/fonts";
+import { ptSerifNormal, inter, interBold } from "@/app/fonts";
 import { BurntPixArchives__factory } from "@/contracts";
 import { useContext, useEffect, useState, useCallback } from "react";
 import { WalletContext } from "@/components/wallet/WalletContext";
@@ -33,7 +33,6 @@ import YourContributions from "@/components/YourContributions";
 import { hexToText, numberToBytes32 } from "@/utils/hexUtils";
 import { getProfileData } from "@/utils/universalProfile";
 import { constants } from "@/constants/constants";
-import { Metadata } from "next";
 
 const newRockerFont = New_Rocker({
   weight: ["400"],
@@ -241,11 +240,14 @@ export default function Home() {
         <header>
           <Flex
             flexDir={{
-              base: "column",
+              base: "column-reverse",
               md: "row",
             }}
             justifyContent="center"
-            alignItems="center"
+            alignItems={{
+              base: "flex-end",
+              md: "flex-start",
+            }}
             width={"100%"}
           >
             <Flex flex="1" justifyContent="flex-end"></Flex>
@@ -261,8 +263,8 @@ export default function Home() {
                 m="0"
                 p="0"
                 fontWeight={400}
-                fontSize="4.5rem"
-                lineHeight="4.5rem"
+                fontSize="4.95rem"
+                lineHeight="4.95rem"
                 textAlign={"center"}
               >
                 Burnt Pix Archives
@@ -271,7 +273,7 @@ export default function Home() {
                 <Heading
                   as="h3"
                   fontSize="sm"
-                  fontWeight={700}
+                  fontStyle={interBold.style.fontStyle}
                   m="0"
                   p="0"
                   letterSpacing={"1px"}
@@ -289,7 +291,7 @@ export default function Home() {
                 <Heading
                   as="h3"
                   fontSize="sm"
-                  fontWeight={700}
+                  fontStyle={interBold.style.fontStyle}
                   m="0"
                   p="0"
                   letterSpacing={"1.5px"}
@@ -299,32 +301,55 @@ export default function Home() {
               </Flex>
             </Flex>
             <Flex flex="1" justifyContent="flex-end">
-              <Box>
+              <Box
+                marginBottom={{
+                  base: "10px",
+                  md: "0px",
+                }}
+              >
                 <WalletConnector />
               </Box>
             </Flex>
           </Flex>
-        </header>
-        <Box mt={4} pl={"20px"} pr={"20px"} width={"100%"}>
-          <Box width="100%">
-            <Divider mb={2} borderColor={"#000000"} opacity={1} />
-            <Flex justifyContent="center" alignItems="center" w="100%">
-              <Box flex="1" textAlign="left" pl={"20px"}>
-                <Text color="#000000" fontWeight="400">
-                  "All the Pixels, That Are Fit To Burn"
-                </Text>
-              </Box>
-              <Box flex="0" minWidth="max-content" px={5}>
-                <Text as="b">{formattedDate}</Text>
-              </Box>
-              <Box flex="1" textAlign="right" pr={"20px"}>
-                <Text color="#000000" fontWeight="400">
-                  {`To Unlock Original Contribute: ${winnerIterations} Iterations`}
-                </Text>
-              </Box>
+          <Flex
+            mt={"25px"}
+            borderTop={"1px solid #000000"}
+            borderBottom={"2px solid #000000"}
+            flexDir={{
+              base: "column",
+              md: "row",
+            }}
+            justifyContent="center"
+            alignItems="center"
+            width={"100%"}
+            p={"2px 25px"}
+          >
+            <Box flex="1">
+              <Text
+                color="#000000"
+                fontFamily={ptSerifNormal.style.fontFamily}
+                fontSize={"md"}
+              >
+                "All the Pixels, That Are Fit To Burn"
+              </Text>
+            </Box>
+            <Box flex="0" minWidth="max-content" px={5}>
+              <Text fontSize={"1.2rem"} as="b">
+                {formattedDate}
+              </Text>
+            </Box>
+            <Flex flex="1" justifyContent={"flex-end"} textAlign={"center"}>
+              <Text
+                color="#000000"
+                fontFamily={ptSerifNormal.style.fontFamily}
+                fontSize={"md"}
+              >
+                {`To Unlock Original Contribute: ${winnerIterations} Iterations`}
+              </Text>
             </Flex>
-            <Divider opacity={1} borderColor={"#00000"} size={"lg"} />
-          </Box>
+          </Flex>
+        </header>
+        <Box mt={4} width={"100%"}>
           <Grid
             width={"100%"}
             mt="20px"
