@@ -28,7 +28,7 @@ const NETWORKS = {
     burntPixArchivesAddress: "0x4b8cCCF15514e136beD7d07365D8FA48353e7947", //TODO update this
   },
   testnet: {
-    domain: "https://testnet--universal-grave.netlify.app",
+    domain: "https://deploy-preview-44--burntpix-archives.netlify.app",
     chainId: 4201,
     name: "LUKSO Testnet",
     symbol: "LYXt",
