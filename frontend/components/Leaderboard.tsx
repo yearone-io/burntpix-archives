@@ -26,7 +26,7 @@ const Leaderboard: React.FC = () => {
   const margin = useBreakpointValue({ base: "0", md: "20px" });
   const walletContext = useContext(WalletContext);
   const toast = useToast();
-  const { networkConfig, provider } = walletContext;
+  const { networkConfig, provider, refineEventCounter } = walletContext;
   const [sortedContributions, setSortedContributions] = useState<
     Contribution[]
   >([]);
@@ -81,7 +81,7 @@ const Leaderboard: React.FC = () => {
       }
     };
     fetchContributions();
-  }, []); // NOTE: adding dependencies will cause duplicated calls
+  }, [refineEventCounter]); // NOTE: adding dependencies will cause duplicated calls
 
   const fetchProfileData = async (
     contributor: string,

@@ -7,6 +7,8 @@ import { getNetworkConfig } from "@/constants/networks";
 import { getProvider } from "@/utils/provider";
 import { JsonRpcProvider, BrowserProvider } from "ethers";
 import { buildSIWEMessage } from "@/utils/universalProfile";
+import { ethers } from "ethers";
+import { BurntPixArchives__factory } from "@/contracts";
 
 // Extends the window object to include `lukso`, which will be used to interact with LUKSO blockchain.
 declare global {
@@ -34,14 +36,25 @@ export const WalletProvider: React.FC<Props> = ({ children }) => {
   const [provider, setProvider] = useState<JsonRpcProvider | BrowserProvider>(
     DEFAULT_PROVIDER,
   );
+  const [refineEventCounter, setRefineEventCounter] = useState(0);
   const [account, setAccount] = useState<string | null>(null);
   const [mainUPController, setMainUPController] = useState<string>();
   const [isLoadingAccount, setIsLoadingAccount] = useState<boolean>(true);
   const [connectedChainId, setConnectedChainId] = useState<
     number | undefined
   >();
-
   const toast = useToast();
+  const contract = new ethers.Contract(
+    networkConfig.burntPixArchivesAddress,
+    BurntPixArchives__factory.abi,
+    provider,
+  );
+
+  // Listen to the RefineToArchive event
+  // that will refresh component
+  useEffect(() => {
+    listenToRefineToArchive(contract);
+  }, []);
 
   useEffect(() => {
     const initProvider = getProvider(networkConfig);
@@ -147,6 +160,34 @@ export const WalletProvider: React.FC<Props> = ({ children }) => {
     }
   };
 
+  const listenToRefineToArchive = (contract: ethers.Contract) => {
+    // NOTE: we have to do this to ignore a console log that is thrown by ethers.js when it can't coalesce an error
+    // due to a filter function not being able to be coalesced
+    const originalConsoleLog = console.log;
+    console.log = (...args) => {
+      if (
+        args[0] === "@TODO" &&
+        args[1].shortMessage &&
+        args[1].shortMessage === "could not coalesce error"
+      ) {
+        // If it does, don't log this message to the console
+        return;
+      }
+
+      // Otherwise, call the original console.log function with all arguments
+      originalConsoleLog.apply(console, args);
+    };
+
+    try {
+      contract.on("RefineToArchive", (sender, value) => {
+        console.log("REFINE TO ARCHIVE EVENT", sender, value);
+        setRefineEventCounter((prevCounter) => prevCounter + 1);
+      });
+    } catch (error) {
+      console.error("Error listening to RefineToArchive event", error);
+    }
+  };
+
   // Render the context provider, passing down the account state and control functions to children.
   return (
     <WalletContext.Provider
@@ -159,6 +200,7 @@ export const WalletProvider: React.FC<Props> = ({ children }) => {
         isLoadingAccount,
         networkConfig,
         connectedChainId,
+        refineEventCounter,
       }}
     >
       {children}

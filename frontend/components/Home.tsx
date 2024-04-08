@@ -32,7 +32,8 @@ import { Header } from "./Header";
 
 export default function Home() {
   const walletContext = useContext(WalletContext);
-  const { account, networkConfig, provider } = walletContext;
+  const { account, networkConfig, provider, refineEventCounter } =
+    walletContext;
   const toast = useToast();
 
   const date = new Date();
@@ -137,7 +138,7 @@ export default function Home() {
 
   useEffect(() => {
     supplyCap && fetchCollectionStats();
-  }, [supplyCap]);
+  }, [supplyCap, refineEventCounter]);
 
   const externalFetchArchives: IFetchArchives = useCallback(
     async (
@@ -199,10 +200,17 @@ export default function Home() {
           });
         }
 
-        setArchives((prevArchives) => [
-          ...(Array.isArray(prevArchives) ? prevArchives : []),
-          ...newArchives,
-        ]);
+        setArchives((prevArchives) => {
+          let all = [
+            ...(Array.isArray(prevArchives) ? prevArchives : []),
+            ...newArchives,
+          ];
+          // unique by id
+          all = all.filter(
+            (v, i, a) => a.findIndex((t) => t.id === v.id) === i,
+          );
+          return all;
+        });
         setLoadedIndices(end);
       } catch (error: any) {
         toast({
