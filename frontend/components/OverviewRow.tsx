@@ -20,7 +20,7 @@ export const OverviewRow = ({
       templateColumns={{ base: "1fr", md: "1fr 1fr", lg: "1fr 1fr 1fr" }}
       w="full"
     >
-      <GridItem colSpan={1} px={{ base: 0, md: 7 }} py={7}>
+      <GridItem colSpan={1} pl={{ base: 0, md: 7 }} py={7}>
         <Article
           title="LIVE VIEW"
           description="In a First, LUKSO Community Works to Refine and Archive the Same Burnt Pic Together"

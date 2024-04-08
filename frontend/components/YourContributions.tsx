@@ -54,13 +54,16 @@ const YourContributions = ({
       setUserStats([
         {
           label: "Iterations:",
-          value: new Intl.NumberFormat("en-US").format(
-            Number(userIterations[0]),
-          ),
+          value: new Intl.NumberFormat("en-US")
+            .format(Number(userIterations[0]))
+            .toLocaleString(),
         },
         { label: "Archive Unlocks:", value: userArchives.length },
         { label: "Archive Mints:", value: userOwnedArchiveMints.length },
-        { label: "Iters Till Next Archive:", value: userIterationsGoal },
+        {
+          label: "Iters Till Next Archive:",
+          value: userIterationsGoal.toLocaleString(),
+        },
       ]);
     } catch (error: any) {
       toast({
