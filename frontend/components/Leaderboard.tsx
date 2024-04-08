@@ -47,28 +47,17 @@ const Leaderboard: React.FC = () => {
   useEffect(() => {
     const fetchContributions = async () => {
       try {
-        const contributorsResponse = await burntPixArchives.getContributors();
-        const contributors = [...contributorsResponse];
-        const contributionsResponse =
-          await burntPixArchives.getContributions(contributors);
-        const contributionsBigInt = [...contributionsResponse];
-
-        let contributions = contributors.map((address, index) => ({
-          contributor: address,
-          contribution: Number(contributionsBigInt[index].toString()),
-        }));
-
-        contributions.sort((a, b) => b.contribution - a.contribution);
-        const topContributions = contributions.slice(0, 10);
+        const [topContributors, contributions] = await burntPixArchives.getTopTenContributors()
 
         const profiles = await Promise.all(
-          topContributions.map((contrib) =>
-            fetchProfileData(contrib.contributor, networkConfig.rpcUrl),
+          topContributors.map((contrib) =>
+            fetchProfileData(contrib, networkConfig.rpcUrl),
           ),
         );
-        const contributionsWithProfiles = topContributions.map(
-          (contrib, index) => ({
-            ...contrib,
+        const contributionsWithProfiles = topContributors.map(
+          (contributor, index) => ({
+            contributor,
+            contribution: Number(contributions[index]),
             upName: profiles[index]?.upName || null,
             avatar: profiles[index]?.avatar || null,
           }),

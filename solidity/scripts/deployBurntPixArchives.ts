@@ -18,11 +18,12 @@ async function main() {
   const provider = new ethers.JsonRpcProvider(config.networks[network].url);
   const signer = new ethers.Wallet(EOA_PRIVATE_KEY as string, provider);
   // deployment config
-  const contractOwner = UP_ADDR_CONTROLLED_BY_EOA;
+  const creator = UP_ADDR_CONTROLLED_BY_EOA;
+  const royaltiesRecipient = UP_ADDR_CONTROLLED_BY_EOA;
   const burntpicId = BURNTPIC_ID;
   const maxSupply = MAX_SUPPLY;
   const winnerGoal = WINNER_ITERATIONS;
-  const constructorArguments = [CODEHUB, ARCHIVE_HELPERS, contractOwner, burntpicId, maxSupply, winnerGoal];
+  const constructorArguments = [CODEHUB, ARCHIVE_HELPERS, creator, royaltiesRecipient, burntpicId, maxSupply, winnerGoal];
   const BurntPixArchivesFactory = new ethers.ContractFactory(
     BurntPixArchives.abi,
     BurntPixArchives.bytecode,
@@ -44,7 +45,7 @@ async function main() {
   ];
   const erc725 = new ERC725(
     LSP12Schema,
-    contractOwner,
+    creator,
     config.networks[network].url,
   );
   const allAssetAddresses = issuedAssets.map((asset) => asset.address);
@@ -63,7 +64,7 @@ async function main() {
     ...issuedAssetsMap,
   ]);
   const myUPContract = new ethers.Contract(
-    contractOwner,
+    creator,
     UniversalProfileArtifact.abi,
     signer,
   );
