@@ -37,7 +37,7 @@ const NETWORKS = {
     marketplaceCollectionsURL: "https://universalpage.dev/collections",
     burntPixCollectionAddress: "0x12167f1c2713aC4f740B4700c4C72bC2de6C686f",
     marketplaceProfilesURL: "https://universalpage.dev/profiles",
-    burntPixArchivesAddress: "0x7a861014FA2302d8C33662Df45a5030b59c02015",
+    burntPixArchivesAddress: "0x51be5f55417edB275715913328EDa544A7B32035",
   },
 } as {
   [key: string]: Network;
