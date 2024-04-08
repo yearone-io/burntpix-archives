@@ -63,10 +63,7 @@ const SignInButton: React.FC = () => {
           alt="Sign In"
           height={fontDimensions}
         />
-        <Box
-          fontSize={fontDimensions}
-          lineHeight={fontDimensions}
-        >
+        <Box fontSize={fontDimensions} lineHeight={fontDimensions}>
           {isLoadingAccount ? "..." : "SIGN IN"}
         </Box>
       </Flex>

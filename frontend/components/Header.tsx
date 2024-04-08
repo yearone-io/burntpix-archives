@@ -92,7 +92,7 @@ export const Header = ({ winnerIterations }: IHeaderProps) => {
               base: "3",
               md: "0px",
             }}
-            marginRight={{base: 0, md: "6"}}
+            marginRight={{ base: 0, md: "6" }}
           >
             <WalletConnector />
           </Box>
