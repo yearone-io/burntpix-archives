@@ -71,20 +71,20 @@ export default function BurntPixArt({ burntPicId }: IOriginalArtProps) {
         )}
       </Box>
 
-      <HStack justifyContent={"center"}>
+      <Flex mt={1} alignItems={"center"} gap={1}>
         <Text
           fontSize="sm"
           fontWeight="500"
           letterSpacing={1.5}
           fontFamily={inter.style.fontFamily}
         >
-          Burnt Pix Id
+          Burnt Pic Id:
         </Text>
         <Link
           isExternal={true}
           href={`${networkConfig.marketplaceCollectionsURL}/${networkConfig.burntPixCollectionAddress}/${burntPicId}`}
         >
-          <Flex>
+          <Flex alignItems={"center"} gap={1}>
             <Text
               fontSize="sm"
               fontWeight="500"
@@ -94,12 +94,11 @@ export default function BurntPixArt({ burntPicId }: IOriginalArtProps) {
             >
               {formatAddress(burntPicId)}
             </Text>
-            <Text fontSize={"12px"} ml="2px" mt="4px">
-              <FaExternalLinkAlt />
-            </Text>
+            <Box><FaExternalLinkAlt /></Box>
+            
           </Flex>
         </Link>
-      </HStack>
+      </Flex>
     </Flex>
   );
 }
