@@ -82,6 +82,7 @@ contract BurntPixArchives is LSP8CappedSupply {
         address _codehub,
         address _archiveHelpers,
         address _creator,
+        address _royaltyRecipient,
         bytes32 _burntPicId,
         uint256 _maxSupply,
         uint256 _winnerIters
@@ -109,8 +110,9 @@ contract BurntPixArchives is LSP8CappedSupply {
             _LSP4_CREATORS_ARRAY_KEY,
             hex"00000000000000000000000000000001"
         );
+        bytes32 creatorIndex = bytes32(bytes16(_LSP4_CREATORS_ARRAY_KEY));
         _setData(
-            0x114bd03b3a46d48759680d81ebb2b41400000000000000000000000000000000,
+            creatorIndex,
             abi.encodePacked(_creator)
         );
         _setData(
@@ -129,7 +131,7 @@ contract BurntPixArchives is LSP8CappedSupply {
             abi.encodePacked(
                 hex"001c", // length of data
                 _INTERFACEID_LSP0,
-                _creator,
+                _royaltyRecipient,
                 uint32(5_000)
             )
         );
@@ -175,7 +177,7 @@ contract BurntPixArchives is LSP8CappedSupply {
                 ""
             );
         }
-        // STORE ARCHIVE IF UNLOCKED
+        // STORE ARCHIVE IF NEXT LEVEL UNLOCKED
         if (
             contributions[contributor].iterations >=
             IArchiveHelpers(archiveHelpers).fibonacciIterations(
@@ -220,6 +222,29 @@ contract BurntPixArchives is LSP8CappedSupply {
 
     function getContributors() public view returns (address[] memory) {
         return contributors;
+    }
+
+    function getTopTenContributors() public view returns (address[10] memory, uint256[10] memory) {
+        address[10] memory topContributors;
+        uint256[10] memory topIterations;
+
+        for (uint256 i = 0; i < contributors.length; i++) {
+            uint256 iterations = contributions[contributors[i]].iterations;
+
+            for (uint256 j = 0; j < topIterations.length; j++) {
+                if (iterations > topIterations[j]) {
+                    for (uint256 k = topIterations.length - 1; k > j; k--) {
+                        topIterations[k] = topIterations[k - 1];
+                        topContributors[k] = topContributors[k - 1];
+                    }
+                    topIterations[j] = iterations;
+                    topContributors[j] = contributors[i];
+                    break;
+                }
+            }
+        }
+
+        return (topContributors, topIterations);
     }
 
     function getContributions(
@@ -271,7 +296,7 @@ contract BurntPixArchives is LSP8CappedSupply {
         bytes32 archiveId,
         bytes32 key
     ) internal view override returns (bytes memory dataValues) {
-        require(_exists(archiveId));
+        require(_exists(archiveId), "BurntPixArchives: Token does not exist");
         if (key == _LSP4_METADATA_KEY) {
             return
                 IArchiveHelpers(archiveHelpers).generateArchiveMetadata(
