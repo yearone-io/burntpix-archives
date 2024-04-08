@@ -10,21 +10,16 @@ import {
 } from "@chakra-ui/react";
 import Archives, { IArchive, IFetchArchives } from "@/components/Archives";
 import Article from "@/components/Article";
-import { StatsItem } from "@/components/MainStatsList";
 import Leaderboard from "@/components/Leaderboard";
 import { FaExternalLinkAlt } from "react-icons/fa";
 import { inter } from "@/app/fonts";
 import { BurntPixArchives } from "@/contracts";
-import { useContext, useEffect, useState, useCallback } from "react";
-import { WalletContext } from "@/components/wallet/WalletContext";
-import { divideBigIntTokenBalance } from "@/utils/numberUtils";
+import { useCallback } from "react";
 import YourContributions from "@/components/YourContributions";
 import { hexToText, numberToBytes32 } from "@/utils/hexUtils";
 import { getProfileData } from "@/utils/universalProfile";
 import { constants } from "@/constants/constants";
 import { Network } from "@/constants/networks";
-import { Header } from "./Header";
-import { OverviewRow } from "./OverviewRow";
 
 const archivesTitle = (
   <Box
@@ -144,7 +139,6 @@ export const ContributionsRow = ({
       <GridItem
         colSpan={1}
         borderRight={{ base: "none", lg: "1px solid #000000" }}
-        py={7}
         borderTop={"1px solid #000000"}
       >
         <Box py={7} px={{ base: 0, md: 7 }} borderBottom={"1px solid #000000"}>
