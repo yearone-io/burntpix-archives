@@ -1,4 +1,5 @@
 import SignInButton from "@/components/SignInButton";
+import { inter } from "@/app/fonts";
 
 declare global {
   interface Window {
@@ -37,10 +38,17 @@ const WalletConnector: React.FC = () => {
             as={Button}
             color={"dark.purple.500"}
             border={"1px solid var(--chakra-colors-dark-purple-500)"}
+            size={{ base: "xs", md: "sm" }}
+            fontFamily={inter.style.fontFamily}
+            fontSize={{ base: "12px", md: "14px" }}
+            lineHeight={{ base: "12px", md: "14px" }}
           >
             {formatAddress(account)}
           </MenuButton>
-          <MenuList>
+          <MenuList
+            fontSize={{ base: "12px", md: "14px" }}
+            lineHeight={{ base: "12px", md: "14px" }}
+          >
             <MenuItem onClick={disconnect} icon={<VscDebugDisconnect />}>
               Disconnect
             </MenuItem>

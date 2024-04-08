@@ -49,6 +49,9 @@ const Leaderboard: React.FC = () => {
       try {
         const [topContributors, contributions] =
           await burntPixArchives.getTopTenContributors();
+        if (Number(contributions[0]) === 0) {
+          return;
+        }
 
         const profiles = await Promise.all(
           topContributors.map((contrib) =>
