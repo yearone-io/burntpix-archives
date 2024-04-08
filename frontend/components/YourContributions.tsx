@@ -67,7 +67,7 @@ const YourContributions = ({
         title: `Failed to fetch your contribution stats: ${error.message}`,
         status: "error",
         position: "bottom-left",
-        duration: 5000,
+        duration: null,
         isClosable: true,
       });
     }
@@ -78,26 +78,31 @@ const YourContributions = ({
   }, [account, refineEventCounter]);
 
   const yourArchivesTitle = (
-    <Box
+    <Flex
       color="#FE005B"
       fontWeight={900}
       fontSize="md"
       lineHeight="17px"
       letterSpacing={1.5}
       fontFamily={inter.style.fontFamily}
+      alignItems={"center"}
+      gap={"2"}
     >
-      {" "}
       YOUR ARCHIVES
-      <Link isExternal={true} href={"/"}>
+      <Link
+        isExternal={true}
+        href={`${networkConfig.marketplaceProfilesURL}/${account}`}
+      >
         <IconButton
           aria-label="View archives"
           color={"lukso.pink"}
           icon={<FaExternalLinkAlt />}
-          size="sm"
+          size="xs"
           variant="ghost"
+          mb={"2px"}
         />
       </Link>
-    </Box>
+    </Flex>
   );
 
   const externalFetchArchives: IFetchArchives = useCallback(
@@ -174,7 +179,7 @@ const YourContributions = ({
           title: `Failed to fetch your archives: ${error.message}`,
           status: "error",
           position: "bottom-left",
-          duration: 5000,
+          duration: null,
           isClosable: true,
         });
       }

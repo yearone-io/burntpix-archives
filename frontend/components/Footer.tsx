@@ -24,8 +24,9 @@ const Footer: React.FC = () => {
       <Flex
         alignItems="center"
         justifyContent="space-between"
-        p={"20px"}
-        m={"20px"}
+        py={8}
+        px={{ base: 0, md: 7 }}
+        mx={8}
         borderTop="2px"
         borderColor="#000000"
       >
