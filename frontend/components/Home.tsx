@@ -11,6 +11,10 @@ import {
   Link,
   useToast,
 } from "@chakra-ui/react";
+<<<<<<< HEAD
+=======
+import BurntPixArt from "@/components/BurntPixArt";
+>>>>>>> dfb149ce382be96bbe26fd0472ddcc3af69b44bb
 import Archives, { IArchive, IFetchArchives } from "@/components/Archives";
 import Article from "@/components/Article";
 import { StatsItem } from "@/components/MainStatsList";
@@ -26,13 +30,21 @@ import { hexToText, numberToBytes32 } from "@/utils/hexUtils";
 import { getProfileData } from "@/utils/universalProfile";
 import { constants } from "@/constants/constants";
 import { Header } from "./Header";
+<<<<<<< HEAD
 import { OverviewRow } from "./OverviewRow";
+=======
+>>>>>>> dfb149ce382be96bbe26fd0472ddcc3af69b44bb
 
 export default function Home() {
   const walletContext = useContext(WalletContext);
   const { account, networkConfig, provider } = walletContext;
   const toast = useToast();
 
+<<<<<<< HEAD
+=======
+  const date = new Date();
+
+>>>>>>> dfb149ce382be96bbe26fd0472ddcc3af69b44bb
   const burntPixArchives = BurntPixArchives__factory.connect(
     networkConfig.burntPixArchivesAddress,
     provider,
