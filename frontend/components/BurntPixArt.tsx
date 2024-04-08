@@ -49,7 +49,12 @@ export default function BurntPixArt({ burntPicId }: IOriginalArtProps) {
   }, [burntPicId]);
 
   return (
-    <Flex width={"100%"} flexDir={"column"} alignItems={"center"} justifyContent={"center"}>
+    <Flex
+      width={"100%"}
+      flexDir={"column"}
+      alignItems={"center"}
+      justifyContent={"center"}
+    >
       <Box width={"100%"} minWidth={"xs"} maxWidth={"sm"}>
         {burntPix ? (
           <div

@@ -219,7 +219,10 @@ export default function Home() {
     <main className={styles.main}>
       <Flex width="100%" direction={"column"} maxW={"2000px"} p={"0px 25px"}>
         <Header winnerIterations={winnerIterations} />
-        <OverviewRow collectionStats={collectionStats} burntPicId={burntPicId} />
+        <OverviewRow
+          collectionStats={collectionStats}
+          burntPicId={burntPicId}
+        />
         <Divider borderColor={"#00000"} size={"md"} />
         <Grid width={"100%"} templateColumns={{ base: "1fr", md: "9fr 4fr" }}>
           <GridItem w="100%" overflow={"hidden"}>
