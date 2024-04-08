@@ -60,7 +60,7 @@ interface ArchivesProps {
 
 const Archives: React.FC<ArchivesProps> = ({ fetchArchives }) => {
   const walletContext = useContext(WalletContext);
-  const { networkConfig, provider } = walletContext;
+  const { networkConfig, provider, refineEventCounter } = walletContext;
   const [archives, setArchives] = useState<IArchive[]>();
   const [startIndex, setStartIndex] = useState(0);
   const [loadedIndices, setLoadedIndices] = useState<number>(0);
@@ -85,7 +85,7 @@ const Archives: React.FC<ArchivesProps> = ({ fetchArchives }) => {
       ownerProfiles,
       setOwnerProfiles,
     );
-  }, [fetchArchives, slideAmount]);
+  }, [fetchArchives, slideAmount, refineEventCounter]);
 
   const nextSlide = () => {
     setStartIndex((prevIndex) => {

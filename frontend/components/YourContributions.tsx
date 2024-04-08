@@ -25,7 +25,7 @@ const YourContributions = ({
 }: IYourContributionsProps) => {
   const walletContext = useContext(WalletContext);
   const toast = useToast();
-  const { networkConfig } = walletContext;
+  const { networkConfig, refineEventCounter } = walletContext;
   const [userArchives, setUserArchives] = useState<string[]>([]);
   const [userOwnedArchiveMints, setUserOwnedArchiveMints] = useState<string[]>(
     [],
@@ -50,7 +50,7 @@ const YourContributions = ({
         Number(userIterations[0]),
       );
       setUserArchives(userArchives);
-      setUserOwnedArchiveMints(userOwnedArchiveMints);
+      setUserOwnedArchiveMints(userOwnedArchiveMints); // todo?? do we need this?
       setUserStats([
         {
           label: "Iterations:",
@@ -78,7 +78,7 @@ const YourContributions = ({
 
   useEffect(() => {
     fetchUserStats(account as string);
-  }, [account]);
+  }, [account, refineEventCounter]);
 
   const yourArchivesTitle = (
     <Flex
@@ -165,10 +165,17 @@ const YourContributions = ({
           });
         }
 
-        setArchives((prevArchives) => [
-          ...(Array.isArray(prevArchives) ? prevArchives : []),
-          ...newArchives,
-        ]);
+        setArchives((prevArchives) => {
+          let all = [
+            ...(Array.isArray(prevArchives) ? prevArchives : []),
+            ...newArchives,
+          ];
+          // unique by id
+          all = all.filter(
+            (v, i, a) => a.findIndex((t) => t.id === v.id) === i,
+          );
+          return all;
+        });
         setLoadedIndices(end);
       } catch (error: any) {
         toast({
