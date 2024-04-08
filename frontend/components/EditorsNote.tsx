@@ -5,9 +5,9 @@ import { inter } from "@/app/fonts";
 const EditorsNote: React.FC = () => {
   return (
     <Box
-      m="20px"
       fontFamily={inter.style.fontFamily}
-      minW="300px"
+      minW="xs"
+      width="100%"
       lineHeight="tall"
     >
       <Text fontSize="sm" fontWeight={400} lineHeight="15px" marginBottom="2">

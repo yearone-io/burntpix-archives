@@ -11,13 +11,10 @@ import {
   Link,
   useToast,
 } from "@chakra-ui/react";
-import BurntPixArt from "@/components/BurntPixArt";
 import Archives, { IArchive, IFetchArchives } from "@/components/Archives";
 import Article from "@/components/Article";
-import MainStatsList, { StatsItem } from "@/components/MainStatsList";
-import RefineButton from "@/components/RefineButton";
+import { StatsItem } from "@/components/MainStatsList";
 import Leaderboard from "@/components/Leaderboard";
-import EditorsNote from "@/components/EditorsNote";
 import { FaExternalLinkAlt } from "react-icons/fa";
 import { inter } from "@/app/fonts";
 import { BurntPixArchives__factory } from "@/contracts";
@@ -29,13 +26,12 @@ import { hexToText, numberToBytes32 } from "@/utils/hexUtils";
 import { getProfileData } from "@/utils/universalProfile";
 import { constants } from "@/constants/constants";
 import { Header } from "./Header";
+import { OverviewRow } from "./OverviewRow";
 
 export default function Home() {
   const walletContext = useContext(WalletContext);
   const { account, networkConfig, provider } = walletContext;
   const toast = useToast();
-
-  const date = new Date();
 
   const burntPixArchives = BurntPixArchives__factory.connect(
     networkConfig.burntPixArchivesAddress,
@@ -223,68 +219,32 @@ export default function Home() {
     <main className={styles.main}>
       <Flex width="100%" direction={"column"} maxW={"2000px"} p={"0px 25px"}>
         <Header winnerIterations={winnerIterations} />
-        <Box mt={4} width={"100%"}>
-          <Grid
-            width={"100%"}
-            mt="20px"
-            templateColumns={{ base: "4fr 9fr", md: "9fr 4fr" }}
-          >
-            <GridItem
+        <OverviewRow collectionStats={collectionStats} burntPicId={burntPicId} />
+        <Divider borderColor={"#00000"} size={"md"} />
+        <Grid width={"100%"} templateColumns={{ base: "1fr", md: "9fr 4fr" }}>
+          <GridItem w="100%" overflow={"hidden"}>
+            <Flex
+              flexDir="column"
               borderRight={{ base: "none", md: "1px solid #000000" }}
-              pb="20px"
             >
-              <Flex direction={{ base: "column", md: "row" }}>
-                <Box flex="1" minW={"300px"}>
-                  <Article
-                    title="LIVE VIEW"
-                    description="In a First, LUKSO Community Works to Refine and Archive the Same Burnt Pic Together"
-                  >
-                    <Box p="20px 10%" w="100%">
-                      <MainStatsList stats={collectionStats} />
-                    </Box>
-                    <RefineButton />
-                  </Article>
-                </Box>
-                <Flex
-                  flex="1"
-                  minW="fit-content"
-                  mt={{ base: 4, md: 0 }}
-                  justifyContent="center"
-                >
-                  <BurntPixArt burntPicId={burntPicId} />
-                </Flex>
-              </Flex>
-            </GridItem>
-            <GridItem>
-              <EditorsNote />
-            </GridItem>
-          </Grid>
-          <Divider borderColor={"#00000"} size={"md"} />
-          <Grid width={"100%"} templateColumns={{ base: "1fr", md: "9fr 4fr" }}>
-            <GridItem w="100%" overflow={"hidden"}>
-              <Flex
-                flexDir="column"
-                borderRight={{ base: "none", md: "1px solid #000000" }}
-              >
-                <Box>
-                  <Article title={archivesTitle}>
-                    <Archives fetchArchives={externalFetchArchives} />
-                  </Article>
-                </Box>
-                <Divider borderColor={"#00000"} size={"md"} />
-                <Article title="LEADERBOARD">
-                  <Leaderboard />
+              <Box>
+                <Article title={archivesTitle}>
+                  <Archives fetchArchives={externalFetchArchives} />
                 </Article>
-              </Flex>
-            </GridItem>
-            <GridItem w="100%" overflow={"hidden"}>
-              <YourContributions
-                account={account}
-                burntPixArchives={burntPixArchives}
-              />
-            </GridItem>
-          </Grid>
-        </Box>
+              </Box>
+              <Divider borderColor={"#00000"} size={"md"} />
+              <Article title="LEADERBOARD">
+                <Leaderboard />
+              </Article>
+            </Flex>
+          </GridItem>
+          <GridItem w="100%" overflow={"hidden"}>
+            <YourContributions
+              account={account}
+              burntPixArchives={burntPixArchives}
+            />
+          </GridItem>
+        </Grid>
       </Flex>
     </main>
   );

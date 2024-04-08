@@ -1,10 +1,9 @@
-import { BurntPixArchives, Fractal__factory } from "@/contracts";
+import { Fractal__factory } from "@/contracts";
 import React, { useContext, useEffect, useState } from "react";
 import { WalletContext } from "@/components/wallet/WalletContext";
 import {
   HStack,
   Text,
-  VStack,
   Link,
   Box,
   Flex,
@@ -50,8 +49,8 @@ export default function BurntPixArt({ burntPicId }: IOriginalArtProps) {
   }, [burntPicId]);
 
   return (
-    <VStack alignItems={"left"}>
-      <Box width={320} height={320}>
+    <Flex width={"100%"} flexDir={"column"} alignItems={"center"} justifyContent={"center"}>
+      <Box width={"100%"} minWidth={"xs"} maxWidth={"sm"}>
         {burntPix ? (
           <div
             style={{ height: "100%", width: "100%" }}
@@ -96,6 +95,6 @@ export default function BurntPixArt({ burntPicId }: IOriginalArtProps) {
           </Flex>
         </Link>
       </HStack>
-    </VStack>
+    </Flex>
   );
 }
