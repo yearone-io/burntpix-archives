@@ -10,7 +10,7 @@ const SignInBox: React.FC = () => {
       p={5}
       boxShadow="md"
       borderRadius="lg"
-      width="350px"
+      width="100%"
       mx="auto"
       my={8}
       textAlign="center"

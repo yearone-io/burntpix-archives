@@ -23,7 +23,6 @@ interface Contribution {
 }
 
 const Leaderboard: React.FC = () => {
-  const margin = useBreakpointValue({ base: "0", md: "20px" });
   const walletContext = useContext(WalletContext);
   const toast = useToast();
   const { networkConfig, provider, refineEventCounter } = walletContext;
@@ -73,7 +72,7 @@ const Leaderboard: React.FC = () => {
           title: `Failed to fetch leaderboard contributions: ${error.message}`,
           status: "error",
           position: "bottom-left",
-          duration: 5000,
+          duration: null,
           isClosable: true,
         });
       } finally {
@@ -152,40 +151,28 @@ const Leaderboard: React.FC = () => {
     </Flex>
   );
 
-  // Split the items into two columns
-  const columnOneItems = sortedContributions.slice(0, 5);
-  const columnTwoItems = sortedContributions.slice(5, 10);
-
-  const gridTemplateColumns = { base: "repeat(1, 1fr)", md: "repeat(2, 1fr)" };
-
-  const loadingSkeleton = (
-    <Grid templateColumns={gridTemplateColumns} gap="2" mr="20px">
-      <Skeleton height="30px" width="100%" />
-      <Skeleton height="30px" width="100%" />
-      <Skeleton height="30px" width="100%" />
-      <Skeleton height="30px" width="100%" />
-      <Skeleton height="30px" width="100%" />
-      <Skeleton height="30px" width="100%" />
-      <Skeleton height="30px" width="100%" />
-      <Skeleton height="30px" width="100%" />
-      <Skeleton height="30px" width="100%" />
-      <Skeleton height="30px" width="100%" />
-    </Grid>
-  );
-
-  const gridItems = (
-    <Grid templateColumns={gridTemplateColumns}>
-      <Box mr="20px">{columnOneItems.map(renderItem)}</Box>
-      <Box mr="20px">
-        {columnTwoItems.map((item, index) => renderItem(item, index + 5))}
-      </Box>
-    </Grid>
-  );
-
   return (
-    <Box ml={margin} mr={margin} mt="20px" mb="20px" w="100%">
-      {isLoading ? loadingSkeleton : gridItems}
-    </Box>
+    <Flex
+      direction={{ base: "column", md: "row" }}
+      wrap="wrap"
+      justifyContent="center"
+      w="100%"
+    >
+      <Box minWidth={{ base: "100%", md: "50%" }}>
+        {isLoading
+          ? [...Array(5)].map((_, index) => (
+              <Skeleton key={index} height="30px" width="100%" />
+            ))
+          : sortedContributions.slice(0, 5).map(renderItem)}
+      </Box>
+      <Box minWidth={{ base: "100%", md: "50%" }}>
+        {isLoading
+          ? [...Array(5)].map((_, index) => (
+              <Skeleton key={index + 5} height="30px" width="100%" />
+            ))
+          : sortedContributions.slice(5, 10).map(renderItem)}
+      </Box>
+    </Flex>
   );
 };
 

@@ -166,7 +166,7 @@ const Archives: React.FC<ArchivesProps> = ({ fetchArchives }) => {
                   <Link
                     href={
                       archive.id
-                        ? `${networkConfig.artWebBaseUrl}/${networkConfig.burntPixArchivesAddress}/${archive.id}`
+                        ? `${networkConfig.marketplaceCollectionsURL}/${networkConfig.burntPixArchivesAddress}/${archive.id}`
                         : undefined
                     }
                     isExternal={true}
@@ -180,7 +180,7 @@ const Archives: React.FC<ArchivesProps> = ({ fetchArchives }) => {
                     isExternal={true}
                     href={
                       archive.ownerAddress
-                        ? `${networkConfig.profileWebBaseUrl}/${archive.ownerAddress}`
+                        ? `${networkConfig.marketplaceProfilesURL}/${archive.ownerAddress}`
                         : undefined
                     }
                   >
