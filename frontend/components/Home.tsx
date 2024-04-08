@@ -42,7 +42,7 @@ const newRockerFont = New_Rocker({
 
 export default function Home() {
   const walletContext = useContext(WalletContext);
-  const { account, networkConfig, provider } = walletContext;
+  const { account, networkConfig, provider, refineEventCounter } = walletContext;
   const toast = useToast();
 
   const date = new Date();
@@ -153,7 +153,7 @@ export default function Home() {
 
   useEffect(() => {
     supplyCap && fetchCollectionStats();
-  }, [supplyCap]);
+  }, [supplyCap, refineEventCounter]);
 
   const externalFetchArchives: IFetchArchives = useCallback(
     async (

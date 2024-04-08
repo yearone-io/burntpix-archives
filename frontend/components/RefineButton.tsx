@@ -52,6 +52,13 @@ const RefineButton: React.FC = () => {
         .connect(signer)
         ["refineToArchive(uint256)"](selectedIterations);
       setIsRefining(false);
+      toast({
+        title: "Refining successful!",
+        status: "success",
+        position: "bottom-left",
+        duration: 5000,
+        isClosable: true,
+      });
     } catch (error: any) {
       setIsRefining(false);
       let message = "Error refining: ";
