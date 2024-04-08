@@ -94,8 +94,9 @@ export default function BurntPixArt({ burntPicId }: IOriginalArtProps) {
             >
               {formatAddress(burntPicId)}
             </Text>
-            <Box><FaExternalLinkAlt /></Box>
-            
+            <Box>
+              <FaExternalLinkAlt />
+            </Box>
           </Flex>
         </Link>
       </Flex>

@@ -103,6 +103,7 @@ export default function Home() {
         <OverviewRow
           collectionStats={collectionStats}
           burntPicId={burntPicId}
+          winningIterations={winnerIterations}
         />
         <ContributionsRow
           account={account}

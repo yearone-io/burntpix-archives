@@ -9,11 +9,13 @@ import EditorsNote from "./EditorsNote";
 interface IOverviewRowProps {
   readonly collectionStats: StatsItem[];
   readonly burntPicId: string;
+  readonly winningIterations: string;
 }
 
 export const OverviewRow = ({
   collectionStats,
   burntPicId,
+  winningIterations,
 }: IOverviewRowProps) => {
   return (
     <Grid
@@ -48,7 +50,7 @@ export const OverviewRow = ({
         py={7}
         borderTop={{ base: "1px solid #000000", lg: "0px" }}
       >
-        <EditorsNote />
+        <EditorsNote winningIterations={winningIterations} />
       </GridItem>
     </Grid>
   );
