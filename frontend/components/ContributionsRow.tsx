@@ -120,17 +120,24 @@ export const ContributionsRow = ({
           });
         }
 
-        setArchives((prevArchives) => [
-          ...(Array.isArray(prevArchives) ? prevArchives : []),
-          ...newArchives,
-        ]);
+        setArchives((prevArchives) => {
+          let all = [
+            ...(Array.isArray(prevArchives) ? prevArchives : []),
+            ...newArchives,
+          ];
+          // unique by id
+          all = all.filter(
+            (v, i, a) => a.findIndex((t) => t.id === v.id) === i,
+          );
+          return all;
+        });
         setLoadedIndices(end);
       } catch (error: any) {
         toast({
           title: `Failed to fetch archives: ${error.message}`,
           status: "error",
           position: "bottom-left",
-          duration: null,
+          duration: 5000,
           isClosable: true,
         });
       }

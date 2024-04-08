@@ -13,7 +13,8 @@ import { ContributionsRow } from "./ContributionsRow";
 
 export default function Home() {
   const walletContext = useContext(WalletContext);
-  const { networkConfig, provider, account } = walletContext;
+  const { account, networkConfig, provider, refineEventCounter } =
+    walletContext;
   const toast = useToast();
 
   const burntPixArchives = BurntPixArchives__factory.connect(
@@ -94,7 +95,7 @@ export default function Home() {
 
   useEffect(() => {
     supplyCap && fetchCollectionStats();
-  }, [supplyCap]);
+  }, [supplyCap, refineEventCounter]);
 
   return (
     <main className={styles.main}>
