@@ -16,7 +16,6 @@ export default function Home() {
   const { account, networkConfig, provider, refineEventCounter } =
     walletContext;
   const toast = useToast();
-
   const burntPixArchives = BurntPixArchives__factory.connect(
     networkConfig.burntPixArchivesAddress,
     provider,

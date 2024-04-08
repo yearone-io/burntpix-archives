@@ -2,7 +2,6 @@ import { Fractal__factory } from "@/contracts";
 import React, { useContext, useEffect, useState } from "react";
 import { WalletContext } from "@/components/wallet/WalletContext";
 import {
-  HStack,
   Text,
   Link,
   Box,
