@@ -55,7 +55,7 @@ export const Header = ({ winnerIterations }: IHeaderProps) => {
           >
             Burnt Pix Archives
           </Heading>
-          <Flex gap={"5px"} alignItems={"center"}>
+          <Flex gap={"2"} alignItems={"center"}>
             <Heading
               as="h3"
               fontSize="sm"
@@ -89,17 +89,17 @@ export const Header = ({ winnerIterations }: IHeaderProps) => {
         <Flex flex="1" justifyContent="flex-end">
           <Box
             marginBottom={{
-              base: "10px",
+              base: "3",
               md: "0px",
             }}
-            marginRight={"20px"}
+            marginRight={{base: 0, md: "6"}}
           >
             <WalletConnector />
           </Box>
         </Flex>
       </Flex>
       <Flex
-        mt={"25px"}
+        mt={"7"}
         borderTop={"1px solid #000000"}
         borderBottom={"2px solid #000000"}
         flexDir={{
@@ -109,7 +109,8 @@ export const Header = ({ winnerIterations }: IHeaderProps) => {
         justifyContent="center"
         alignItems="center"
         width={"100%"}
-        p={"2px 25px"}
+        py={"1"}
+        px={"6"}
       >
         <Box flex="1">
           <Text

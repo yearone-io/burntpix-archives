@@ -8,6 +8,7 @@ const SignInButton: React.FC = () => {
   const { connect, isLoadingAccount, networkConfig, connectedChainId } =
     walletContext;
   const toast = useToast();
+  const fontDimensions = { base: "0.75rem", md: "0.85rem" };
 
   const onSignInClick = async () => {
     if (connectedChainId !== networkConfig.chainId) {
@@ -60,11 +61,11 @@ const SignInButton: React.FC = () => {
         <Image
           src="/images/LYX-logo.svg"
           alt="Sign In"
-          height={{ base: "12px", md: "14px" }}
+          height={fontDimensions}
         />
         <Box
-          fontSize={{ base: "12px", md: "14px" }}
-          lineHeight={{ base: "12px", md: "14px" }}
+          fontSize={fontDimensions}
+          lineHeight={fontDimensions}
         >
           {isLoadingAccount ? "..." : "SIGN IN"}
         </Box>
