@@ -47,7 +47,8 @@ const Leaderboard: React.FC = () => {
   useEffect(() => {
     const fetchContributions = async () => {
       try {
-        const [topContributors, contributions] = await burntPixArchives.getTopTenContributors()
+        const [topContributors, contributions] =
+          await burntPixArchives.getTopTenContributors();
 
         const profiles = await Promise.all(
           topContributors.map((contrib) =>

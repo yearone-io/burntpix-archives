@@ -27,24 +27,27 @@ const listenToRefineToArchive = (contract: ethers.Contract) => {
   // due to a filter function not being able to be coalesced
   const originalConsoleLog = console.log;
   console.log = (...args) => {
-    if (args[0] === '@TODO' && args[1].shortMessage &&  args[1].shortMessage === "could not coalesce error") {
+    if (
+      args[0] === "@TODO" &&
+      args[1].shortMessage &&
+      args[1].shortMessage === "could not coalesce error"
+    ) {
       // If it does, don't log this message to the console
       return;
     }
-  
+
     // Otherwise, call the original console.log function with all arguments
     originalConsoleLog.apply(console, args);
   };
 
-
   try {
-    contract.on('RefineToArchive', (sender, value) => {
-        console.log('REFINE TO ARCHIVE EVENT', sender, value)
-    })
+    contract.on("RefineToArchive", (sender, value) => {
+      console.log("REFINE TO ARCHIVE EVENT", sender, value);
+    });
   } catch (error) {
-    console.error('Error listening to RefineToArchive event', error);
+    console.error("Error listening to RefineToArchive event", error);
   }
-}
+};
 
 /**
  * WalletProvider is a React component that provides wallet state and functionality
@@ -67,11 +70,18 @@ export const WalletProvider: React.FC<Props> = ({ children }) => {
     number | undefined
   >();
   const toast = useToast();
-  const contract = new ethers.Contract(networkConfig.burntPixArchivesAddress, BurntPixArchives__factory.abi, provider);
-  listenToRefineToArchive(contract);
+  const contract = new ethers.Contract(
+    networkConfig.burntPixArchivesAddress,
+    BurntPixArchives__factory.abi,
+    provider,
+  );
 
+  // Listen to the RefineToArchive event
+  // that will refresh component
+  useEffect(() => {
+    listenToRefineToArchive(contract);
+  }, []);
 
-// Initialize event liste
   useEffect(() => {
     const initProvider = getProvider(networkConfig);
     setProvider(initProvider);
