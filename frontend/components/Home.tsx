@@ -7,17 +7,12 @@ import {
   Flex,
   Grid,
   GridItem,
-  Heading,
   IconButton,
   Link,
-  Text,
   useToast,
-  Image,
 } from "@chakra-ui/react";
-import { New_Rocker } from "next/font/google";
 import BurntPixArt from "@/components/BurntPixArt";
 import Archives, { IArchive, IFetchArchives } from "@/components/Archives";
-import WalletConnector from "@/components/wallet/WalletConnector";
 import Article from "@/components/Article";
 import MainStatsList, { StatsItem } from "@/components/MainStatsList";
 import RefineButton from "@/components/RefineButton";
@@ -33,12 +28,7 @@ import YourContributions from "@/components/YourContributions";
 import { hexToText, numberToBytes32 } from "@/utils/hexUtils";
 import { getProfileData } from "@/utils/universalProfile";
 import { constants } from "@/constants/constants";
-import { Metadata } from "next";
-
-const newRockerFont = New_Rocker({
-  weight: ["400"],
-  subsets: ["latin"],
-});
+import { Header } from "./Header";
 
 export default function Home() {
   const walletContext = useContext(WalletContext);
@@ -46,12 +36,6 @@ export default function Home() {
   const toast = useToast();
 
   const date = new Date();
-  const formattedDate = date.toLocaleDateString("en-US", {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
 
   const burntPixArchives = BurntPixArchives__factory.connect(
     networkConfig.burntPixArchivesAddress,
@@ -238,93 +222,8 @@ export default function Home() {
   return (
     <main className={styles.main}>
       <Flex width="100%" direction={"column"} maxW={"2000px"} p={"0px 25px"}>
-        <header>
-          <Flex
-            flexDir={{
-              base: "column",
-              md: "row",
-            }}
-            justifyContent="center"
-            alignItems="center"
-            width={"100%"}
-          >
-            <Flex flex="1" justifyContent="flex-end"></Flex>
-            <Flex
-              flex="2"
-              direction="column"
-              alignItems="center"
-              justifyContent="center"
-            >
-              <Heading
-                as="h1"
-                fontFamily={newRockerFont.style.fontFamily}
-                m="0"
-                p="0"
-                fontWeight={400}
-                fontSize="4.5rem"
-                lineHeight="4.5rem"
-                textAlign={"center"}
-              >
-                Burnt Pix Archives
-              </Heading>
-              <Flex gap={"5px"} alignItems={"center"}>
-                <Heading
-                  as="h3"
-                  fontSize="sm"
-                  fontWeight={700}
-                  m="0"
-                  p="0"
-                  letterSpacing={"1px"}
-                  style={{ wordSpacing: "2px" }}
-                >
-                  ON THE
-                </Heading>
-                <Heading
-                  as={Image}
-                  color="lukso.pink"
-                  height={"0.8rem"}
-                  src="/images/LUKSO_Wordmark_Fuchsia.svg"
-                  alt="LUKSO"
-                />
-                <Heading
-                  as="h3"
-                  fontSize="sm"
-                  fontWeight={700}
-                  m="0"
-                  p="0"
-                  letterSpacing={"1.5px"}
-                >
-                  CHAIN
-                </Heading>
-              </Flex>
-            </Flex>
-            <Flex flex="1" justifyContent="flex-end">
-              <Box>
-                <WalletConnector />
-              </Box>
-            </Flex>
-          </Flex>
-        </header>
-        <Box mt={4} pl={"20px"} pr={"20px"} width={"100%"}>
-          <Box width="100%">
-            <Divider mb={2} borderColor={"#000000"} opacity={1} />
-            <Flex justifyContent="center" alignItems="center" w="100%">
-              <Box flex="1" textAlign="left" pl={"20px"}>
-                <Text color="#000000" fontWeight="400">
-                  "All the Pixels, That Are Fit To Burn"
-                </Text>
-              </Box>
-              <Box flex="0" minWidth="max-content" px={5}>
-                <Text as="b">{formattedDate}</Text>
-              </Box>
-              <Box flex="1" textAlign="right" pr={"20px"}>
-                <Text color="#000000" fontWeight="400">
-                  {`To Unlock Original Contribute: ${winnerIterations} Iterations`}
-                </Text>
-              </Box>
-            </Flex>
-            <Divider opacity={1} borderColor={"#00000"} size={"lg"} />
-          </Box>
+        <Header winnerIterations={winnerIterations} />
+        <Box mt={4} width={"100%"}>
           <Grid
             width={"100%"}
             mt="20px"
