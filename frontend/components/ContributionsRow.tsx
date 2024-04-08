@@ -21,28 +21,6 @@ import { getProfileData } from "@/utils/universalProfile";
 import { constants } from "@/constants/constants";
 import { Network } from "@/constants/networks";
 
-const archivesTitle = (
-  <Box
-    color="#FE005B"
-    fontWeight={900}
-    fontSize="md"
-    lineHeight="17px"
-    letterSpacing={1.5}
-    fontFamily={inter.style.fontFamily}
-  >
-    ARCHIVES
-    <Link isExternal={true} href={"/"}>
-      <IconButton
-        aria-label="View archives"
-        color={"lukso.pink"}
-        icon={<FaExternalLinkAlt />}
-        size="sm"
-        variant="ghost"
-      />
-    </Link>
-  </Box>
-);
-
 interface IContributionsRowProps {
   readonly account: string | null;
   readonly burntPixArchives: BurntPixArchives;
@@ -54,6 +32,33 @@ export const ContributionsRow = ({
   burntPixArchives,
   networkConfig,
 }: IContributionsRowProps) => {
+  const archivesTitle = (
+    <Flex
+      color="#FE005B"
+      fontWeight={900}
+      fontSize="md"
+      lineHeight="17px"
+      letterSpacing={1.5}
+      fontFamily={inter.style.fontFamily}
+      alignItems={"center"}
+      gap={"2"}
+    >
+      ARCHIVES
+      <Link
+        isExternal={true}
+        href={`${networkConfig.marketplaceCollectionsURL}/${networkConfig.burntPixArchivesAddress}`}
+      >
+        <IconButton
+          aria-label="View archives"
+          color={"lukso.pink"}
+          icon={<FaExternalLinkAlt />}
+          size="xs"
+          variant="ghost"
+          mb={"2px"}
+        />
+      </Link>
+    </Flex>
+  );
   const toast = useToast();
   const externalFetchArchives: IFetchArchives = useCallback(
     async (

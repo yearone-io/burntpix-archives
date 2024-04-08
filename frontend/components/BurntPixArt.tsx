@@ -82,7 +82,7 @@ export default function BurntPixArt({ burntPicId }: IOriginalArtProps) {
         </Text>
         <Link
           isExternal={true}
-          href={`${networkConfig.originalBurntPicUrl}/${burntPicId}`}
+          href={`${networkConfig.marketplaceCollectionsURL}/${networkConfig.burntPixCollectionAddress}/${burntPicId}`}
         >
           <Flex>
             <Text
