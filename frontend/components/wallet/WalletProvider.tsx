@@ -22,7 +22,6 @@ interface Props {
   children: ReactNode;
 }
 
-
 /**
  * WalletProvider is a React component that provides wallet state and functionality
  * to its children via React Context API.
@@ -174,11 +173,11 @@ export const WalletProvider: React.FC<Props> = ({ children }) => {
         // If it does, don't log this message to the console
         return;
       }
-  
+
       // Otherwise, call the original console.log function with all arguments
       originalConsoleLog.apply(console, args);
     };
-  
+
     try {
       contract.on("RefineToArchive", (sender, value) => {
         console.log("REFINE TO ARCHIVE EVENT", sender, value);

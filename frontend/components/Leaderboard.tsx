@@ -78,9 +78,7 @@ const Leaderboard: React.FC = () => {
       }
     };
     fetchContributions();
-  }, [
-    refineEventCounter
-  ]); // NOTE: adding dependencies will cause duplicated calls
+  }, [refineEventCounter]); // NOTE: adding dependencies will cause duplicated calls
 
   const fetchProfileData = async (
     contributor: string,

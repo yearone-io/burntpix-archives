@@ -42,7 +42,8 @@ const newRockerFont = New_Rocker({
 
 export default function Home() {
   const walletContext = useContext(WalletContext);
-  const { account, networkConfig, provider, refineEventCounter } = walletContext;
+  const { account, networkConfig, provider, refineEventCounter } =
+    walletContext;
   const toast = useToast();
 
   const date = new Date();
@@ -215,10 +216,17 @@ export default function Home() {
           });
         }
 
-        setArchives((prevArchives) => [
-          ...(Array.isArray(prevArchives) ? prevArchives : []),
-          ...newArchives,
-        ]);
+        setArchives((prevArchives) => {
+          let all = [
+            ...(Array.isArray(prevArchives) ? prevArchives : []),
+            ...newArchives,
+          ];
+          // unique by id
+          all = all.filter(
+            (v, i, a) => a.findIndex((t) => t.id === v.id) === i,
+          );
+          return all;
+        });
         setLoadedIndices(end);
       } catch (error: any) {
         toast({
