@@ -17,7 +17,7 @@
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.0",
     "@erc725/erc725.js": "0.23.0",
-    "@lukso/lsp-smart-contracts": "^0.15.0-rc.1",
+    "@lukso/lsp-smart-contracts": "^0.15.0",
     "@types/node": "20.2.5",
     "@types/react": "18.2.9",
     "@types/react-dom": "18.2.4",
