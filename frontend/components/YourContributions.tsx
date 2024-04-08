@@ -67,7 +67,7 @@ const YourContributions = ({
         title: `Failed to fetch your contribution stats: ${error.message}`,
         status: "error",
         position: "bottom-left",
-        duration: 5000,
+        duration: null,
         isClosable: true,
       });
     }
@@ -167,7 +167,7 @@ const YourContributions = ({
           title: `Failed to fetch your archives: ${error.message}`,
           status: "error",
           position: "bottom-left",
-          duration: 5000,
+          duration: null,
           isClosable: true,
         });
       }

@@ -40,7 +40,7 @@ export default function BurntPixArt({ burntPicId }: IOriginalArtProps) {
           title: `Failed to fetch burntpix original image: ${error.message}`,
           status: "error",
           position: "bottom-left",
-          duration: 5000,
+          duration: null,
           isClosable: true,
         });
       }

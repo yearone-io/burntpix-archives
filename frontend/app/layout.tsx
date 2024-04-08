@@ -1,4 +1,4 @@
-import Footer from "@/components/instructionsComponent/navigation/footer";
+import Footer from "@/components/Footer";
 import Head from "next/head";
 import { Providers } from "./providers";
 import { WalletProvider } from "@/components/wallet/WalletProvider";
