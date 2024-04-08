@@ -24,7 +24,7 @@ export default function BurntPixArt({ burntPicId }: IOriginalArtProps) {
   const [burntPix, setBurntPix] = useState<string | undefined>();
   const walletContext = useContext(WalletContext);
   const toast = useToast();
-  const { networkConfig, provider } = walletContext;
+  const { networkConfig, provider, refineEventCounter } = walletContext;
 
   useEffect(() => {
     const fetchBurntPix = async () => {
@@ -47,7 +47,7 @@ export default function BurntPixArt({ burntPicId }: IOriginalArtProps) {
       }
     };
     burntPicId && fetchBurntPix();
-  }, [burntPicId]);
+  }, [burntPicId, refineEventCounter]);
 
   return (
     <VStack alignItems={"left"}>
