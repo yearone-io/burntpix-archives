@@ -7,6 +7,8 @@ import { getNetworkConfig } from "@/constants/networks";
 import { getProvider } from "@/utils/provider";
 import { JsonRpcProvider, BrowserProvider } from "ethers";
 import { buildSIWEMessage } from "@/utils/universalProfile";
+import { ethers } from "ethers";
+import { BurntPixArchives__factory } from "@/contracts";
 
 // Extends the window object to include `lukso`, which will be used to interact with LUKSO blockchain.
 declare global {
@@ -40,8 +42,13 @@ export const WalletProvider: React.FC<Props> = ({ children }) => {
   const [connectedChainId, setConnectedChainId] = useState<
     number | undefined
   >();
-
   const toast = useToast();
+
+  const contract = new ethers.Contract(networkConfig.burntPixArchivesAddress, BurntPixArchives__factory.abi, provider);
+
+  contract.on('MyEvent', (sender, value) => {
+      console.log('yeeeeeeee')
+  });
 
   useEffect(() => {
     const initProvider = getProvider(networkConfig);
