@@ -108,7 +108,7 @@ const Leaderboard: React.FC = () => {
         justifyContent="space-between"
         p={0.5}
       >
-        <Flex alignItems="center" flex="1" gap={3}>
+        <Flex alignItems="center" flex="1" gap={16}>
           <Text
             fontSize={fontSizing}
             fontWeight="normal"
@@ -147,31 +147,52 @@ const Leaderboard: React.FC = () => {
       direction={{ base: "column", md: "row" }}
       wrap="wrap"
       justifyContent="center"
-      alignItems={"center"}
+      alignItems={"flex-start"}
       w="100%"
     >
       {isLoading ? (
         <>
-          <Box minWidth={{ base: "100%", md: "50%" }}>
+          <Flex
+            flexDir={"column"}
+            marginRight={{ base: "0", md: "10%" }}
+            minWidth={{ base: "100%", md: "45%" }}
+            gap={3}
+            mr={"5%"}
+          >
             {[...Array(5)].map((_, index) => (
               <Skeleton key={index} height="30px" width="100%" />
             ))}
-          </Box>
-          <Box minWidth={{ base: "100%", md: "50%" }}>
+          </Flex>
+          <Flex
+            flexDir={"column"}
+            minWidth={{ base: "100%", md: "45%" }}
+            gap={3}
+          >
             {[...Array(5)].map((_, index) => (
               <Skeleton key={index} height="30px" width="100%" />
             ))}
-          </Box>
+          </Flex>
         </>
       ) : (
         <>
-          <Box minWidth={{ base: "100%", md: "50%" }}>
+          <Flex
+            flexDir={"column"}
+            marginRight={{ base: "0", md: "10%" }}
+            minWidth={{ base: "100%", md: "45%" }}
+            gap={3}
+          >
             {topContributions.slice(0, 5).map(renderItem)}
-          </Box>
+          </Flex>
           {topContributions.slice(5, 10).length ? (
-            <Box minWidth={{ base: "100%", md: "50%" }}>
-              {topContributions.slice(5, 10).map(renderItem)}
-            </Box>
+            <Flex
+              flexDir={"column"}
+              minWidth={{ base: "100%", md: "45%" }}
+              gap={3}
+            >
+              {topContributions
+                .slice(5, 10)
+                .map((item, index) => renderItem(item, index + 5))}
+            </Flex>
           ) : null}
         </>
       )}
