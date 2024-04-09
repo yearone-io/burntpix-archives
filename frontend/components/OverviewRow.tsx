@@ -1,20 +1,73 @@
 "use client";
-import { Box, Flex, Grid, GridItem } from "@chakra-ui/react";
+import { Box, Flex, Grid, GridItem, useToast } from "@chakra-ui/react";
 import Article from "./Article";
 import MainStatsList, { StatsItem } from "./MainStatsList";
 import RefineButton from "./RefineButton";
 import BurntPixArt from "./BurntPixArt";
 import EditorsNote from "./EditorsNote";
+import { useContext, useEffect, useState } from "react";
+import { divideBigIntTokenBalance } from "@/utils/numberUtils";
+import { BurntPixArchives__factory } from "@/contracts";
+import { WalletContext } from "@/components/wallet/WalletContext";
 
 interface IOverviewRowProps {
-  readonly collectionStats: StatsItem[];
+  readonly supplyCap: number;
   readonly burntPicId: string;
 }
 
-export const OverviewRow = ({
-  collectionStats,
-  burntPicId,
-}: IOverviewRowProps) => {
+export const OverviewRow = ({ supplyCap, burntPicId }: IOverviewRowProps) => {
+  const walletContext = useContext(WalletContext);
+  const { account, networkConfig, provider, refineEventCounter } =
+    walletContext;
+  const toast = useToast();
+  const burntPixArchives = BurntPixArchives__factory.connect(
+    networkConfig.burntPixArchivesAddress,
+    provider,
+  );
+
+  const [collectionStats, setCollectionStats] = useState<StatsItem[]>([
+    { label: "Iterations:", value: "--" },
+    { label: "Contributors:", value: "--" },
+    { label: "Archive Mints:", value: "--" },
+    { label: "LYX Burned:", value: "--" },
+  ]);
+
+  const fetchCollectionStats = async () => {
+    try {
+      const [totalSupply, iterations, contributors, lyxBurned] =
+        await Promise.all([
+          burntPixArchives.totalSupply(),
+          burntPixArchives.getTotalIterations(),
+          burntPixArchives.getTotalContributors(),
+          burntPixArchives.getTotalFeesBurnt(),
+        ]);
+      setCollectionStats([
+        { label: "Iterations:", value: iterations.toString() },
+        { label: "Contributors:", value: contributors.toString() },
+        {
+          label: "Archive Mints:",
+          value: `${new Intl.NumberFormat("en-US").format(Number(totalSupply))} / ${new Intl.NumberFormat("en-US").format(supplyCap)}`,
+        },
+        {
+          label: "LYX Burned:",
+          value: `${divideBigIntTokenBalance(lyxBurned, 18).toString()} LYX`,
+        },
+      ]);
+    } catch (error: any) {
+      toast({
+        title: `Failed to fetch collection stats: ${error.message}`,
+        status: "error",
+        position: "bottom-left",
+        duration: null,
+        isClosable: true,
+      });
+    }
+  };
+
+  useEffect(() => {
+    supplyCap && fetchCollectionStats();
+  }, [supplyCap]);
+
   return (
     <Grid
       templateColumns={{ base: "1fr", md: "1fr 1fr", lg: "1fr 1fr 1fr" }}
