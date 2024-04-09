@@ -4,8 +4,6 @@ import {
   Avatar,
   Flex,
   Text,
-  Grid,
-  useBreakpointValue,
   Skeleton,
   useToast,
 } from "@chakra-ui/react";
