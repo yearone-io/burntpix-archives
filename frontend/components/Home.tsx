@@ -13,12 +13,12 @@ import { ContributionsRow } from "./ContributionsRow";
 
 export default function Home() {
   const walletContext = useContext(WalletContext);
-  const { account, networkConfig, provider, refineEventCounter } =
+  const { account, networkConfig, multicaller, refineEventCounter } =
     walletContext;
   const toast = useToast();
   const burntPixArchives = BurntPixArchives__factory.connect(
     networkConfig.burntPixArchivesAddress,
-    provider,
+    multicaller,
   );
 
   // immutables

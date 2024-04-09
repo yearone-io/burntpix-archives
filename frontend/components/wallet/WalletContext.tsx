@@ -2,6 +2,7 @@ import React from "react";
 import { getNetworkConfig, Network } from "@/constants/networks";
 import { ethers } from "ethers";
 import { JsonRpcProvider, BrowserProvider } from "ethers";
+import { MulticallProvider } from "@ethers-ext/provider-multicall";
 
 interface WalletContextType {
   networkConfig: Network;
@@ -13,6 +14,7 @@ interface WalletContextType {
   isLoadingAccount: boolean;
   connectedChainId: number | undefined;
   refineEventCounter: number;
+  multicaller: MulticallProvider;
 }
 
 const networkConfig = getNetworkConfig(
@@ -27,9 +29,13 @@ export const DEFAULT_PROVIDER = new ethers.JsonRpcProvider(
   },
 );
 
+const multicaller = new MulticallProvider(DEFAULT_PROVIDER);
+
+
 const defaultImplementation: WalletContextType = {
   networkConfig: networkConfig,
   provider: DEFAULT_PROVIDER,
+  multicaller: multicaller,
   account: null,
   mainUPController: undefined,
   isLoadingAccount: true,

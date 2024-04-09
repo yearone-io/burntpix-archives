@@ -30,7 +30,7 @@ import { inter } from "@/app/fonts";
 
 const RefineButton: React.FC = () => {
   const walletContext = useContext(WalletContext);
-  const { account, provider, networkConfig } = walletContext;
+  const { account, multicaller, networkConfig, provider } = walletContext;
   const defaultIterations = 100;
   const [selectedIterations, setSelectedIterations] =
     useState(defaultIterations);
@@ -40,7 +40,7 @@ const RefineButton: React.FC = () => {
   const defaultRed = "#FE005B";
   const burntPixArchives = BurntPixArchives__factory.connect(
     networkConfig.burntPixArchivesAddress,
-    provider,
+    multicaller,
   );
 
   const refine = async () => {

@@ -25,7 +25,7 @@ interface Contribution {
 const Leaderboard: React.FC = () => {
   const walletContext = useContext(WalletContext);
   const toast = useToast();
-  const { networkConfig, provider, refineEventCounter } = walletContext;
+  const { networkConfig, multicaller, refineEventCounter } = walletContext;
   const [sortedContributions, setSortedContributions] = useState<
     Contribution[]
   >([]);
@@ -40,7 +40,7 @@ const Leaderboard: React.FC = () => {
 
   const burntPixArchives = BurntPixArchives__factory.connect(
     networkConfig.burntPixArchivesAddress,
-    provider,
+    multicaller,
   );
 
   useEffect(() => {

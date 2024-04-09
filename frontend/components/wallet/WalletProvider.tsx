@@ -9,6 +9,7 @@ import { JsonRpcProvider, BrowserProvider } from "ethers";
 import { buildSIWEMessage } from "@/utils/universalProfile";
 import { ethers } from "ethers";
 import { BurntPixArchives__factory } from "@/contracts";
+import { MulticallProvider } from "@ethers-ext/provider-multicall";
 
 // Extends the window object to include `lukso`, which will be used to interact with LUKSO blockchain.
 declare global {
@@ -43,11 +44,12 @@ export const WalletProvider: React.FC<Props> = ({ children }) => {
   const [connectedChainId, setConnectedChainId] = useState<
     number | undefined
   >();
+  const multicaller = new MulticallProvider(provider);
   const toast = useToast();
   const contract = new ethers.Contract(
     networkConfig.burntPixArchivesAddress,
     BurntPixArchives__factory.abi,
-    provider,
+    multicaller,
   );
 
   // Listen to the RefineToArchive event
@@ -188,6 +190,8 @@ export const WalletProvider: React.FC<Props> = ({ children }) => {
     }
   };
 
+
+
   // Render the context provider, passing down the account state and control functions to children.
   return (
     <WalletContext.Provider
@@ -201,6 +205,7 @@ export const WalletProvider: React.FC<Props> = ({ children }) => {
         networkConfig,
         connectedChainId,
         refineEventCounter,
+        multicaller
       }}
     >
       {children}

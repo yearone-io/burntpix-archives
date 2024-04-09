@@ -60,7 +60,7 @@ interface ArchivesProps {
 
 const Archives: React.FC<ArchivesProps> = ({ fetchArchives }) => {
   const walletContext = useContext(WalletContext);
-  const { networkConfig, provider, refineEventCounter } = walletContext;
+  const { networkConfig, multicaller, refineEventCounter } = walletContext;
   const [archives, setArchives] = useState<IArchive[]>();
   const [startIndex, setStartIndex] = useState(0);
   const [loadedIndices, setLoadedIndices] = useState<number>(0);
@@ -72,7 +72,7 @@ const Archives: React.FC<ArchivesProps> = ({ fetchArchives }) => {
 
   const burntPixArchives = BurntPixArchives__factory.connect(
     networkConfig.burntPixArchivesAddress,
-    provider,
+    multicaller,
   );
 
   useEffect(() => {
