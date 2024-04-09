@@ -170,10 +170,10 @@ export const ContributionsRow = ({
         py={7}
         borderTop={"1px solid #000000"}
       >
-        <YourContributions
-          account={account}
-          burntPixArchives={burntPixArchives}
-        />
+          <YourContributions
+            account={account}
+            burntPixArchives={burntPixArchives}
+          /> 
       </GridItem>
     </Grid>
   );
