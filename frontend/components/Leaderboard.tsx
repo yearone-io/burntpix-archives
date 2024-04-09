@@ -112,6 +112,12 @@ const Leaderboard: React.FC = () => {
         return { upName: null, avatar: null };
       }
 
+      const existingContributor = sortedContributions.find((c) => c.contributor === contributor);
+      // avoid unnecessary api call when refreshing leaderboard
+      if (existingContributor) {
+        return { upName: existingContributor.upName, avatar: existingContributor.avatar };
+      }
+
       const profileData = await getProfileData(contributor, rpcUrl);
       let upName = null,
         avatar = null;
