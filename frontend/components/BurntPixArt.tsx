@@ -15,7 +15,7 @@ import { inter } from "@/app/fonts";
 import { FaExternalLinkAlt } from "react-icons/fa";
 
 interface IOriginalArtProps {
-  readonly burntPicId: string;
+  readonly burntPicId?: string;
 }
 
 export default function BurntPixArt({ burntPicId }: IOriginalArtProps) {
@@ -26,6 +26,7 @@ export default function BurntPixArt({ burntPicId }: IOriginalArtProps) {
 
   useEffect(() => {
     const fetchBurntPix = async () => {
+      if (!burntPicId) return;
       try {
         const burntPixFractal = Fractal__factory.connect(
           burntPicId.replace("000000000000000000000000", ""),
@@ -44,7 +45,7 @@ export default function BurntPixArt({ burntPicId }: IOriginalArtProps) {
         });
       }
     };
-    burntPicId && fetchBurntPix();
+    fetchBurntPix();
   }, [burntPicId, refineEventCounter]);
 
   return (
@@ -91,7 +92,7 @@ export default function BurntPixArt({ burntPicId }: IOriginalArtProps) {
               fontFamily={inter.style.fontFamily}
               mr="2px"
             >
-              {formatAddress(burntPicId)}
+              {burntPicId ? formatAddress(burntPicId) : "--"}
             </Text>
             <Box>
               <FaExternalLinkAlt />

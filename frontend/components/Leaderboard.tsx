@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Box, Avatar, Flex, Text, Skeleton, useToast } from "@chakra-ui/react";
+import { Avatar, Flex, Text, Skeleton, useToast } from "@chakra-ui/react";
 import { inter } from "@/app/fonts"; // Make sure this import path is correct
 import { BurntPixArchives__factory } from "@/contracts";
 import { WalletContext } from "./wallet/WalletContext";
@@ -23,8 +23,8 @@ const Leaderboard: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   const truncateName = (name: string) => {
-    if (name.length > 25) {
-      return name.substring(0, 25) + "...";
+    if (name.length > 20) {
+      return name.substring(0, 20) + "...";
     }
     return name;
   };
