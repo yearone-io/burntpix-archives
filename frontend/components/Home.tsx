@@ -99,7 +99,7 @@ export default function Home() {
   return (
     <main className={styles.main}>
       <Flex width="100%" direction={"column"} maxW={"2000px"} px={8}>
-        <Header winnerIterations={winnerIterations} />
+        {/* <Header winnerIterations={winnerIterations} />
         <OverviewRow
           collectionStats={collectionStats}
           burntPicId={burntPicId}
@@ -108,7 +108,7 @@ export default function Home() {
           account={account}
           burntPixArchives={burntPixArchives}
           networkConfig={networkConfig}
-        />
+        /> */}
       </Flex>
     </main>
   );

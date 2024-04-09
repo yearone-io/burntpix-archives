@@ -9,6 +9,13 @@ import { JsonRpcProvider, BrowserProvider } from "ethers";
 import { buildSIWEMessage } from "@/utils/universalProfile";
 import { ethers } from "ethers";
 import { BurntPixArchives__factory } from "@/contracts";
+import {
+  Multicall,
+  ContractCallResults,
+  ContractCallContext,
+} from 'ethereum-multicall';
+import { TimeoutError } from "viem";
+import { time } from "console";
 
 // Extends the window object to include `lukso`, which will be used to interact with LUKSO blockchain.
 declare global {
@@ -33,13 +40,17 @@ export const WalletProvider: React.FC<Props> = ({ children }) => {
   const networkConfig = getNetworkConfig(
     process.env.NEXT_PUBLIC_DEFAULT_NETWORK!,
   );
-  const [provider, setProvider] = useState<JsonRpcProvider | BrowserProvider>(
+  const [provider, setProvider] = useState<JsonRpcProvider | BrowserProvider | any>(
     DEFAULT_PROVIDER,
   );
+
+  // const multicall = new Multicall({ ethersProvider: provider, tryAggregate: true });
+
   const [refineEventCounter, setRefineEventCounter] = useState(0);
   const [account, setAccount] = useState<string | null>(null);
   const [mainUPController, setMainUPController] = useState<string>();
   const [isLoadingAccount, setIsLoadingAccount] = useState<boolean>(true);
+  const [isListeningToRefineToArchive, setIsListeningToRefineToArchive] = useState<boolean>(false); // sanity check to avoid multiple listeners
   const [connectedChainId, setConnectedChainId] = useState<
     number | undefined
   >();
@@ -53,7 +64,16 @@ export const WalletProvider: React.FC<Props> = ({ children }) => {
   // Listen to the RefineToArchive event
   // that will refresh component
   useEffect(() => {
-    listenToRefineToArchive(contract);
+    if (isListeningToRefineToArchive) { 
+      return;
+    }
+    const TIMEOUT = 4000;
+    // Dont start listening until Timeout to space calls
+    const timeOut = setTimeout(() => {
+      listenToRefineToArchive(contract);
+      setIsListeningToRefineToArchive(true);
+    }, TIMEOUT);
+    return () => clearTimeout(timeOut);
   }, []);
 
   useEffect(() => {
@@ -179,9 +199,14 @@ export const WalletProvider: React.FC<Props> = ({ children }) => {
     };
 
     try {
+      console.log("LISTENING TO REFINE TO ARCHIVE EVENT")
       contract.on("RefineToArchive", (sender, value) => {
         console.log("REFINE TO ARCHIVE EVENT", sender, value);
-        setRefineEventCounter((prevCounter) => prevCounter + 1);
+        setRefineEventCounter((prevCounter) => {
+          return prevCounter + 1
+        }
+        
+        );
       });
     } catch (error) {
       console.error("Error listening to RefineToArchive event", error);
