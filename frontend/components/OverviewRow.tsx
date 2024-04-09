@@ -50,7 +50,7 @@ export const OverviewRow = ({ burntPicId }: IOverviewRowProps) => {
         { label: "Contributors:", value: contributors.toString() },
         {
           label: "Archive Mints:",
-          value: `${Number(totalSupply)} / ${supplyCap}`,
+          value: `${new Intl.NumberFormat("en-US").format(Number(totalSupply))} / ${new Intl.NumberFormat("en-US").format(supplyCap)}`,
         },
         {
           label: "LYX Burned:",
