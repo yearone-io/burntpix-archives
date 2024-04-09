@@ -23,8 +23,6 @@ export const OverviewRow = ({ burntPicId }: IOverviewRowProps) => {
     networkConfig.burntPixArchivesAddress,
     provider,
   );
-  const [supplyCap, setSupplyCap] = useState<number>(0);
-
   const [collectionStats, setCollectionStats] = useState<StatsItem[]>([
     { label: "Iterations:", value: "--" },
     { label: "Contributors:", value: "--" },
@@ -42,8 +40,6 @@ export const OverviewRow = ({ burntPicId }: IOverviewRowProps) => {
           burntPixArchives.getTotalFeesBurnt(),
           burntPixArchives.tokenSupplyCap(),
         ]);
-
-      setSupplyCap(Number(tokenSupplyCap));
 
       setCollectionStats([
         { label: "Iterations:", value: iterations.toString() },
