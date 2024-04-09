@@ -12,11 +12,12 @@ import { WalletContext } from "@/components/wallet/WalletContext";
 
 interface IOverviewRowProps {
   readonly burntPicId?: string;
+  readonly winningIterations: string;
 }
 
-export const OverviewRow = ({ burntPicId }: IOverviewRowProps) => {
+export const OverviewRow = ({ burntPicId, winningIterations }: IOverviewRowProps) => {
   const walletContext = useContext(WalletContext);
-  const { account, networkConfig, provider, refineEventCounter } =
+  const { networkConfig, provider, refineEventCounter } =
     walletContext;
   const toast = useToast();
   const burntPixArchives = BurntPixArchives__factory.connect(
@@ -66,14 +67,14 @@ export const OverviewRow = ({ burntPicId }: IOverviewRowProps) => {
 
   useEffect(() => {
     burntPicId && fetchCollectionStats();
-  }, [burntPicId]);
+  }, [burntPicId, refineEventCounter]);
 
   return (
     <Grid
       templateColumns={{ base: "1fr", md: "1fr 1fr", lg: "1fr 1fr 1fr" }}
       w="full"
     >
-      <GridItem colSpan={1} px={{ base: 0, md: 7 }} py={7}>
+      <GridItem colSpan={1} pl={{ base: 0, md: 7 }} py={7}>
         <Article
           title="LIVE VIEW"
           description="In a First, LUKSO Community Works to Refine and Archive the Same Burnt Pic Together"
@@ -101,7 +102,7 @@ export const OverviewRow = ({ burntPicId }: IOverviewRowProps) => {
         py={7}
         borderTop={{ base: "1px solid #000000", lg: "0px" }}
       >
-        <EditorsNote />
+        <EditorsNote winningIterations={winningIterations} />
       </GridItem>
     </Grid>
   );

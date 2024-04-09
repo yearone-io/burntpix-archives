@@ -75,9 +75,9 @@ const Footer: React.FC = () => {
           </Flex>
         </Flex>
         <Text
-          fontSize="10px"
+          fontSize="xs"
           fontFamily={inter.style.fontFamily}
-          lineHeight="12px"
+          lineHeight="xs"
           fontWeight={500}
           letterSpacing={1.5}
         >

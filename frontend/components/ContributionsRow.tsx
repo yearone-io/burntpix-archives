@@ -160,7 +160,9 @@ export const ContributionsRow = ({
         </Box>
         <Box py={7} px={{ base: 0, md: 7 }}>
           <Article title="LEADERBOARD">
-            <Leaderboard />
+            <Box pt={6}>
+              <Leaderboard />
+            </Box>
           </Article>
         </Box>
       </GridItem>

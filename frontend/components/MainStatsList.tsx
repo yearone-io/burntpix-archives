@@ -14,6 +14,7 @@ export interface StatsListProps {
 
 const MainStatsList: React.FC<StatsListProps> = ({ stats }) => {
   const bulletColor = "#FE005B";
+  const fontSizing = { base: "sm", md: "md", lg: "lg" };
 
   return (
     <List spacing={1}>
@@ -22,14 +23,14 @@ const MainStatsList: React.FC<StatsListProps> = ({ stats }) => {
           {/* Setting up the grid with two columns: one for the label and icon, another for the value */}
           <Grid templateColumns="repeat(2, 1fr)" alignItems="center" gap={2}>
             <Box display="flex" alignItems="center">
-              <Box as={MdLens} color={bulletColor} mr="2" size="9px" />
+              <Box as={MdLens} color={bulletColor} mr="2" size="0.8rem" />
               <Text
                 as="span"
                 fontWeight="500"
-                fontSize="16px"
-                lineHeight="26px"
+                fontSize={fontSizing}
+                lineHeight={fontSizing}
                 fontFamily={inter.style.fontFamily}
-                letterSpacing="1.5"
+                letterSpacing="1.5px"
                 whiteSpace="nowrap"
                 overflow="hidden"
                 textOverflow="ellipsis"
@@ -41,8 +42,8 @@ const MainStatsList: React.FC<StatsListProps> = ({ stats }) => {
               as="span"
               textAlign="right"
               fontWeight="800"
-              fontSize="16px"
-              lineHeight="26px"
+              fontSize={fontSizing}
+              lineHeight={fontSizing}
               fontFamily={inter.style.fontFamily}
               letterSpacing="1.5"
             >
