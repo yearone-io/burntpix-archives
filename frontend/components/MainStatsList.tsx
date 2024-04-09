@@ -14,6 +14,7 @@ export interface StatsListProps {
 
 const MainStatsList: React.FC<StatsListProps> = ({ stats }) => {
   const bulletColor = "#FE005B";
+  const fontSizing = { base: "sm", md: "md", lg: "lg" };
 
   return (
     <List spacing={1}>
@@ -26,8 +27,8 @@ const MainStatsList: React.FC<StatsListProps> = ({ stats }) => {
               <Text
                 as="span"
                 fontWeight="500"
-                fontSize="lg"
-                lineHeight="lg"
+                fontSize={fontSizing}
+                lineHeight={fontSizing}
                 fontFamily={inter.style.fontFamily}
                 letterSpacing="1.5px"
                 whiteSpace="nowrap"
@@ -41,8 +42,8 @@ const MainStatsList: React.FC<StatsListProps> = ({ stats }) => {
               as="span"
               textAlign="right"
               fontWeight="800"
-              fontSize="lg"
-              lineHeight="lg"
+              fontSize={fontSizing}
+              lineHeight={fontSizing}
               fontFamily={inter.style.fontFamily}
               letterSpacing="1.5"
             >

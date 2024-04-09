@@ -52,9 +52,11 @@ export const WalletProvider: React.FC<Props> = ({ children }) => {
 
   // Listen to the RefineToArchive event
   // that will refresh component
+  /*
   useEffect(() => {
     listenToRefineToArchive(contract);
   }, []);
+  */
 
   useEffect(() => {
     const initProvider = getProvider(networkConfig);

@@ -193,7 +193,7 @@ const YourContributions = ({
   return (
     <>
       {account ? (
-        <Flex flexDir="column">
+        <Flex flexDir="column" gap={5}>
           <Article title="YOUR CONTRIBUTIONS">
             <Box p="20px 0px">
               <MainStatsList stats={userStats} />
