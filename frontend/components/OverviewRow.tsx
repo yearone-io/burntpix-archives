@@ -12,7 +12,7 @@ import { WalletContext } from "@/components/wallet/WalletContext";
 
 interface IOverviewRowProps {
   readonly supplyCap: number;
-  readonly burntPicId: string;
+  readonly burntPicId?: string;
 }
 
 export const OverviewRow = ({ supplyCap, burntPicId }: IOverviewRowProps) => {
@@ -65,8 +65,8 @@ export const OverviewRow = ({ supplyCap, burntPicId }: IOverviewRowProps) => {
   };
 
   useEffect(() => {
-    supplyCap && fetchCollectionStats();
-  }, [supplyCap]);
+    burntPicId && fetchCollectionStats();
+  }, [burntPicId]);
 
   return (
     <Grid

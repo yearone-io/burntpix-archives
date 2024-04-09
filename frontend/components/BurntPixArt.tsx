@@ -16,7 +16,7 @@ import { inter } from "@/app/fonts";
 import { FaExternalLinkAlt } from "react-icons/fa";
 
 interface IOriginalArtProps {
-  readonly burntPicId: string;
+  readonly burntPicId?: string;
 }
 
 export default function BurntPixArt({ burntPicId }: IOriginalArtProps) {

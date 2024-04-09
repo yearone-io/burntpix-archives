@@ -2,11 +2,9 @@
 import styles from "../app/page.module.css";
 import "../app/globals.css";
 import { Flex, useToast } from "@chakra-ui/react";
-import { StatsItem } from "@/components/MainStatsList";
 import { BurntPixArchives__factory } from "@/contracts";
 import { useContext, useEffect, useState } from "react";
 import { WalletContext } from "@/components/wallet/WalletContext";
-import { divideBigIntTokenBalance } from "@/utils/numberUtils";
 import { Header } from "./Header";
 import { OverviewRow } from "./OverviewRow";
 import { ContributionsRow } from "./ContributionsRow";
@@ -22,7 +20,7 @@ export default function Home() {
   );
 
   // immutables
-  const [burntPicId, setBurntPicId] = useState<string>("");
+  const [burntPicId, setBurntPicId] = useState<string>();
   const [winnerIterations, setWinnerIterations] = useState<string>("--");
   const [supplyCap, setSupplyCap] = useState<number>(0);
 
