@@ -2,7 +2,7 @@ import { Box, Text, Link } from "@chakra-ui/react";
 import React from "react";
 import { inter } from "@/app/fonts";
 
-const EditorsNote: React.FC = () => {
+const EditorsNote = ({ winningIterations }: { winningIterations: string }) => {
   return (
     <Box
       fontFamily={inter.style.fontFamily}
@@ -37,14 +37,15 @@ const EditorsNote: React.FC = () => {
         Burnt Pix Archives are provided as is.
       </Text>
       <Text fontSize="sm" fontWeight={400} lineHeight="15px" marginBottom="2">
-        The core idea behind Burnt Pix Archives is to encourage the Luxo
+        The core idea behind Burnt Pix Archives is to encourage the Lukso
         community to work together and refine the same Burnt Pix NFT.
-        Conceptually we do this by rewarding the refiners of the NFT with lower
-        resolution LSP8 "archives" of the same original at various stages in its
-        evolution as the refiners unlock new levels through their contributions.
-        The amount of possible minted archives is limited to ten thousand. The
-        refiner that first contributes 69,420,000 iterations to the archive
-        unlocks the original NFT for their use.
+        Conceptually we do this by rewarding the refiners of the NFT with the
+        ability to mint lower resolution LSP8 "archives" of the same original at
+        various stages in its evolution as the refiners unlock new levels
+        through their contributions. The amount of possible minted archives is
+        limited to ten thousand. The refiner that first contributes{" "}
+        {winningIterations} iterations to the archive unlocks the original NFT
+        for their use.
       </Text>
     </Box>
   );

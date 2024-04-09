@@ -52,7 +52,10 @@ export default function Home() {
     <main className={styles.main}>
       <Flex width="100%" direction={"column"} maxW={"2000px"} px={8}>
         <Header winnerIterations={winnerIterations} />
-        <OverviewRow burntPicId={burntPicId} />
+        <OverviewRow
+          burntPicId={burntPicId}
+          winningIterations={winnerIterations}
+        />
         <ContributionsRow
           account={account}
           burntPixArchives={burntPixArchives}
