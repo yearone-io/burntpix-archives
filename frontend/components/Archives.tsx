@@ -7,6 +7,7 @@ import React, {
 } from "react";
 import {
   Avatar,
+  Box,
   Flex,
   HStack,
   Icon,
@@ -67,7 +68,7 @@ const Archives: React.FC<ArchivesProps> = ({ fetchArchives }) => {
   const [ownerProfiles, setOwnerProfiles] = useState<IOwners>({});
 
   // Use the useBreakpointValue hook to determine the number of images to slide
-  const responsiveSlideValues = { base: 3, md: 5 };
+  const responsiveSlideValues = { base: 3, lg: 5 };
   const slideAmount = useBreakpointValue(responsiveSlideValues) || 5;
 
   const burntPixArchives = BurntPixArchives__factory.connect(
@@ -121,6 +122,55 @@ const Archives: React.FC<ArchivesProps> = ({ fetchArchives }) => {
       </Stack>
     );
   }
+
+  const archiveBox = (archive: IArchive, index: number) => (
+    <VStack key={index}>
+      <Box
+        height={{ base: "200px", lg: "115px" }}
+        width={{ base: "200px", lg: "115px" }}
+        filter={archive.isMinted ? "none" : "invert(100%)"}
+        dangerouslySetInnerHTML={{ __html: archive.image }}
+      />
+      <Flex width={{ base: "200px", lg: "115px" }}  alignItems={"center"} justifyContent={"space-between"}>
+        {archive.id && archive.isMinted ? (
+          <Link
+            href={`${networkConfig.marketplaceCollectionsURL}/${networkConfig.burntPixArchivesAddress}/${archive.id}`}
+            fontSize={"md"}
+            isExternal={true}
+            color={"black"}
+            fontWeight={"500"}
+          >
+            #{index + startIndex + 1}
+          </Link>
+        ) : (
+          <Text color={"black"} fontSize={"md"} fontWeight={"500"}>
+            #{index + startIndex + 1}
+          </Text>
+        )}
+        <Flex alignItems={"center"} gap={1}>
+        <Link
+          isExternal={true}
+          href={
+            archive.ownerAddress
+              ? `${networkConfig.marketplaceProfilesURL}/${archive.ownerAddress}`
+              : undefined
+          }
+        >
+          <Avatar
+            name={archive.ownerName}
+            src={archive.ownerAvatar}
+            height={"24px"}
+            width={"24px"}
+          />
+        </Link>
+        {archive.isMinted && (
+          <Icon ml={1} as={FaCheckCircle} boxSize={"18px"} />
+        )}
+        </Flex>
+      </Flex>
+    </VStack>
+  );
+
   return archives.length ? (
     <VStack alignItems={"left"} w="100%" pr="20px" pt="20px">
       <HStack>
@@ -130,73 +180,9 @@ const Archives: React.FC<ArchivesProps> = ({ fetchArchives }) => {
           aria-label={"Previous"}
           isDisabled={startIndex <= 0}
           backgroundColor={"transparent"}
-        ></IconButton>
-        <Flex w={slideAmount === responsiveSlideValues.base ? "200px" : "100%"}>
-          {archives
-            .slice(startIndex, startIndex + slideAmount)
-            .map((archive, index) => (
-              <VStack
-                alignItems={"left"}
-                key={index}
-                width={
-                  slideAmount === responsiveSlideValues.base ? "100%" : "20%"
-                }
-              >
-                <div
-                  style={{
-                    height:
-                      slideAmount === responsiveSlideValues.base
-                        ? "200px"
-                        : "100px",
-                    width:
-                      slideAmount === responsiveSlideValues.base
-                        ? "200px"
-                        : "100px",
-                    filter: archive.isMinted ? "none" : "invert(100%)",
-                  }}
-                  dangerouslySetInnerHTML={{ __html: archive.image }}
-                />
-                <Flex
-                  width={
-                    slideAmount === responsiveSlideValues.base
-                      ? "200px"
-                      : "100px"
-                  }
-                >
-                  <Link
-                    href={
-                      archive.id
-                        ? `${networkConfig.marketplaceCollectionsURL}/${networkConfig.burntPixArchivesAddress}/${archive.id}`
-                        : undefined
-                    }
-                    isExternal={true}
-                    color={"black"}
-                    fontWeight={"500"}
-                  >
-                    #{index + startIndex + 1}
-                  </Link>
-                  <Spacer />
-                  <Link
-                    isExternal={true}
-                    href={
-                      archive.ownerAddress
-                        ? `${networkConfig.marketplaceProfilesURL}/${archive.ownerAddress}`
-                        : undefined
-                    }
-                  >
-                    <Avatar
-                      name={archive.ownerName}
-                      src={archive.ownerAvatar}
-                      height={"24px"}
-                      width={"24px"}
-                    />
-                  </Link>
-                  {archive.isMinted && (
-                    <Icon ml={1} as={FaCheckCircle} boxSize={"24px"} />
-                  )}
-                </Flex>
-              </VStack>
-            ))}
+        />
+        <Flex w={"100%"}>
+          {archives.slice(startIndex, startIndex + slideAmount).map(archiveBox)}
         </Flex>
         <IconButton
           onClick={nextSlide}
