@@ -32,6 +32,11 @@ const config: HardhatUserConfig = {
 			chainId: 42,
 			accounts: [getNetworkAccountsConfig("luksoMain").EOA_PRIVATE_KEY as string]
 		},
+		luksoDevnet: {
+			url: "https://rpc.devnet.lukso.dev",
+			chainId: 7420,
+			accounts: [getNetworkAccountsConfig("luksoTestnet").EOA_PRIVATE_KEY as string]
+		},
 	},
 	sourcify: {
 		enabled: false,
@@ -55,6 +60,14 @@ const config: HardhatUserConfig = {
 				urls: {
 					apiURL: "https://api.explorer.execution.mainnet.lukso.network/api",
 					browserURL: "https://explorer.execution.mainnet.lukso.network",
+				},
+			},
+			{
+				network: "luksoDevnet",
+				chainId: 7420,
+				urls: {
+					apiURL: "https://api.explorer.execution.devnet.lukso.dev/api",
+					browserURL: "https://explorer.execution.devnet.lukso.dev",
 				},
 			},
 		],
