@@ -27,6 +27,7 @@ export default function BurntPixArt({ burntPicId }: IOriginalArtProps) {
 
   useEffect(() => {
     const fetchBurntPix = async () => {
+      if (!burntPicId) return;
       try {
         const burntPixFractal = Fractal__factory.connect(
           burntPicId.replace("000000000000000000000000", ""),
@@ -45,7 +46,7 @@ export default function BurntPixArt({ burntPicId }: IOriginalArtProps) {
         });
       }
     };
-    burntPicId && fetchBurntPix();
+    fetchBurntPix();
   }, [burntPicId, refineEventCounter]);
 
   return (
@@ -92,7 +93,7 @@ export default function BurntPixArt({ burntPicId }: IOriginalArtProps) {
               fontFamily={inter.style.fontFamily}
               mr="2px"
             >
-              {formatAddress(burntPicId)}
+              {burntPicId ? formatAddress(burntPicId) : "--"}
             </Text>
             <Text fontSize={"12px"} ml="2px" mt="4px">
               <FaExternalLinkAlt />
