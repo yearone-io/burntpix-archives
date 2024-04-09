@@ -1,19 +1,12 @@
 import React, { useContext, useEffect, useState } from "react";
-import {
-  Box,
-  Avatar,
-  Flex,
-  Text,
-  Grid,
-  useBreakpointValue,
-  Skeleton,
-  useToast,
-} from "@chakra-ui/react";
+import { Avatar, Flex, Text, Skeleton, useToast } from "@chakra-ui/react";
 import { inter } from "@/app/fonts"; // Make sure this import path is correct
 import { BurntPixArchives__factory } from "@/contracts";
 import { WalletContext } from "./wallet/WalletContext";
 import { getProfileData } from "@/utils/universalProfile";
 import { constants } from "@/constants/constants";
+import { ZeroAddress } from "ethers";
+import { formatAddress } from "@/utils/tokenUtils";
 
 interface Contribution {
   contributor: string;
@@ -26,14 +19,13 @@ const Leaderboard: React.FC = () => {
   const walletContext = useContext(WalletContext);
   const toast = useToast();
   const { networkConfig, provider, refineEventCounter } = walletContext;
-  const [sortedContributions, setSortedContributions] = useState<
-    Contribution[]
-  >([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [topContributions, setTopContributions] = useState<Contribution[]>([]);
+  const [loadingFirstFive, setLoadingFirstFive] = useState(true);
+  const [loadingSecondFive, setLoadingSecondFive] = useState(true);
 
   const truncateName = (name: string) => {
-    if (name.length > 10) {
-      return name.substring(0, 10) + "...";
+    if (name.length > 20) {
+      return name.substring(0, 20) + "...";
     }
     return name;
   };
@@ -63,7 +55,6 @@ const Leaderboard: React.FC = () => {
     };
 
     const fetchContributions = async () => {
-      setIsLoading(true);
       try {
         const [topContributors, contributions] =
           await burntPixArchives.getTopTenContributors();
@@ -72,22 +63,45 @@ const Leaderboard: React.FC = () => {
         }
         const delayMsTime = 150;
 
-        const profiles = await fetchProfileDataWithDelay(
-          topContributors,
+        const firstChunk = topContributors.slice(0, 5);
+        const secondChunk = topContributors.slice(5);
+
+        const firstChunkProfiles = await fetchProfileDataWithDelay(
+          firstChunk,
           delayMsTime,
         );
-        if (!isMounted || !profiles) return;
 
-        const contributionsWithProfiles = topContributors.map(
-          (contributor, index) => ({
+        if (!isMounted || !firstChunkProfiles) return;
+
+        const firstChunkContributionsWithProfiles = firstChunk
+          .filter((contributor) => contributor !== ZeroAddress)
+          .map((contributor, index) => ({
             contributor,
             contribution: Number(contributions[index]),
-            upName: profiles[index]?.upName || null,
-            avatar: profiles[index]?.avatar || null,
-          }),
+            upName: firstChunkProfiles[index]?.upName || null,
+            avatar: firstChunkProfiles[index]?.avatar || null,
+          }));
+        setTopContributions(firstChunkContributionsWithProfiles);
+        setLoadingFirstFive(false);
+        const secondChunkProfiles = await fetchProfileDataWithDelay(
+          secondChunk,
+          delayMsTime,
         );
+        if (!isMounted || !secondChunkProfiles) return;
+        const secondChunkContributionsWithProfiles = secondChunk
+          .filter((contributor) => contributor !== ZeroAddress)
+          .map((contributor, index) => ({
+            contributor,
+            contribution: Number(contributions[index]),
+            upName: secondChunkProfiles[index]?.upName || null,
+            avatar: secondChunkProfiles[index]?.avatar || null,
+          }));
 
-        if (isMounted) setSortedContributions(contributionsWithProfiles);
+        setTopContributions([
+          ...firstChunkContributionsWithProfiles,
+          ...secondChunkContributionsWithProfiles,
+        ]);
+        setLoadingSecondFive(false);
       } catch (error: any) {
         if (isMounted) {
           toast({
@@ -98,8 +112,6 @@ const Leaderboard: React.FC = () => {
             isClosable: true,
           });
         }
-      } finally {
-        if (isMounted) setIsLoading(false);
       }
     };
 
@@ -119,7 +131,7 @@ const Leaderboard: React.FC = () => {
         return { upName: null, avatar: null };
       }
 
-      const existingContributor = sortedContributions.find(
+      const existingContributor = topContributions.find(
         (c) => c.contributor === contributor,
       );
       // avoid unnecessary api call when refreshing leaderboard
@@ -147,74 +159,134 @@ const Leaderboard: React.FC = () => {
       return null;
     }
   };
-
-  const renderItem = (item: Contribution, index: number) => (
-    <Flex
-      key={index}
-      alignItems="center"
-      justifyContent="space-between"
-      p={0.5}
-    >
-      <Flex alignItems="center" flex="1">
-        <Text
-          fontSize="md"
-          fontWeight="normal"
-          minWidth="20px"
-          mr="50px"
-          fontFamily={inter.style.fontFamily}
-        >
-          {index + 1}.
-        </Text>
-        {item.avatar !== null && (
-          <Avatar
-            name={truncateName(item.upName || item.contributor)}
-            src={item.avatar}
-            height="16px"
-            width="16px"
-          />
-        )}
-        <Text
-          fontSize="md"
-          fontWeight="normal"
-          ml="3"
-          mr="50px"
-          flex="1"
-          fontFamily={inter.style.fontFamily}
-          isTruncated // This ensures the name doesn't push the score out of view
-        >
-          {truncateName(item.upName || item.contributor)}
-        </Text>
-      </Flex>
-      <Box textAlign="left" minW="80px">
-        {" "}
-        <Text fontSize="md" fontWeight="bold">
+  const avatarSize = { base: "18px", md: "24px" };
+  const fontSizing = { base: "sm", md: "md", lg: "lg" };
+  const renderItem = (item: Contribution, index: number) => {
+    const contributorName = item.upName
+      ? truncateName(item.upName)
+      : formatAddress(item.contributor);
+    return (
+      <Flex
+        key={index}
+        alignItems="center"
+        justifyContent="space-between"
+        p={0.5}
+      >
+        <Flex alignItems="center" flex="1" gap={16}>
+          <Text
+            fontSize={fontSizing}
+            fontWeight="normal"
+            minWidth="20px"
+            fontFamily={inter.style.fontFamily}
+          >
+            {index + 1}.
+          </Text>
+          <Flex alignItems={"center"} gap={2}>
+            {item.avatar !== null && (
+              <Avatar
+                src={item.avatar}
+                height={avatarSize}
+                width={avatarSize}
+              />
+            )}
+            <Text
+              fontSize={fontSizing}
+              fontWeight="normal"
+              flex="1"
+              fontFamily={inter.style.fontFamily}
+            >
+              {contributorName}
+            </Text>
+          </Flex>
+        </Flex>
+        <Text fontSize={fontSizing} fontWeight="800">
           {item.contribution.toLocaleString()}
         </Text>
-      </Box>
-    </Flex>
-  );
+      </Flex>
+    );
+  };
+
+  if (!topContributions.length && !loadingFirstFive && !loadingSecondFive) {
+    return (
+      <Flex
+        height={"120px"}
+        alignItems={"center"}
+        justifyContent={"center"}
+        w="100%"
+        px={7}
+        gap={3}
+      >
+        <Text fontSize={"lg"} lineHeight={"lg"} fontWeight={400}>
+          Leaderboard is empty
+        </Text>
+        <Text fontSize={"3xl"} lineHeight={"3xl"}>
+          🏆
+        </Text>
+      </Flex>
+    );
+  }
 
   return (
     <Flex
       direction={{ base: "column", md: "row" }}
       wrap="wrap"
       justifyContent="center"
+      alignItems={"flex-start"}
       w="100%"
     >
-      <Box minWidth={{ base: "100%", md: "50%" }}>
-        {isLoading
-          ? [...Array(5)].map((_, index) => (
+      {loadingFirstFive ? (
+        <>
+          <Flex
+            flexDir={"column"}
+            marginRight={{ base: "0", md: "10%" }}
+            minWidth={{ base: "100%", md: "45%" }}
+            gap={3}
+            mr={"5%"}
+          >
+            {[...Array(5)].map((_, index) => (
               <Skeleton key={index} height="30px" width="100%" />
-            ))
-          : sortedContributions.slice(0, 5).map(renderItem)}
-      </Box>
-      <Box minWidth={{ base: "100%", md: "50%" }}>
-        {isLoading
-          ? [...Array(5)].map((_, index) => (
-              <Skeleton key={index + 5} height="30px" width="100%" />
-            ))
-          : sortedContributions.slice(5, 10).map(renderItem)}
-      </Box>
+            ))}
+          </Flex>
+        </>
+      ) : (
+        <>
+          <Flex
+            flexDir={"column"}
+            marginRight={{ base: "0", md: "10%" }}
+            minWidth={{ base: "100%", md: "45%" }}
+            gap={3}
+          >
+            {topContributions.slice(0, 5).map(renderItem)}
+          </Flex>
+        </>
+      )}
+      {loadingSecondFive ? (
+        <>
+          <Flex
+            flexDir={"column"}
+            minWidth={{ base: "100%", md: "45%" }}
+            gap={3}
+          >
+            {[...Array(5)].map((_, index) => (
+              <Skeleton key={index} height="30px" width="100%" />
+            ))}
+          </Flex>
+        </>
+      ) : (
+        <>
+          {topContributions.slice(5, 10).length ? (
+            <Flex
+              flexDir={"column"}
+              minWidth={{ base: "100%", md: "45%" }}
+              gap={3}
+            >
+              {topContributions
+                .slice(5, 10)
+                .map((item, index) => renderItem(item, index + 5))}
+            </Flex>
+          ) : null}
+        </>
+      )}
     </Flex>
   );
 };

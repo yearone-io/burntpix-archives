@@ -2,7 +2,6 @@ import React, {
   useContext,
   useEffect,
   useState,
-  useCallback,
   Dispatch,
   SetStateAction,
 } from "react";
@@ -18,6 +17,7 @@ import {
   useBreakpointValue,
   Stack,
   Skeleton,
+  Text,
 } from "@chakra-ui/react";
 import {
   FaArrowCircleLeft,
@@ -121,7 +121,7 @@ const Archives: React.FC<ArchivesProps> = ({ fetchArchives }) => {
       </Stack>
     );
   }
-  return (
+  return archives.length ? (
     <VStack alignItems={"left"} w="100%" pr="20px" pt="20px">
       <HStack>
         <IconButton
@@ -207,6 +207,22 @@ const Archives: React.FC<ArchivesProps> = ({ fetchArchives }) => {
         />
       </HStack>
     </VStack>
+  ) : (
+    <Flex
+      height={"120px"}
+      alignItems={"center"}
+      justifyContent={"center"}
+      w="100%"
+      px={7}
+      gap={3}
+    >
+      <Text fontSize={"lg"} lineHeight={"lg"} fontWeight={400}>
+        New archives will appear here
+      </Text>
+      <Text fontSize={"3xl"} lineHeight={"3xl"}>
+        📂
+      </Text>
+    </Flex>
   );
 };
 
