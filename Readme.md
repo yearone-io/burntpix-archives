@@ -9,3 +9,4 @@ This functionality is achieved through three smart contracts:
 1. **BurntPixArchives.sol** - an LSP8CappedSupply collection which is responsibles for minting the "archive" (lower res copies of the original burnt pix NFT at the point in time a user's earned them), tracking refiner contributions, as well as refining in parallel the FractalClone.sol, a lower resolution copy of the original burnt pic.
 2. **FractalClone.sol** - a lower resolution copy of the original burnt pic. It's refined in parallel to the original with the same exact amount of iterations in order to keep track of a mirror image and serve "archive" copies of the original.
 3. **ArchiveHelpers.sol** - helper functions that build metadata, track levels, and do other misc things necessary for system to work.
+
