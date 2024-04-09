@@ -45,9 +45,13 @@ const Leaderboard: React.FC = () => {
 
   useEffect(() => {
     let isMounted = true;
-    const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-  
-    const fetchProfileDataWithDelay = async (contributors: string[], delayMs: number) => {
+    const delay = (ms: number) =>
+      new Promise((resolve) => setTimeout(resolve, ms));
+
+    const fetchProfileDataWithDelay = async (
+      contributors: string[],
+      delayMs: number,
+    ) => {
       const profiles = [];
       for (const contrib of contributors) {
         if (!isMounted) return;
@@ -57,26 +61,32 @@ const Leaderboard: React.FC = () => {
       }
       return profiles;
     };
-  
+
     const fetchContributions = async () => {
       setIsLoading(true);
       try {
-        const [topContributors, contributions] = await burntPixArchives.getTopTenContributors();
+        const [topContributors, contributions] =
+          await burntPixArchives.getTopTenContributors();
         if (Number(contributions[0]) === 0 || !isMounted) {
           return;
         }
-        const delayMsTime = 150
-  
-        const profiles = await fetchProfileDataWithDelay(topContributors, delayMsTime);
+        const delayMsTime = 150;
+
+        const profiles = await fetchProfileDataWithDelay(
+          topContributors,
+          delayMsTime,
+        );
         if (!isMounted || !profiles) return;
-  
-        const contributionsWithProfiles = topContributors.map((contributor, index) => ({
-          contributor,
-          contribution: Number(contributions[index]),
-          upName: profiles[index]?.upName || null,
-          avatar: profiles[index]?.avatar || null,
-        }));
-  
+
+        const contributionsWithProfiles = topContributors.map(
+          (contributor, index) => ({
+            contributor,
+            contribution: Number(contributions[index]),
+            upName: profiles[index]?.upName || null,
+            avatar: profiles[index]?.avatar || null,
+          }),
+        );
+
         if (isMounted) setSortedContributions(contributionsWithProfiles);
       } catch (error: any) {
         if (isMounted) {
@@ -92,30 +102,32 @@ const Leaderboard: React.FC = () => {
         if (isMounted) setIsLoading(false);
       }
     };
-  
+
     fetchContributions();
-  
+
     return () => {
       isMounted = false;
     };
   }, [refineEventCounter]);
-  
 
   const fetchProfileData = async (
     contributor: string,
     rpcUrl: string,
   ): Promise<{ upName: string | null; avatar: string | null } | null> => {
     try {
-
-      if (contributor === "0x0000000000000000000000000000000000000000"
-      ) {
+      if (contributor === "0x0000000000000000000000000000000000000000") {
         return { upName: null, avatar: null };
       }
 
-      const existingContributor = sortedContributions.find((c) => c.contributor === contributor);
+      const existingContributor = sortedContributions.find(
+        (c) => c.contributor === contributor,
+      );
       // avoid unnecessary api call when refreshing leaderboard
       if (existingContributor) {
-        return { upName: existingContributor.upName, avatar: existingContributor.avatar };
+        return {
+          upName: existingContributor.upName,
+          avatar: existingContributor.avatar,
+        };
       }
 
       const profileData = await getProfileData(contributor, rpcUrl);
