@@ -11,11 +11,10 @@ import { BurntPixArchives__factory } from "@/contracts";
 import { WalletContext } from "@/components/wallet/WalletContext";
 
 interface IOverviewRowProps {
-  readonly supplyCap: number;
   readonly burntPicId?: string;
 }
 
-export const OverviewRow = ({ supplyCap, burntPicId }: IOverviewRowProps) => {
+export const OverviewRow = ({ burntPicId }: IOverviewRowProps) => {
   const walletContext = useContext(WalletContext);
   const { account, networkConfig, provider, refineEventCounter } =
     walletContext;
@@ -24,6 +23,7 @@ export const OverviewRow = ({ supplyCap, burntPicId }: IOverviewRowProps) => {
     networkConfig.burntPixArchivesAddress,
     provider,
   );
+  const [supplyCap, setSupplyCap] = useState<number>(0);
 
   const [collectionStats, setCollectionStats] = useState<StatsItem[]>([
     { label: "Iterations:", value: "--" },
@@ -34,19 +34,23 @@ export const OverviewRow = ({ supplyCap, burntPicId }: IOverviewRowProps) => {
 
   const fetchCollectionStats = async () => {
     try {
-      const [totalSupply, iterations, contributors, lyxBurned] =
+      const [totalSupply, iterations, contributors, lyxBurned, tokenSupplyCap] =
         await Promise.all([
           burntPixArchives.totalSupply(),
           burntPixArchives.getTotalIterations(),
           burntPixArchives.getTotalContributors(),
           burntPixArchives.getTotalFeesBurnt(),
+          burntPixArchives.tokenSupplyCap(),
         ]);
+
+      setSupplyCap(Number(tokenSupplyCap));
+
       setCollectionStats([
         { label: "Iterations:", value: iterations.toString() },
         { label: "Contributors:", value: contributors.toString() },
         {
           label: "Archive Mints:",
-          value: `${new Intl.NumberFormat("en-US").format(Number(totalSupply))} / ${new Intl.NumberFormat("en-US").format(supplyCap)}`,
+          value: `${Number(totalSupply)} / ${supplyCap}`,
         },
         {
           label: "LYX Burned:",

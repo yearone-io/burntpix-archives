@@ -22,21 +22,18 @@ export default function Home() {
   // immutables
   const [burntPicId, setBurntPicId] = useState<string>();
   const [winnerIterations, setWinnerIterations] = useState<string>("--");
-  const [supplyCap, setSupplyCap] = useState<number>(0);
 
   useEffect(() => {
     const fetchImmutableStats = async () => {
       try {
-        const [burntPicId, winnerIterations, supplyCap] = await Promise.all([
+        const [burntPicId, winnerIterations] = await Promise.all([
           burntPixArchives.burntPicId(),
           burntPixArchives.winnerIters(),
-          burntPixArchives.tokenSupplyCap(),
         ]);
         setBurntPicId(burntPicId);
         setWinnerIterations(
           new Intl.NumberFormat("en-US").format(Number(winnerIterations)),
         );
-        setSupplyCap(Number(supplyCap));
       } catch (error: any) {
         toast({
           title: `Failed to fetch collection constants: ${error.message}`,
@@ -55,7 +52,7 @@ export default function Home() {
     <main className={styles.main}>
       <Flex width="100%" direction={"column"} maxW={"2000px"} px={8}>
         <Header winnerIterations={winnerIterations} />
-        <OverviewRow supplyCap={supplyCap} burntPicId={burntPicId} />
+        <OverviewRow burntPicId={burntPicId} />
         <ContributionsRow
           account={account}
           burntPixArchives={burntPixArchives}
