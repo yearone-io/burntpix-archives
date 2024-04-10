@@ -251,6 +251,7 @@ const Archives: React.FC<ArchivesProps> = ({
             borderRadius={10}
             w="fit-content"
             fontSize="xs"
+            lineHeight="0.75rem"
             fontWeight={700}
             onClick={() => {mintArchive(archive.id)}}
             fontFamily={inter.style.fontFamily}
