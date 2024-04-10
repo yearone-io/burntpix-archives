@@ -1,5 +1,13 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Avatar, Flex, Text, Skeleton, useToast } from "@chakra-ui/react";
+import {
+  Avatar,
+  Flex,
+  Text,
+  Skeleton,
+  useToast,
+  Grid,
+  GridItem,
+} from "@chakra-ui/react";
 import { inter } from "@/app/fonts"; // Make sure this import path is correct
 import { BurntPixArchives__factory } from "@/contracts";
 import { WalletContext } from "./wallet/WalletContext";
@@ -129,62 +137,42 @@ const Leaderboard: React.FC = () => {
     );
   };
 
-  // todo: rework this as a grid
   return topContributions.length || isLoading ? (
-    <Flex
-      direction={{ base: "column", md: "row" }}
-      wrap="wrap"
+    <Grid
+      templateColumns={{ base: "repeat(1, 1fr)", xl: "repeat(2, 1fr)" }}
+      gap={{ base: 3, xl: 16 }}
       justifyContent="center"
-      alignItems={"flex-start"}
+      alignItems="flex-start"
       w="100%"
     >
       {isLoading ? (
         <>
-          <Flex
-            flexDir={"column"}
-            marginRight={{ base: "0", md: "10%" }}
-            minWidth={{ base: "100%", md: "45%" }}
-            gap={3}
-            mr={"5%"}
-          >
+          <GridItem as={Flex} flexDir={"column"} gap={3} colSpan={1}>
             {[...Array(5)].map((_, index) => (
               <Skeleton key={index} height="30px" width="100%" />
             ))}
-          </Flex>
-          <Flex
-            flexDir={"column"}
-            minWidth={{ base: "100%", md: "45%" }}
-            gap={3}
-          >
+          </GridItem>
+          <GridItem as={Flex} flexDir={"column"} gap={3} colSpan={1}>
             {[...Array(5)].map((_, index) => (
               <Skeleton key={index} height="30px" width="100%" />
             ))}
-          </Flex>
+          </GridItem>
         </>
       ) : (
         <>
-          <Flex
-            flexDir={"column"}
-            marginRight={{ base: "0", md: "10%" }}
-            minWidth={{ base: "100%", md: "45%" }}
-            gap={3}
-          >
+          <GridItem as={Flex} flexDir={"column"} gap={3} colSpan={1}>
             {topContributions.slice(0, 5).map(renderItem)}
-          </Flex>
-          {topContributions.slice(5, 10).length ? (
-            <Flex
-              flexDir={"column"}
-              minWidth={{ base: "100%", md: "45%" }}
-              gap={3}
-            >
+          </GridItem>
+          {topContributions.slice(5, 10).length > 0 && (
+            <GridItem as={Flex} flexDir={"column"} gap={3} colSpan={1}>
               {topContributions
                 .slice(5, 10)
                 .map((item, index) => renderItem(item, index + 5))}
-            </Flex>
-          ) : null}
+            </GridItem>
+          )}
         </>
       )}
-    </Flex>
+    </Grid>
   ) : (
     <Flex
       height={"120px"}

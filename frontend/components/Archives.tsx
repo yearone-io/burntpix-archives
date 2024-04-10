@@ -49,7 +49,7 @@ export interface IFetchArchives {
 
 export interface IFetchArchivesCount {
   (
-    setArchivesCount: React.Dispatch<React.SetStateAction<number>>,
+    setArchivesCount: React.Dispatch<React.SetStateAction<number | undefined>>,
   ): Promise<void>;
 }
 
@@ -68,16 +68,14 @@ const Archives: React.FC<ArchivesProps> = ({
 }) => {
   const walletContext = useContext(WalletContext);
   const { networkConfig, provider, refineEventCounter } = walletContext;
-  const [archivesCount, setArchivesCount] = useState<number>(0);
-  const [isLoadingArchivesCount, setIsLoadingArchivesCount] =
-    useState<boolean>(true);
+  const [archivesCount, setArchivesCount] = useState<number>();
   const [archives, setArchives] = useState<IArchive[]>();
   const [startIndex, setStartIndex] = useState(0);
   const [slideAmount, setSlideAmount] = useState<number>(0);
   const [lastLoadedIndex, setLastLoadedIndex] = useState<number>(0);
   const [ownerProfiles, setOwnerProfiles] = useState<IOwners>({});
   const carouselRef = useRef<HTMLDivElement>(null);
-  const archiveContainerWidth = 150;
+  const archiveContainerWidth = 130;
   const archiveContainerGap = 24;
 
   useEffect(() => {
@@ -120,6 +118,7 @@ const Archives: React.FC<ArchivesProps> = ({
   }, [fetchArchives, slideAmount]);
 
   const nextSlide = () => {
+    if (archivesCount === undefined) return;
     setStartIndex((prevStartIndex) => {
       const nextStartIndex = prevStartIndex + slideAmount;
       if (nextStartIndex > archivesCount - 1) {
@@ -236,13 +235,7 @@ const Archives: React.FC<ArchivesProps> = ({
         }
         gap={`${archiveContainerGap}px`}
       >
-        {isLoadingArchivesCount || archivesCount ? (
-          nextArchivesBatch.length ? (
-            nextArchivesBatch.map(archiveContainer)
-          ) : (
-            archiveSkeleton()
-          )
-        ) : (
+        {archivesCount === 0 ? (
           <Flex
             height={"120px"}
             alignItems={"center"}
@@ -256,6 +249,10 @@ const Archives: React.FC<ArchivesProps> = ({
               📂
             </Text>
           </Flex>
+        ) : nextArchivesBatch.length ? (
+          nextArchivesBatch.map(archiveContainer)
+        ) : (
+          archiveSkeleton()
         )}
       </Flex>
       <IconButton
