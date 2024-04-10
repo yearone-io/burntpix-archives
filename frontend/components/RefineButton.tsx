@@ -43,6 +43,17 @@ const RefineButton: React.FC = () => {
     provider,
   );
 
+  useEffect(() => {
+    const savedIterations = localStorage.getItem("selectedIterations");
+    if (savedIterations) {
+      setSelectedIterations(Number(savedIterations));
+    }
+  }, [])
+
+  useEffect(() => {
+    localStorage.setItem("selectedIterations", selectedIterations.toString());
+  }, [selectedIterations]);
+
   const refine = async () => {
     setIsRefining(true);
     try {
