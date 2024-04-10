@@ -259,7 +259,10 @@ const Archives: React.FC<ArchivesProps> = ({
         onClick={nextSlide}
         icon={<FaArrowCircleRight />}
         aria-label={"Next"}
-        isDisabled={startIndex + slideAmount >= archivesCount}
+        isDisabled={
+          archivesCount === undefined ||
+          startIndex + slideAmount >= archivesCount
+        }
         backgroundColor={"transparent"}
       />
     </Flex>
