@@ -78,7 +78,7 @@ const Archives: React.FC<ArchivesProps> = ({
   const [startIndex, setStartIndex] = useState(0);
   const [slideAmount, setSlideAmount] = useState<number>(0);
   const [lastLoadedIndex, setLastLoadedIndex] = useState<number>(0);
-  const [isMinting, setIsMinting] = useState(false);
+  const [isMinting, setIsMinting] = useState("");
   const [ownerProfiles, setOwnerProfiles] = useState<IOwners>({});
   const carouselRef = useRef<HTMLDivElement>(null);
   const archiveContainerWidth = 130;
@@ -135,12 +135,12 @@ const Archives: React.FC<ArchivesProps> = ({
 
   const mintArchive = async (archiveId: string) => {
     try {
-      setIsMinting(true);
+      setIsMinting(archiveId);
       console.log(`Minting archive: ${archiveId}`);
       const signer = await provider.getSigner();
       await burntPixArchives.connect(signer)["mintArchive(bytes32)"](archiveId);
 
-      setIsMinting(false);
+      setIsMinting("");
       toast({
         title: "Archive minted!",
         status: "success",
@@ -155,7 +155,7 @@ const Archives: React.FC<ArchivesProps> = ({
       );
       archives[archiveIndex as number].isMinted = true;
     } catch (error: any) {
-      setIsMinting(false);
+      setIsMinting("");
       let message = error.message;
       if (error.info?.error?.message) {
         message = error.info.error.message;
@@ -258,7 +258,7 @@ const Archives: React.FC<ArchivesProps> = ({
               }}
               fontFamily={inter.style.fontFamily}
               loadingText={"..."}
-              isLoading={isMinting}
+              isLoading={isMinting === archive.id}
             >
               MINT
             </Button>
