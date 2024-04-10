@@ -27,6 +27,7 @@ import { WalletContext } from "@/components/wallet/WalletContext";
 import { LSP3ProfileMetadata } from "@lukso/lsp3-contracts";
 import { bytes32ToNumber } from "@/utils/hexUtils";
 import { BurntPixArchives__factory } from "@/contracts";
+import { inter } from "@/app/fonts";
 
 export interface IArchive {
   id: string;
@@ -70,12 +71,13 @@ const Archives: React.FC<ArchivesProps> = ({
   fetchArchives,
 }) => {
   const walletContext = useContext(WalletContext);
-  const { networkConfig, provider, refineEventCounter } = walletContext;
+  const { networkConfig, provider, refineEventCounter, account } = walletContext;
   const [archivesCount, setArchivesCount] = useState<number>();
   const [archives, setArchives] = useState<IArchive[]>();
   const [startIndex, setStartIndex] = useState(0);
   const [slideAmount, setSlideAmount] = useState<number>(0);
   const [lastLoadedIndex, setLastLoadedIndex] = useState<number>(0);
+  const [isMinting, setIsMinting] = useState(false);
   const [ownerProfiles, setOwnerProfiles] = useState<IOwners>({});
   const carouselRef = useRef<HTMLDivElement>(null);
   const archiveContainerWidth = 130;
@@ -85,6 +87,7 @@ const Archives: React.FC<ArchivesProps> = ({
     provider,
   );
   const toast = useToast();
+  const defaultRed = "#FE005B";
 
   useEffect(() => {
     const resizeObserver = new ResizeObserver((entries) => {
@@ -125,14 +128,20 @@ const Archives: React.FC<ArchivesProps> = ({
       );
   }, [fetchArchives, slideAmount]);
 
+  const isMintable = (archive: IArchive) => {
+    return !archive.isMinted && archive.ownerAddress === account;
+  }
+
   const mintArchive = async (archiveId: string) => {
     try {
+      setIsMinting(true)
       console.log(`Minting archive: ${archiveId}`)
       const signer = await provider.getSigner();
       await burntPixArchives
         .connect(signer)
         ["mintArchive(bytes32)"](archiveId);
-        
+
+      setIsMinting(false);
       toast({
         title: 'Archive minted!',
         status: "success",
@@ -141,6 +150,7 @@ const Archives: React.FC<ArchivesProps> = ({
         isClosable: true,
       });
     } catch (error: any) {
+      setIsMinting(false)
       let message = error.message;
       if (error.info?.error?.message) {
         message = error.info.error.message;
@@ -226,9 +236,23 @@ const Archives: React.FC<ArchivesProps> = ({
           </Text>
         )}
         <Flex alignItems={"center"} gap={1}>
-          <Button variant="ghost" size="sm" onClick={() => {mintArchive(archive.id)}}>
-            Mint
-          </Button>
+          {isMintable(archive) && (
+          <Button
+            bg={defaultRed}
+            p={'2px 7px'}
+            h={'20px'}
+            color="white"
+            _hover={{ bg: defaultRed }}
+            borderRadius={10}
+            w="fit-content"
+            fontSize="xs"
+            fontWeight={700}
+            onClick={() => {mintArchive(archive.id)}}
+            fontFamily={inter.style.fontFamily}
+            loadingText={"..."}
+            isLoading={isMinting}
+          >MINT</Button>
+          )}
           {archive.isMinted && (
             <>
               <Link
