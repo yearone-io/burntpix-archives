@@ -16,6 +16,7 @@ import {
   Text,
   Skeleton,
   Button,
+  useToast,
 } from "@chakra-ui/react";
 import {
   FaArrowCircleLeft,
@@ -83,6 +84,7 @@ const Archives: React.FC<ArchivesProps> = ({
     networkConfig.burntPixArchivesAddress,
     provider,
   );
+  const toast = useToast();
 
   useEffect(() => {
     const resizeObserver = new ResizeObserver((entries) => {
@@ -125,12 +127,31 @@ const Archives: React.FC<ArchivesProps> = ({
 
   const mintArchive = async (archiveId: string) => {
     try {
+      console.log(`Minting archive: ${archiveId}`)
       const signer = await provider.getSigner();
       await burntPixArchives
         .connect(signer)
         ["mintArchive(bytes32)"](archiveId);
+        
+      toast({
+        title: 'Archive minted!',
+        status: "success",
+        position: "bottom-left",
+        duration: null,
+        isClosable: true,
+      });
     } catch (error: any) {
-      console.error(`Failed to mint archive: ${error.message}`);
+      let message = error.message;
+      if (error.info?.error?.message) {
+        message = error.info.error.message;
+      }
+      toast({
+        title: message,
+        status: "error",
+        position: "bottom-left",
+        duration: null,
+        isClosable: true,
+      });
     }
   }
 
@@ -205,7 +226,7 @@ const Archives: React.FC<ArchivesProps> = ({
           </Text>
         )}
         <Flex alignItems={"center"} gap={1}>
-          <Button variant="ghost" size="sm" onClick={mintArchive}>
+          <Button variant="ghost" size="sm" onClick={() => {mintArchive(archive.id)}}>
             Mint
           </Button>
           {archive.isMinted && (
