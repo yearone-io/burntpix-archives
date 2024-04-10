@@ -15,6 +15,7 @@ import {
   Link,
   Text,
   Skeleton,
+  Button,
 } from "@chakra-ui/react";
 import {
   FaArrowCircleLeft,
@@ -188,23 +189,28 @@ const Archives: React.FC<ArchivesProps> = ({
           </Text>
         )}
         <Flex alignItems={"center"} gap={1}>
-          <Link
-            isExternal={true}
-            href={
-              archive.ownerAddress
-                ? `${networkConfig.marketplaceProfilesURL}/${archive.ownerAddress}`
-                : undefined
-            }
-          >
-            <Avatar
-              name={archive.ownerName ? archive.ownerName : undefined}
-              src={archive.ownerAvatar ? archive.ownerAvatar : undefined}
-              height={"24px"}
-              width={"24px"}
-            />
-          </Link>
+          <Button variant="ghost" size="sm">
+            Mint
+          </Button>
           {archive.isMinted && (
-            <Icon ml={1} as={FaCheckCircle} boxSize={"18px"} />
+            <>
+              <Link
+                isExternal={true}
+                href={
+                  archive.ownerAddress
+                    ? `${networkConfig.marketplaceProfilesURL}/${archive.ownerAddress}`
+                    : undefined
+                }
+              >
+                <Avatar
+                  name={archive.ownerName ? archive.ownerName : undefined}
+                  src={archive.ownerAvatar ? archive.ownerAvatar : undefined}
+                  height={"24px"}
+                  width={"24px"}
+                />
+              </Link>
+              <Icon ml={1} as={FaCheckCircle} boxSize={"18px"} />
+            </>
           )}
         </Flex>
       </Flex>
