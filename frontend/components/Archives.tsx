@@ -2,6 +2,7 @@ import React, {
   useContext,
   useEffect,
   useState,
+  useRef,
   Dispatch,
   SetStateAction,
 } from "react";
@@ -9,25 +10,20 @@ import {
   Avatar,
   Box,
   Flex,
-  HStack,
   Icon,
   IconButton,
   Link,
-  Spacer,
-  VStack,
-  useBreakpointValue,
-  Stack,
-  Skeleton,
   Text,
+  Skeleton,
 } from "@chakra-ui/react";
 import {
   FaArrowCircleLeft,
   FaArrowCircleRight,
   FaCheckCircle,
 } from "react-icons/fa";
-import { BurntPixArchives__factory } from "@/contracts";
 import { WalletContext } from "@/components/wallet/WalletContext";
 import { LSP3ProfileMetadata } from "@lukso/lsp3-contracts";
+import { bytes32ToNumber } from "@/utils/hexUtils";
 
 export interface IArchive {
   id: string;
@@ -43,11 +39,17 @@ export interface IFetchArchives {
     startFrom: number,
     amount: number,
     setArchives: React.Dispatch<React.SetStateAction<IArchive[]>>,
-    setLoadedIndices: React.Dispatch<React.SetStateAction<number>>,
+    setLastLoadedIndex: React.Dispatch<React.SetStateAction<number>>,
     ownerProfiles: { [key: string]: any },
     setOwnerProfiles: React.Dispatch<
       React.SetStateAction<{ [key: string]: any }>
     >,
+  ): Promise<void>;
+}
+
+export interface IFetchArchivesCount {
+  (
+    setArchivesCount: React.Dispatch<React.SetStateAction<number>>,
   ): Promise<void>;
 }
 
@@ -57,81 +59,120 @@ interface IOwners {
 
 interface ArchivesProps {
   fetchArchives: IFetchArchives;
+  fetchArchivesCount: IFetchArchivesCount;
 }
 
-const Archives: React.FC<ArchivesProps> = ({ fetchArchives }) => {
+const Archives: React.FC<ArchivesProps> = ({
+  fetchArchivesCount,
+  fetchArchives,
+}) => {
   const walletContext = useContext(WalletContext);
   const { networkConfig, provider, refineEventCounter } = walletContext;
+  const [archivesCount, setArchivesCount] = useState<number>(0);
+  const [isLoadingArchivesCount, setIsLoadingArchivesCount] =
+    useState<boolean>(true);
   const [archives, setArchives] = useState<IArchive[]>();
   const [startIndex, setStartIndex] = useState(0);
-  const [loadedIndices, setLoadedIndices] = useState<number>(0);
+  const [slideAmount, setSlideAmount] = useState<number>(0);
+  const [lastLoadedIndex, setLastLoadedIndex] = useState<number>(0);
   const [ownerProfiles, setOwnerProfiles] = useState<IOwners>({});
-
-  // Use the useBreakpointValue hook to determine the number of images to slide
-  const responsiveSlideValues = { base: 3, lg: 5 };
-  const slideAmount = useBreakpointValue(responsiveSlideValues) || 5;
-
-  const burntPixArchives = BurntPixArchives__factory.connect(
-    networkConfig.burntPixArchivesAddress,
-    provider,
-  );
+  const carouselRef = useRef<HTMLDivElement>(null);
+  const archiveContainerWidth = 150;
+  const archiveContainerGap = 24;
 
   useEffect(() => {
-    // Use the passed-in fetchArchives function with necessary arguments
-    fetchArchives(
-      startIndex,
-      slideAmount,
-      setArchives as Dispatch<SetStateAction<IArchive[]>>,
-      setLoadedIndices,
-      ownerProfiles,
-      setOwnerProfiles,
-    );
-  }, [fetchArchives, slideAmount, refineEventCounter]);
+    const resizeObserver = new ResizeObserver((entries) => {
+      for (let entry of entries) {
+        setSlideAmount(
+          Math.floor(
+            entry.contentRect.width /
+              (archiveContainerWidth + archiveContainerGap),
+          ),
+        );
+      }
+    });
+
+    if (carouselRef.current) {
+      resizeObserver.observe(carouselRef.current);
+    }
+
+    return () => {
+      if (carouselRef.current) {
+        resizeObserver.unobserve(carouselRef.current);
+      }
+    };
+  }, [carouselRef]);
+
+  useEffect(() => {
+    fetchArchivesCount(setArchivesCount);
+  }, [fetchArchivesCount, refineEventCounter]);
+
+  useEffect(() => {
+    slideAmount &&
+      fetchArchives(
+        startIndex,
+        slideAmount,
+        setArchives as Dispatch<SetStateAction<IArchive[]>>,
+        setLastLoadedIndex,
+        ownerProfiles,
+        setOwnerProfiles,
+      );
+  }, [fetchArchives, slideAmount]);
 
   const nextSlide = () => {
-    setStartIndex((prevIndex) => {
-      const nextIndex = Math.min(prevIndex + slideAmount, loadedIndices - 1);
+    setStartIndex((prevStartIndex) => {
+      const nextStartIndex = prevStartIndex + slideAmount;
+      if (nextStartIndex > archivesCount - 1) {
+        return prevStartIndex;
+      }
       if (
-        nextIndex + slideAmount > loadedIndices &&
-        loadedIndices < Number(burntPixArchives.archiveCount())
+        nextStartIndex + slideAmount > lastLoadedIndex &&
+        lastLoadedIndex < archivesCount - 1
       ) {
         fetchArchives(
-          startIndex,
+          nextStartIndex,
           slideAmount,
           setArchives as Dispatch<SetStateAction<IArchive[]>>,
-          setLoadedIndices,
+          setLastLoadedIndex,
           ownerProfiles,
           setOwnerProfiles,
         );
       }
-      return nextIndex;
+      return nextStartIndex;
     });
   };
 
   const prevSlide = () => {
-    setStartIndex((prevIndex) => Math.max(prevIndex - slideAmount, 0));
+    setStartIndex((prevStartIndex) =>
+      Math.max(prevStartIndex - slideAmount, 0),
+    );
   };
 
-  if (archives === undefined) {
-    return (
-      <Stack mr="20px">
-        <Skeleton height="30px" />
-        <Skeleton height="30px" />
-        <Skeleton height="30px" />
-        <Skeleton height="30px" />
-      </Stack>
-    );
-  }
+  const archiveSkeleton = () => (
+    <Flex flexDir={"column"} justifyContent={"center"} width={"100%"}>
+      <Skeleton width={"100%"} height={`${archiveContainerWidth + 20}px`} />
+    </Flex>
+  );
 
-  const archiveBox = (archive: IArchive, index: number) => (
-    <VStack key={index}>
+  const archiveContainer = (archive: IArchive, index: number) => (
+    <Flex
+      flexDir={"column"}
+      justifyContent={"center"}
+      key={index}
+      width={`${archiveContainerWidth}px`}
+      gap={2}
+    >
       <Box
-        height={{ base: "200px", lg: "115px" }}
-        width={{ base: "200px", lg: "115px" }}
+        height={`${archiveContainerWidth}px`}
+        width={`${archiveContainerWidth}px`}
         filter={archive.isMinted ? "none" : "invert(100%)"}
         dangerouslySetInnerHTML={{ __html: archive.image }}
       />
-      <Flex width={{ base: "200px", lg: "115px" }}  alignItems={"center"} justifyContent={"space-between"}>
+      <Flex
+        width={`${archiveContainerWidth}px`}
+        alignItems={"center"}
+        justifyContent={"space-between"}
+      >
         {archive.id && archive.isMinted ? (
           <Link
             href={`${networkConfig.marketplaceCollectionsURL}/${networkConfig.burntPixArchivesAddress}/${archive.id}`}
@@ -140,74 +181,90 @@ const Archives: React.FC<ArchivesProps> = ({ fetchArchives }) => {
             color={"black"}
             fontWeight={"500"}
           >
-            #{index + startIndex + 1}
+            {`#${bytes32ToNumber(archive.id)}`}
           </Link>
         ) : (
           <Text color={"black"} fontSize={"md"} fontWeight={"500"}>
-            #{index + startIndex + 1}
+            {`#${bytes32ToNumber(archive.id)}`}
           </Text>
         )}
         <Flex alignItems={"center"} gap={1}>
-        <Link
-          isExternal={true}
-          href={
-            archive.ownerAddress
-              ? `${networkConfig.marketplaceProfilesURL}/${archive.ownerAddress}`
-              : undefined
-          }
-        >
-          <Avatar
-            name={archive.ownerName}
-            src={archive.ownerAvatar}
-            height={"24px"}
-            width={"24px"}
-          />
-        </Link>
-        {archive.isMinted && (
-          <Icon ml={1} as={FaCheckCircle} boxSize={"18px"} />
-        )}
+          <Link
+            isExternal={true}
+            href={
+              archive.ownerAddress
+                ? `${networkConfig.marketplaceProfilesURL}/${archive.ownerAddress}`
+                : undefined
+            }
+          >
+            <Avatar
+              name={archive.ownerName ? archive.ownerName : undefined}
+              src={archive.ownerAvatar ? archive.ownerAvatar : undefined}
+              height={"24px"}
+              width={"24px"}
+            />
+          </Link>
+          {archive.isMinted && (
+            <Icon ml={1} as={FaCheckCircle} boxSize={"18px"} />
+          )}
         </Flex>
       </Flex>
-    </VStack>
+    </Flex>
   );
 
-  return archives.length ? (
-    <VStack alignItems={"left"} w="100%" pr="20px" pt="20px">
-      <HStack>
-        <IconButton
-          icon={<FaArrowCircleLeft />}
-          onClick={prevSlide}
-          aria-label={"Previous"}
-          isDisabled={startIndex <= 0}
-          backgroundColor={"transparent"}
-        />
-        <Flex w={"100%"}>
-          {archives.slice(startIndex, startIndex + slideAmount).map(archiveBox)}
-        </Flex>
-        <IconButton
-          onClick={nextSlide}
-          icon={<FaArrowCircleRight />}
-          aria-label={"Next"}
-          isDisabled={startIndex + slideAmount >= archives!.length}
-          backgroundColor={"transparent"}
-        />
-      </HStack>
-    </VStack>
-  ) : (
-    <Flex
-      height={"120px"}
-      alignItems={"center"}
-      justifyContent={"center"}
-      w="100%"
-      px={7}
-      gap={3}
-    >
-      <Text fontSize={"lg"} lineHeight={"lg"} fontWeight={400}>
-        New archives will appear here
-      </Text>
-      <Text fontSize={"3xl"} lineHeight={"3xl"}>
-        📂
-      </Text>
+  const nextArchivesBatch =
+    archives && archives.length
+      ? archives.slice(startIndex, startIndex + slideAmount)
+      : [];
+  return (
+    <Flex alignItems={"center"} justifyContent={"center"} w="100%">
+      <IconButton
+        icon={<FaArrowCircleLeft />}
+        onClick={prevSlide}
+        aria-label={"Previous"}
+        isDisabled={startIndex <= 0}
+        backgroundColor={"transparent"}
+      />
+      <Flex
+        w={"100%"}
+        ref={carouselRef}
+        alignItems={"center"}
+        justifyContent={
+          !!nextArchivesBatch.length && nextArchivesBatch.length < slideAmount
+            ? "flex-start"
+            : "center"
+        }
+        gap={`${archiveContainerGap}px`}
+      >
+        {isLoadingArchivesCount || archivesCount ? (
+          nextArchivesBatch.length ? (
+            nextArchivesBatch.map(archiveContainer)
+          ) : (
+            archiveSkeleton()
+          )
+        ) : (
+          <Flex
+            height={"120px"}
+            alignItems={"center"}
+            justifyContent={"center"}
+            gap={3}
+          >
+            <Text fontSize={"lg"} lineHeight={"lg"} fontWeight={400}>
+              New archives will appear here
+            </Text>
+            <Text fontSize={"3xl"} lineHeight={"3xl"}>
+              📂
+            </Text>
+          </Flex>
+        )}
+      </Flex>
+      <IconButton
+        onClick={nextSlide}
+        icon={<FaArrowCircleRight />}
+        aria-label={"Next"}
+        isDisabled={startIndex + slideAmount >= archivesCount}
+        backgroundColor={"transparent"}
+      />
     </Flex>
   );
 };

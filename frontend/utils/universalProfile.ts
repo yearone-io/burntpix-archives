@@ -14,11 +14,7 @@ export const buildSIWEMessage = (upAddress: string): string => {
       "Welcome Welcome my Friiiend, please make sure you have read and understood our terms of service and conditions and privacy policy. By signing in, you confirm that you have read and agree to these documents and will use the platform in accordance with their provisions. Thank you for using Universal GRAVE, and we hope we solve all your spam problems once and for all.", // a human-readable assertion user signs
     version: "1", // Current version of the SIWE Message
     chainId: getNetworkConfig(process.env.NEXT_PUBLIC_DEFAULT_NETWORK!).chainId, // Chain ID to which the session is bound, 4201 is LUKSO Testnet
-    resources: [
-      `${window.location.origin}/terms`,
-      `${window.location.origin}/terms#disclaimer`,
-      `${window.location.origin}/terms#privacy`,
-    ], // Information the user wishes to have resolved as part of authentication by the relying party
+    resources: [], // Information the user wishes to have resolved as part of authentication by the relying party
   };
   return new SiweMessage(siweParams).prepareMessage();
 };
@@ -39,6 +35,28 @@ export const getProfileData = async (
   const profileData = await erc725js.fetchData("LSP3Profile");
   return (profileData!.value as { LSP3Profile: Record<string, any> })
     .LSP3Profile as LSP3ProfileMetadata;
+};
+
+export const getProfileBasicInfo = async (
+  contributor: string,
+  rpcUrl: string,
+): Promise<{ upName: string | null; avatar: string | null } | null> => {
+  let upName = null,
+    avatar = null;
+  try {
+    const profileData = await getProfileData(contributor, rpcUrl);
+
+    if (profileData) {
+      if (profileData.profileImage && profileData.profileImage.length > 0) {
+        avatar = `${constants.IPFS_GATEWAY}/${profileData.profileImage[0].url.replace("ipfs://", "")}`;
+      }
+      upName = profileData.name;
+    }
+  } catch (error) {
+    console.error("Error fetching profile data for", contributor, error);
+  } finally {
+    return { upName, avatar };
+  }
 };
 
 export const formatAddress = (address: string | null) => {

@@ -3,9 +3,7 @@ import { Avatar, Flex, Text, Skeleton, useToast } from "@chakra-ui/react";
 import { inter } from "@/app/fonts"; // Make sure this import path is correct
 import { BurntPixArchives__factory } from "@/contracts";
 import { WalletContext } from "./wallet/WalletContext";
-import { getProfileData } from "@/utils/universalProfile";
-import { constants } from "@/constants/constants";
-import { ZeroAddress } from "ethers";
+import { getProfileBasicInfo } from "@/utils/universalProfile";
 import { formatAddress } from "@/utils/tokenUtils";
 
 interface Contribution {
@@ -37,25 +35,37 @@ const Leaderboard: React.FC = () => {
   useEffect(() => {
     const fetchContributions = async () => {
       try {
-        const [topContributors, contributions] =
+        let [topContributors, contributions] =
           await burntPixArchives.getTopTenContributors();
         if (Number(contributions[0]) === 0) {
           return;
         }
+        const zeroContributionIndeces: number[] = [];
+        contributions.forEach((contribution, index) => {
+          if (Number(contribution) === 0) {
+            zeroContributionIndeces.push(index);
+          }
+        });
+        topContributors = topContributors.filter(
+          (_, index) => !zeroContributionIndeces.includes(index),
+        );
+        contributions = contributions.filter(
+          (_, index) => !zeroContributionIndeces.includes(index),
+        );
 
         const profiles = await Promise.all(
           topContributors.map((contrib) =>
-            fetchProfileData(contrib, networkConfig.rpcUrl),
+            getProfileBasicInfo(contrib, networkConfig.rpcUrl),
           ),
         );
-        const contributionsWithProfiles = topContributors
-          .filter((contributor) => contributor !== ZeroAddress)
-          .map((contributor, index) => ({
+        const contributionsWithProfiles = topContributors.map(
+          (contributor, index) => ({
             contributor,
             contribution: Number(contributions[index]),
             upName: profiles[index]?.upName || null,
             avatar: profiles[index]?.avatar || null,
-          }));
+          }),
+        );
 
         setTopContributions(contributionsWithProfiles);
       } catch (error: any) {
@@ -72,29 +82,6 @@ const Leaderboard: React.FC = () => {
     };
     fetchContributions();
   }, [refineEventCounter]); // NOTE: adding dependencies will cause duplicated calls
-
-  const fetchProfileData = async (
-    contributor: string,
-    rpcUrl: string,
-  ): Promise<{ upName: string | null; avatar: string | null } | null> => {
-    try {
-      const profileData = await getProfileData(contributor, rpcUrl);
-      let upName = null,
-        avatar = null;
-
-      if (profileData) {
-        if (profileData.profileImage && profileData.profileImage.length > 0) {
-          avatar = `${constants.IPFS_GATEWAY}/${profileData.profileImage[0].url.replace("ipfs://", "")}`;
-        }
-        upName = profileData.name;
-      }
-
-      return { upName, avatar };
-    } catch (error) {
-      console.error("Error fetching profile data for", contributor, error);
-      return null;
-    }
-  };
   const avatarSize = { base: "18px", md: "24px" };
   const fontSizing = { base: "sm", md: "md", lg: "lg" };
   const renderItem = (item: Contribution, index: number) => {
@@ -142,6 +129,7 @@ const Leaderboard: React.FC = () => {
     );
   };
 
+  // todo: rework this as a grid
   return topContributions.length || isLoading ? (
     <Flex
       direction={{ base: "column", md: "row" }}
