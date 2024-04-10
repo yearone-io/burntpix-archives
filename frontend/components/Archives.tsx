@@ -25,6 +25,7 @@ import {
 import { WalletContext } from "@/components/wallet/WalletContext";
 import { LSP3ProfileMetadata } from "@lukso/lsp3-contracts";
 import { bytes32ToNumber } from "@/utils/hexUtils";
+import { BurntPixArchives__factory } from "@/contracts";
 
 export interface IArchive {
   id: string;
@@ -78,6 +79,10 @@ const Archives: React.FC<ArchivesProps> = ({
   const carouselRef = useRef<HTMLDivElement>(null);
   const archiveContainerWidth = 130;
   const archiveContainerGap = 24;
+  const burntPixArchives = BurntPixArchives__factory.connect(
+    networkConfig.burntPixArchivesAddress,
+    provider,
+  );
 
   useEffect(() => {
     const resizeObserver = new ResizeObserver((entries) => {
@@ -117,6 +122,17 @@ const Archives: React.FC<ArchivesProps> = ({
         setOwnerProfiles,
       );
   }, [fetchArchives, slideAmount]);
+
+  const mintArchive = async (archiveId: string) => {
+    try {
+      const signer = await provider.getSigner();
+      await burntPixArchives
+        .connect(signer)
+        ["mintArchive(bytes32)"](archiveId);
+    } catch (error: any) {
+      console.error(`Failed to mint archive: ${error.message}`);
+    }
+  }
 
   const nextSlide = () => {
     if (archivesCount === undefined) return;
@@ -189,7 +205,7 @@ const Archives: React.FC<ArchivesProps> = ({
           </Text>
         )}
         <Flex alignItems={"center"} gap={1}>
-          <Button variant="ghost" size="sm">
+          <Button variant="ghost" size="sm" onClick={mintArchive}>
             Mint
           </Button>
           {archive.isMinted && (
