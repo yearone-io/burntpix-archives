@@ -71,7 +71,8 @@ const Archives: React.FC<ArchivesProps> = ({
   fetchArchives,
 }) => {
   const walletContext = useContext(WalletContext);
-  const { networkConfig, provider, refineEventCounter, account } = walletContext;
+  const { networkConfig, provider, refineEventCounter, account } =
+    walletContext;
   const [archivesCount, setArchivesCount] = useState<number>();
   const [archives, setArchives] = useState<IArchive[]>();
   const [startIndex, setStartIndex] = useState(0);
@@ -130,20 +131,18 @@ const Archives: React.FC<ArchivesProps> = ({
 
   const isMintable = (archive: IArchive) => {
     return !archive.isMinted && archive.ownerAddress === account;
-  }
+  };
 
   const mintArchive = async (archiveId: string) => {
     try {
-      setIsMinting(true)
-      console.log(`Minting archive: ${archiveId}`)
+      setIsMinting(true);
+      console.log(`Minting archive: ${archiveId}`);
       const signer = await provider.getSigner();
-      await burntPixArchives
-        .connect(signer)
-        ["mintArchive(bytes32)"](archiveId);
+      await burntPixArchives.connect(signer)["mintArchive(bytes32)"](archiveId);
 
       setIsMinting(false);
       toast({
-        title: 'Archive minted!',
+        title: "Archive minted!",
         status: "success",
         position: "bottom-left",
         duration: null,
@@ -151,11 +150,12 @@ const Archives: React.FC<ArchivesProps> = ({
       });
       if (!archives) return; // linting
       // Update the archive to show it's minted
-      const archiveIndex = archives?.findIndex(archive => archive.id === archiveId);
+      const archiveIndex = archives?.findIndex(
+        (archive) => archive.id === archiveId,
+      );
       archives[archiveIndex as number].isMinted = true;
-
     } catch (error: any) {
-      setIsMinting(false)
+      setIsMinting(false);
       let message = error.message;
       if (error.info?.error?.message) {
         message = error.info.error.message;
@@ -168,7 +168,7 @@ const Archives: React.FC<ArchivesProps> = ({
         isClosable: true,
       });
     }
-  }
+  };
 
   const nextSlide = () => {
     if (archivesCount === undefined) return;
@@ -242,21 +242,25 @@ const Archives: React.FC<ArchivesProps> = ({
         )}
         <Flex alignItems={"center"} gap={1}>
           {isMintable(archive) && (
-          <Button
-            bg={defaultRed}
-            p={'2px 7px'}
-            h={'20px'}
-            color="white"
-            _hover={{ bg: defaultRed }}
-            borderRadius={10}
-            w="fit-content"
-            fontSize="xs"
-            fontWeight={700}
-            onClick={() => {mintArchive(archive.id)}}
-            fontFamily={inter.style.fontFamily}
-            loadingText={"..."}
-            isLoading={isMinting}
-          >MINT</Button>
+            <Button
+              bg={defaultRed}
+              p={"2px 7px"}
+              h={"20px"}
+              color="white"
+              _hover={{ bg: defaultRed }}
+              borderRadius={10}
+              w="fit-content"
+              fontSize="xs"
+              fontWeight={700}
+              onClick={() => {
+                mintArchive(archive.id);
+              }}
+              fontFamily={inter.style.fontFamily}
+              loadingText={"..."}
+              isLoading={isMinting}
+            >
+              MINT
+            </Button>
           )}
           {archive.isMinted && (
             <>
