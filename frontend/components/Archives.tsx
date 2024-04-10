@@ -149,6 +149,11 @@ const Archives: React.FC<ArchivesProps> = ({
         duration: null,
         isClosable: true,
       });
+      if (!archives) return; // linting
+      // Update the archive to show it's minted
+      const archiveIndex = archives?.findIndex(archive => archive.id === archiveId);
+      archives[archiveIndex as number].isMinted = true;
+
     } catch (error: any) {
       setIsMinting(false)
       let message = error.message;
