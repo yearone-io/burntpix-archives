@@ -43,6 +43,17 @@ const RefineButton: React.FC = () => {
     provider,
   );
 
+  useEffect(() => {
+    const savedIterations = localStorage.getItem("selectedIterations");
+    if (savedIterations) {
+      setSelectedIterations(Number(savedIterations));
+    }
+  }, [])
+
+  useEffect(() => {
+    localStorage.setItem("selectedIterations", selectedIterations.toString());
+  }, [selectedIterations]);
+
   const refine = async () => {
     setIsRefining(true);
     try {
@@ -67,8 +78,10 @@ const RefineButton: React.FC = () => {
       } else if (error.action === "estimateGas") {
         message +=
           "Error estimating gas, try with a lower number of iterations.";
+      } else if (error.shortMessage === 'could not coalesce error') {
+        message += "Transaction rejected. Try again with a lower number of iterations.";
       } else {
-        message += error.message;
+          message += error.message;
       }
       toast({
         title: message,
