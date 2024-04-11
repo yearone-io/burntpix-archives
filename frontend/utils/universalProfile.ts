@@ -10,7 +10,8 @@ export const buildSIWEMessage = (upAddress: string): string => {
     domain: window.location.host, // required, Domain requesting the signing
     uri: window.location.origin, // required, URI from the resource that is the subject of the signing
     address: upAddress, // Address performing the signing
-    statement: "Welcome to The Burnt Pix Archives, where art meets blockchain in a spectacle of blazed pixels and communal refinements. By signing this message, you signal your acceptance to embark on this quest and participate in a collaborative art experiment with no expectations. Our only goal is to transform a single Burnt Pix fractal into a collaborative art masterpiece. Once the experiment is launched there will be no updates, no fixes, no core team or community, no nothing. The Burnt Pix Archives are provided as is.",
+    statement:
+      "Welcome to The Burnt Pix Archives, where art meets blockchain in a spectacle of blazed pixels and communal refinements. By signing this message, you signal your acceptance to embark on this quest and participate in a collaborative art experiment with no expectations. Our only goal is to transform a single Burnt Pix fractal into a collaborative art masterpiece. Once the experiment is launched there will be no updates, no fixes, no core team or community, no nothing. The Burnt Pix Archives are provided as is.",
     version: "1", // Current version of the SIWE Message
     chainId: getNetworkConfig(process.env.NEXT_PUBLIC_DEFAULT_NETWORK!).chainId, // Chain ID to which the session is bound, 4201 is LUKSO Testnet
     resources: [window.location.origin], // Information the user wishes to have resolved as part of authentication by the relying party

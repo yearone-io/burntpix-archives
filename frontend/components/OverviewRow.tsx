@@ -15,10 +15,12 @@ interface IOverviewRowProps {
   readonly winningIterations: string;
 }
 
-export const OverviewRow = ({ burntPicId, winningIterations }: IOverviewRowProps) => {
+export const OverviewRow = ({
+  burntPicId,
+  winningIterations,
+}: IOverviewRowProps) => {
   const walletContext = useContext(WalletContext);
-  const { networkConfig, provider, refineEventCounter } =
-    walletContext;
+  const { networkConfig, provider, refineEventCounter } = walletContext;
   const toast = useToast();
   const burntPixArchives = BurntPixArchives__factory.connect(
     networkConfig.burntPixArchivesAddress,
