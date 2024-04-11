@@ -44,7 +44,7 @@ export const getProfileData = async (
 export const getProfileBasicInfo = async (
   contributor: string,
   rpcUrl: string,
-): Promise<{ upName: string | null; avatar: string | null } | null> => {
+): Promise<{ upName: string | null; avatar: string | null }> => {
   let upName = null,
     avatar = null;
   try {
