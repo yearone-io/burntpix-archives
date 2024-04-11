@@ -4,6 +4,7 @@ import { ERC725, ERC725JSONSchema } from "@erc725/erc725.js";
 import lsp3ProfileSchema from "@erc725/erc725.js/schemas/LSP3ProfileMetadata.json";
 import { LSP3ProfileMetadata } from "@lukso/lsp3-contracts";
 import { constants } from "@/constants/constants";
+import { inter } from "@/app/fonts";
 
 export const buildSIWEMessage = (upAddress: string): string => {
   const siweParams = {
@@ -35,6 +36,37 @@ export const getProfileData = async (
   const profileData = await erc725js.fetchData("LSP3Profile");
   return (profileData!.value as { LSP3Profile: Record<string, any> })
     .LSP3Profile as LSP3ProfileMetadata;
+};
+
+export interface IProfileBasicInfo {
+  upName: string | null;
+  avatar: string | null;
+}
+
+export interface IProfiles {
+  [key: string]: IProfileBasicInfo;
+}
+
+export const getProfileBasicInfo = async (
+  contributor: string,
+  rpcUrl: string,
+): Promise<IProfileBasicInfo> => {
+  let upName = null,
+    avatar = null;
+  try {
+    const profileData = await getProfileData(contributor, rpcUrl);
+
+    if (profileData) {
+      if (profileData.profileImage && profileData.profileImage.length > 0) {
+        avatar = `${constants.IPFS_GATEWAY}/${profileData.profileImage[0].url.replace("ipfs://", "")}`;
+      }
+      upName = profileData.name;
+    }
+  } catch (error) {
+    console.error("Error fetching profile data for", contributor, error);
+  } finally {
+    return { upName, avatar };
+  }
 };
 
 export const formatAddress = (address: string | null) => {

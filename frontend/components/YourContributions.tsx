@@ -6,13 +6,16 @@ import { inter } from "@/app/fonts";
 import { AddressLike } from "ethers";
 import Article from "./Article";
 import MainStatsList, { StatsItem } from "./MainStatsList";
-import Archives, { IArchive, IFetchArchives } from "./Archives";
+import Archives, {
+  IArchive,
+  IFetchArchives,
+  IFetchArchivesCount,
+} from "./Archives";
 import SignInBox from "./SigninBox";
 import { BurntPixArchives } from "@/contracts/BurntPixArchives";
 import { getNextIterationsGoal } from "@/utils/burntPixUtils";
 import { hexToText } from "@/utils/hexUtils";
-import { getProfileData } from "@/utils/universalProfile";
-import { constants } from "@/constants/constants";
+import { getProfileBasicInfo } from "@/utils/universalProfile";
 
 interface IYourContributionsProps {
   readonly account: string | null;
@@ -27,9 +30,6 @@ const YourContributions = ({
   const toast = useToast();
   const { networkConfig, refineEventCounter } = walletContext;
   const [userArchives, setUserArchives] = useState<string[]>([]);
-  const [userOwnedArchiveMints, setUserOwnedArchiveMints] = useState<string[]>(
-    [],
-  );
   const [userStats, setUserStats] = useState<StatsItem[]>([
     { label: "Iterations:", value: "--" },
     { label: "Archive Unlocks:", value: "--" },
@@ -50,7 +50,6 @@ const YourContributions = ({
         Number(userIterations[0]),
       );
       setUserArchives(userArchives);
-      setUserOwnedArchiveMints(userOwnedArchiveMints); // todo?? do we need this?
       setUserStats([
         {
           label: "Iterations:",
@@ -108,23 +107,28 @@ const YourContributions = ({
     </Flex>
   );
 
-  const externalFetchArchives: IFetchArchives = useCallback(
+  const fetchArchives: IFetchArchives = useCallback(
     async (
       startFrom,
       amount,
       setArchives,
-      setLoadedIndices,
-      ownerProfiles,
-      setOwnerProfiles,
+      setLastLoadedIndex,
+      contributorProfiles,
+      setContributorProfiles,
     ) => {
-      const end = Math.min(startFrom + amount, userArchives.length);
+      if (userArchives.length === 0) {
+        return;
+      }
+      const finalIndex = startFrom + amount - 1;
       const newArchives: IArchive[] = [];
       try {
-        for (let i = startFrom; i < end; i++) {
+        for (let i = startFrom; i <= finalIndex; i++) {
+          if (i > userArchives.length - 1) {
+            break;
+          }
           const archive = await burntPixArchives.burntArchives(userArchives[i]);
           let isMinted = false;
           let ownerAddress = archive.creator;
-
           try {
             ownerAddress = await burntPixArchives.tokenOwnerOf(userArchives[i]);
             isMinted = true;
@@ -134,33 +138,24 @@ const YourContributions = ({
             );
           }
 
-          let ownerProfile = ownerProfiles[ownerAddress];
+          let ownerProfile = contributorProfiles[ownerAddress];
+          // Check if the profile is not already fetched
           if (!ownerProfile) {
-            // Check if the profile is not already fetched
-            try {
-              ownerProfile = await getProfileData(
-                ownerAddress,
-                networkConfig.rpcUrl,
-              );
-            } catch (error: any) {
-              ownerProfile = { name: "EOA" };
-            }
-            setOwnerProfiles((prevProfiles) => ({
+            ownerProfile = await getProfileBasicInfo(
+              ownerAddress,
+              networkConfig.rpcUrl,
+            );
+            setContributorProfiles((prevProfiles) => ({
               ...prevProfiles,
               [ownerAddress]: ownerProfile,
             }));
           }
-          let ownerAvatar;
-          if (ownerProfile.profileImage && ownerProfile.profileImage.length) {
-            ownerAvatar = `${constants.IPFS_GATEWAY}/${ownerProfile.profileImage[0].url.replace("ipfs://", "")}`;
-          }
-
           newArchives.push({
             id: userArchives[i],
             image: hexToText(archive.image),
             ownerAddress,
-            ownerName: ownerProfile.name,
-            ownerAvatar,
+            ownerName: ownerProfile.upName,
+            ownerAvatar: ownerProfile.avatar,
             isMinted,
           });
         }
@@ -176,10 +171,27 @@ const YourContributions = ({
           );
           return all;
         });
-        setLoadedIndices(end);
+        setLastLoadedIndex(finalIndex);
       } catch (error: any) {
         toast({
           title: `Failed to fetch your archives: ${error.message}`,
+          status: "error",
+          position: "bottom-left",
+          duration: null,
+          isClosable: true,
+        });
+      }
+    },
+    [userArchives],
+  );
+
+  const fetchArchivesCount: IFetchArchivesCount = useCallback(
+    async (setArchivesCount) => {
+      try {
+        setArchivesCount(userArchives.length);
+      } catch (error: any) {
+        toast({
+          title: `Failed to fetch your archives count: ${error.message}`,
           status: "error",
           position: "bottom-left",
           duration: null,
@@ -200,7 +212,12 @@ const YourContributions = ({
             </Box>
           </Article>
           <Article title={yourArchivesTitle}>
-            <Archives fetchArchives={externalFetchArchives} />
+            <Box pt={6}>
+              <Archives
+                fetchArchives={fetchArchives}
+                fetchArchivesCount={fetchArchivesCount}
+              />
+            </Box>
           </Article>
         </Flex>
       ) : (

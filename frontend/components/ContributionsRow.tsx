@@ -8,7 +8,11 @@ import {
   Link,
   useToast,
 } from "@chakra-ui/react";
-import Archives, { IArchive, IFetchArchives } from "@/components/Archives";
+import Archives, {
+  IArchive,
+  IFetchArchives,
+  IFetchArchivesCount,
+} from "@/components/Archives";
 import Article from "@/components/Article";
 import Leaderboard from "@/components/Leaderboard";
 import { FaExternalLinkAlt } from "react-icons/fa";
@@ -17,8 +21,7 @@ import { BurntPixArchives } from "@/contracts";
 import { useCallback } from "react";
 import YourContributions from "@/components/YourContributions";
 import { hexToText, numberToBytes32 } from "@/utils/hexUtils";
-import { getProfileData } from "@/utils/universalProfile";
-import { constants } from "@/constants/constants";
+import { getProfileBasicInfo } from "@/utils/universalProfile";
 import { Network } from "@/constants/networks";
 
 interface IContributionsRowProps {
@@ -32,6 +35,7 @@ export const ContributionsRow = ({
   burntPixArchives,
   networkConfig,
 }: IContributionsRowProps) => {
+  const toast = useToast();
   const archivesTitle = (
     <Flex
       color="#FE005B"
@@ -59,28 +63,30 @@ export const ContributionsRow = ({
       </Link>
     </Flex>
   );
-  const toast = useToast();
   const externalFetchArchives: IFetchArchives = useCallback(
     async (
       startFrom,
       amount,
       setArchives,
-      setLoadedIndices,
-      ownerProfiles,
-      setOwnerProfiles,
+      setLastLoadedIndex,
+      contributorProfiles,
+      setContributorProfiles,
     ) => {
       try {
-        const archiveCount = await burntPixArchives.archiveCount();
-        const count = Number(archiveCount);
-        const end = Math.min(startFrom + amount, count);
+        const archiveCount = Number(await burntPixArchives.archiveCount());
+        if (archiveCount === 0) {
+          return;
+        }
+        const finalIndex = startFrom + amount - 1;
         const newArchives: IArchive[] = [];
-
-        for (let i = startFrom; i < end; i++) {
+        for (let i = startFrom; i <= finalIndex; i++) {
+          if (i > archiveCount - 1) {
+            break;
+          }
           const id = numberToBytes32(i + 1);
           const archive = await burntPixArchives.burntArchives(id);
           let isMinted = false;
           let ownerAddress = archive.creator;
-
           try {
             ownerAddress = await burntPixArchives.tokenOwnerOf(id);
             isMinted = true;
@@ -88,34 +94,24 @@ export const ContributionsRow = ({
             console.log(`archive ${id} not minted yet or error fetching owner`);
           }
 
-          let ownerProfile = ownerProfiles[ownerAddress];
+          let ownerProfile = contributorProfiles[ownerAddress];
+          // Check if the profile is not already fetched
           if (!ownerProfile) {
-            // Check if the profile is not already fetched
-            try {
-              ownerProfile = await getProfileData(
-                ownerAddress,
-                networkConfig.rpcUrl,
-              );
-            } catch (error: any) {
-              ownerProfile = { name: "EOA" };
-            }
-            setOwnerProfiles((prevProfiles) => ({
+            ownerProfile = await getProfileBasicInfo(
+              ownerAddress,
+              networkConfig.rpcUrl,
+            );
+            setContributorProfiles((prevProfiles) => ({
               ...prevProfiles,
               [ownerAddress]: ownerProfile,
             }));
           }
-          let ownerAvatar;
-
-          if (ownerProfile.profileImage && ownerProfile.profileImage.length) {
-            ownerAvatar = `${constants.IPFS_GATEWAY}/${ownerProfile.profileImage[0].url.replace("ipfs://", "")}`;
-          }
-
           newArchives.push({
             id,
             image: hexToText(archive.image),
             ownerAddress,
-            ownerName: ownerProfile.name,
-            ownerAvatar,
+            ownerName: ownerProfile.upName,
+            ownerAvatar: ownerProfile.avatar,
             isMinted,
           });
         }
@@ -131,7 +127,7 @@ export const ContributionsRow = ({
           );
           return all;
         });
-        setLoadedIndices(end);
+        setLastLoadedIndex(finalIndex);
       } catch (error: any) {
         toast({
           title: `Failed to fetch archives: ${error.message}`,
@@ -146,6 +142,24 @@ export const ContributionsRow = ({
       /* dependencies */
     ],
   );
+
+  const fetchArchivesCount: IFetchArchivesCount = useCallback(
+    async (setArchivesCount) => {
+      try {
+        const archivesCount = Number(await burntPixArchives.archiveCount());
+        setArchivesCount(archivesCount);
+      } catch (error: any) {
+        toast({
+          title: `Failed to fetch collection archives count: ${error.message}`,
+          status: "error",
+          position: "bottom-left",
+          duration: null,
+          isClosable: true,
+        });
+      }
+    },
+    [],
+  );
   return (
     <Grid w={"full"} templateColumns={{ base: "1fr", lg: "2fr 1fr" }}>
       <GridItem
@@ -155,7 +169,12 @@ export const ContributionsRow = ({
       >
         <Box py={7} px={{ base: 0, md: 7 }} borderBottom={"1px solid #000000"}>
           <Article title={archivesTitle}>
-            <Archives fetchArchives={externalFetchArchives} />
+            <Box pt={6}>
+              <Archives
+                fetchArchives={externalFetchArchives}
+                fetchArchivesCount={fetchArchivesCount}
+              />
+            </Box>
           </Article>
         </Box>
         <Box py={7} px={{ base: 0, md: 7 }}>
