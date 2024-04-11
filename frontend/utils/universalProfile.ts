@@ -10,15 +10,10 @@ export const buildSIWEMessage = (upAddress: string): string => {
     domain: window.location.host, // required, Domain requesting the signing
     uri: window.location.origin, // required, URI from the resource that is the subject of the signing
     address: upAddress, // Address performing the signing
-    statement:
-      "Welcome Welcome my Friiiend, please make sure you have read and understood our terms of service and conditions and privacy policy. By signing in, you confirm that you have read and agree to these documents and will use the platform in accordance with their provisions. Thank you for using Universal GRAVE, and we hope we solve all your spam problems once and for all.", // a human-readable assertion user signs
+    statement: "Welcome to The Burnt Pix Archives, where art meets blockchain in a spectacle of blazed pixels and communal refinements. By signing this message, you signal your acceptance to embark on this quest and participate in a collaborative art experiment with no expectations. Our only goal is to transform a single Burnt Pix fractal into a collaborative art masterpiece. Once the experiment is launched there will be no updates, no fixes, no core team or community, no nothing. The Burnt Pix Archives are provided as is.",
     version: "1", // Current version of the SIWE Message
     chainId: getNetworkConfig(process.env.NEXT_PUBLIC_DEFAULT_NETWORK!).chainId, // Chain ID to which the session is bound, 4201 is LUKSO Testnet
-    resources: [
-      `${window.location.origin}/terms`,
-      `${window.location.origin}/terms#disclaimer`,
-      `${window.location.origin}/terms#privacy`,
-    ], // Information the user wishes to have resolved as part of authentication by the relying party
+    resources: [window.location.origin], // Information the user wishes to have resolved as part of authentication by the relying party
   };
   return new SiweMessage(siweParams).prepareMessage();
 };
