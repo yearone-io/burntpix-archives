@@ -69,8 +69,8 @@ export const ContributionsRow = ({
       amount,
       setArchives,
       setLastLoadedIndex,
-      ownerProfiles,
-      setOwnerProfiles,
+      contributorProfiles,
+      setContributorProfiles,
     ) => {
       try {
         const archiveCount = Number(await burntPixArchives.archiveCount());
@@ -94,14 +94,14 @@ export const ContributionsRow = ({
             console.log(`archive ${id} not minted yet or error fetching owner`);
           }
 
-          let ownerProfile = ownerProfiles[ownerAddress];
+          let ownerProfile = contributorProfiles[ownerAddress];
           // Check if the profile is not already fetched
           if (!ownerProfile) {
             ownerProfile = await getProfileBasicInfo(
               ownerAddress,
               networkConfig.rpcUrl,
             );
-            setOwnerProfiles((prevProfiles) => ({
+            setContributorProfiles((prevProfiles) => ({
               ...prevProfiles,
               [ownerAddress]: ownerProfile,
             }));

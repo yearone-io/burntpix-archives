@@ -113,8 +113,8 @@ const YourContributions = ({
       amount,
       setArchives,
       setLastLoadedIndex,
-      ownerProfiles,
-      setOwnerProfiles,
+      contributorProfiles,
+      setContributorProfiles,
     ) => {
       if (userArchives.length === 0) {
         return;
@@ -138,14 +138,14 @@ const YourContributions = ({
             );
           }
 
-          let ownerProfile = ownerProfiles[ownerAddress];
+          let ownerProfile = contributorProfiles[ownerAddress];
           // Check if the profile is not already fetched
           if (!ownerProfile) {
             ownerProfile = await getProfileBasicInfo(
               ownerAddress,
               networkConfig.rpcUrl,
             );
-            setOwnerProfiles((prevProfiles) => ({
+            setContributorProfiles((prevProfiles) => ({
               ...prevProfiles,
               [ownerAddress]: ownerProfile,
             }));

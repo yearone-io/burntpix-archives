@@ -11,8 +11,12 @@ import {
 import { inter } from "@/app/fonts"; // Make sure this import path is correct
 import { BurntPixArchives__factory } from "@/contracts";
 import { WalletContext } from "./wallet/WalletContext";
-import { getProfileBasicInfo } from "@/utils/universalProfile";
+import {
+  IProfileBasicInfo,
+  getProfileBasicInfo,
+} from "@/utils/universalProfile";
 import { formatAddress } from "@/utils/tokenUtils";
+import { IProfiles } from "@/utils/universalProfile";
 
 interface Contribution {
   contributor: string;
@@ -26,6 +30,7 @@ const Leaderboard: React.FC = () => {
   const toast = useToast();
   const { networkConfig, provider, refineEventCounter } = walletContext;
   const [topContributions, setTopContributions] = useState<Contribution[]>([]);
+  const [contributorProfiles, setContributorProfiles] = useState<IProfiles>({});
   const [isLoading, setIsLoading] = useState(true);
 
   const truncateName = (name: string) => {
@@ -41,7 +46,11 @@ const Leaderboard: React.FC = () => {
   );
 
   useEffect(() => {
+    const delay = (ms: number) =>
+      new Promise((resolve) => setTimeout(resolve, ms));
+
     const fetchContributions = async () => {
+      setIsLoading(true);
       try {
         let [topContributors, contributions] =
           await burntPixArchives.getTopTenContributors();
@@ -61,19 +70,31 @@ const Leaderboard: React.FC = () => {
           (_, index) => !zeroContributionIndeces.includes(index),
         );
 
-        const profiles = await Promise.all(
-          topContributors.map((contrib) =>
-            getProfileBasicInfo(contrib, networkConfig.rpcUrl),
-          ),
-        );
-        const contributionsWithProfiles = topContributors.map(
-          (contributor, index) => ({
-            contributor,
-            contribution: Number(contributions[index]),
-            upName: profiles[index]?.upName || null,
-            avatar: profiles[index]?.avatar || null,
-          }),
-        );
+        const delayMs = 15;
+        // set up for loop
+        const contributionsWithProfiles = [];
+        for (let i = 0; i < topContributors.length; i++) {
+          const contributorAddress = topContributors[i];
+          let contributorProfile = contributorProfiles[contributorAddress];
+          if (!contributorProfile) {
+            contributorProfile = await getProfileBasicInfo(
+              contributorAddress,
+              networkConfig.rpcUrl,
+            );
+            await delay(delayMs);
+            setContributorProfiles((prevProfiles) => ({
+              ...prevProfiles,
+              [contributorAddress]: contributorProfile,
+            }));
+          }
+
+          contributionsWithProfiles.push({
+            contributor: contributorAddress,
+            contribution: Number(contributions[i]),
+            upName: contributorProfile.upName,
+            avatar: contributorProfile.avatar,
+          });
+        }
 
         setTopContributions(contributionsWithProfiles);
       } catch (error: any) {
@@ -88,8 +109,10 @@ const Leaderboard: React.FC = () => {
         setIsLoading(false);
       }
     };
+
     fetchContributions();
   }, [refineEventCounter]); // NOTE: adding dependencies will cause duplicated calls
+
   const avatarSize = { base: "18px", md: "24px" };
   const fontSizing = { base: "sm", md: "md", lg: "lg" };
   const renderItem = (item: Contribution, index: number) => {
@@ -115,6 +138,7 @@ const Leaderboard: React.FC = () => {
           <Flex alignItems={"center"} gap={2}>
             {item.avatar !== null && (
               <Avatar
+                key={index}
                 src={item.avatar}
                 height={avatarSize}
                 width={avatarSize}

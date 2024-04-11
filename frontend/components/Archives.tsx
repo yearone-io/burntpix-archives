@@ -24,10 +24,10 @@ import {
   FaCheckCircle,
 } from "react-icons/fa";
 import { WalletContext } from "@/components/wallet/WalletContext";
-import { LSP3ProfileMetadata } from "@lukso/lsp3-contracts";
 import { bytes32ToNumber } from "@/utils/hexUtils";
 import { BurntPixArchives__factory } from "@/contracts";
 import { inter } from "@/app/fonts";
+import { IProfiles } from "@/utils/universalProfile";
 
 export interface IArchive {
   id: string;
@@ -44,8 +44,8 @@ export interface IFetchArchives {
     amount: number,
     setArchives: React.Dispatch<React.SetStateAction<IArchive[]>>,
     setLastLoadedIndex: React.Dispatch<React.SetStateAction<number>>,
-    ownerProfiles: { [key: string]: any },
-    setOwnerProfiles: React.Dispatch<
+    contributorProfiles: { [key: string]: any },
+    setContributorProfiles: React.Dispatch<
       React.SetStateAction<{ [key: string]: any }>
     >,
   ): Promise<void>;
@@ -55,10 +55,6 @@ export interface IFetchArchivesCount {
   (
     setArchivesCount: React.Dispatch<React.SetStateAction<number | undefined>>,
   ): Promise<void>;
-}
-
-interface IOwners {
-  [key: string]: LSP3ProfileMetadata;
 }
 
 interface ArchivesProps {
@@ -79,7 +75,7 @@ const Archives: React.FC<ArchivesProps> = ({
   const [slideAmount, setSlideAmount] = useState<number>(0);
   const [lastLoadedIndex, setLastLoadedIndex] = useState<number>(0);
   const [isMinting, setIsMinting] = useState("");
-  const [ownerProfiles, setOwnerProfiles] = useState<IOwners>({});
+  const [contributorProfiles, setContributorProfiles] = useState<IProfiles>({});
   const carouselRef = useRef<HTMLDivElement>(null);
   const archiveContainerWidth = 130;
   const archiveContainerGap = 24;
@@ -124,8 +120,8 @@ const Archives: React.FC<ArchivesProps> = ({
         slideAmount,
         setArchives as Dispatch<SetStateAction<IArchive[]>>,
         setLastLoadedIndex,
-        ownerProfiles,
-        setOwnerProfiles,
+        contributorProfiles,
+        setContributorProfiles,
       );
   }, [fetchArchives, slideAmount]);
 
@@ -186,8 +182,8 @@ const Archives: React.FC<ArchivesProps> = ({
           slideAmount,
           setArchives as Dispatch<SetStateAction<IArchive[]>>,
           setLastLoadedIndex,
-          ownerProfiles,
-          setOwnerProfiles,
+          contributorProfiles,
+          setContributorProfiles,
         );
       }
       return nextStartIndex;
@@ -202,7 +198,7 @@ const Archives: React.FC<ArchivesProps> = ({
 
   const archiveSkeleton = () => (
     <Flex flexDir={"column"} justifyContent={"center"} width={"100%"}>
-      <Skeleton width={"100%"} height={`${archiveContainerWidth + 20}px`} />
+      <Skeleton width={"100%"} height={`${archiveContainerWidth + 30}px`} />
     </Flex>
   );
 
@@ -274,6 +270,7 @@ const Archives: React.FC<ArchivesProps> = ({
                 }
               >
                 <Avatar
+                  key={archive.id}
                   name={archive.ownerName ? archive.ownerName : undefined}
                   src={archive.ownerAvatar ? archive.ownerAvatar : undefined}
                   height={"24px"}
