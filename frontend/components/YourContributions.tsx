@@ -15,8 +15,7 @@ import SignInBox from "./SigninBox";
 import { BurntPixArchives } from "@/contracts/BurntPixArchives";
 import { getNextIterationsGoal } from "@/utils/burntPixUtils";
 import { hexToText } from "@/utils/hexUtils";
-import { getProfileBasicInfo, getProfileData } from "@/utils/universalProfile";
-import { constants } from "@/constants/constants";
+import { getProfileBasicInfo } from "@/utils/universalProfile";
 
 interface IYourContributionsProps {
   readonly account: string | null;

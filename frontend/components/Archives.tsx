@@ -15,6 +15,8 @@ import {
   Link,
   Text,
   Skeleton,
+  Button,
+  useToast,
 } from "@chakra-ui/react";
 import {
   FaArrowCircleLeft,
@@ -24,6 +26,8 @@ import {
 import { WalletContext } from "@/components/wallet/WalletContext";
 import { LSP3ProfileMetadata } from "@lukso/lsp3-contracts";
 import { bytes32ToNumber } from "@/utils/hexUtils";
+import { BurntPixArchives__factory } from "@/contracts";
+import { inter } from "@/app/fonts";
 
 export interface IArchive {
   id: string;
@@ -67,16 +71,24 @@ const Archives: React.FC<ArchivesProps> = ({
   fetchArchives,
 }) => {
   const walletContext = useContext(WalletContext);
-  const { networkConfig, provider, refineEventCounter } = walletContext;
+  const { networkConfig, provider, refineEventCounter, account } =
+    walletContext;
   const [archivesCount, setArchivesCount] = useState<number>();
   const [archives, setArchives] = useState<IArchive[]>();
   const [startIndex, setStartIndex] = useState(0);
   const [slideAmount, setSlideAmount] = useState<number>(0);
   const [lastLoadedIndex, setLastLoadedIndex] = useState<number>(0);
+  const [isMinting, setIsMinting] = useState("");
   const [ownerProfiles, setOwnerProfiles] = useState<IOwners>({});
   const carouselRef = useRef<HTMLDivElement>(null);
   const archiveContainerWidth = 130;
   const archiveContainerGap = 24;
+  const burntPixArchives = BurntPixArchives__factory.connect(
+    networkConfig.burntPixArchivesAddress,
+    provider,
+  );
+  const toast = useToast();
+  const defaultRed = "#FE005B";
 
   useEffect(() => {
     const resizeObserver = new ResizeObserver((entries) => {
@@ -116,6 +128,47 @@ const Archives: React.FC<ArchivesProps> = ({
         setOwnerProfiles,
       );
   }, [fetchArchives, slideAmount]);
+
+  const isMintable = (archive: IArchive) => {
+    return !archive.isMinted && archive.ownerAddress === account;
+  };
+
+  const mintArchive = async (archiveId: string) => {
+    try {
+      setIsMinting(archiveId);
+      console.log(`Minting archive: ${archiveId}`);
+      const signer = await provider.getSigner();
+      await burntPixArchives.connect(signer)["mintArchive(bytes32)"](archiveId);
+
+      setIsMinting("");
+      toast({
+        title: "Archive minted!",
+        status: "success",
+        position: "bottom-left",
+        duration: null,
+        isClosable: true,
+      });
+      if (!archives) return; // linting
+      // Update the archive to show it's minted
+      const archiveIndex = archives?.findIndex(
+        (archive) => archive.id === archiveId,
+      );
+      archives[archiveIndex as number].isMinted = true;
+    } catch (error: any) {
+      setIsMinting("");
+      let message = error.message;
+      if (error.info?.error?.message) {
+        message = error.info.error.message;
+      }
+      toast({
+        title: message,
+        status: "error",
+        position: "bottom-left",
+        duration: null,
+        isClosable: true,
+      });
+    }
+  };
 
   const nextSlide = () => {
     if (archivesCount === undefined) return;
@@ -188,23 +241,47 @@ const Archives: React.FC<ArchivesProps> = ({
           </Text>
         )}
         <Flex alignItems={"center"} gap={1}>
-          <Link
-            isExternal={true}
-            href={
-              archive.ownerAddress
-                ? `${networkConfig.marketplaceProfilesURL}/${archive.ownerAddress}`
-                : undefined
-            }
-          >
-            <Avatar
-              name={archive.ownerName ? archive.ownerName : undefined}
-              src={archive.ownerAvatar ? archive.ownerAvatar : undefined}
-              height={"24px"}
-              width={"24px"}
-            />
-          </Link>
+          {isMintable(archive) && (
+            <Button
+              bg={defaultRed}
+              p={"2px 7px"}
+              h={"20px"}
+              color="white"
+              _hover={{ bg: defaultRed }}
+              borderRadius={10}
+              w="fit-content"
+              fontSize="xs"
+              lineHeight="0.75rem"
+              fontWeight={700}
+              onClick={() => {
+                mintArchive(archive.id);
+              }}
+              fontFamily={inter.style.fontFamily}
+              loadingText={"..."}
+              isLoading={isMinting === archive.id}
+            >
+              MINT
+            </Button>
+          )}
           {archive.isMinted && (
-            <Icon ml={1} as={FaCheckCircle} boxSize={"18px"} />
+            <>
+              <Link
+                isExternal={true}
+                href={
+                  archive.ownerAddress
+                    ? `${networkConfig.marketplaceProfilesURL}/${archive.ownerAddress}`
+                    : undefined
+                }
+              >
+                <Avatar
+                  name={archive.ownerName ? archive.ownerName : undefined}
+                  src={archive.ownerAvatar ? archive.ownerAvatar : undefined}
+                  height={"24px"}
+                  width={"24px"}
+                />
+              </Link>
+              <Icon ml={1} as={FaCheckCircle} boxSize={"18px"} />
+            </>
           )}
         </Flex>
       </Flex>
