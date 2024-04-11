@@ -21,6 +21,7 @@ const Leaderboard: React.FC = () => {
   const { networkConfig, provider, refineEventCounter } = walletContext;
   const [topContributions, setTopContributions] = useState<Contribution[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  
 
   const truncateName = (name: string) => {
     if (name.length > 20) {
@@ -35,49 +36,93 @@ const Leaderboard: React.FC = () => {
   );
 
   useEffect(() => {
+    let isMounted = true;
+    const delay = (ms: number) =>
+      new Promise((resolve) => setTimeout(resolve, ms));
+
+    const fetchProfileDataWithDelay = async (
+      contributors: string[],
+      delayMs: number,
+    ) => {
+      const profiles = [];
+      for (const contrib of contributors) {
+        if (!isMounted) return;
+        const profile = await fetchProfileData(contrib, networkConfig.rpcUrl);
+        profiles.push(profile);
+        await delay(delayMs);
+      }
+      return profiles;
+    };
+
     const fetchContributions = async () => {
+      setIsLoading(true);
       try {
         const [topContributors, contributions] =
           await burntPixArchives.getTopTenContributors();
-        if (Number(contributions[0]) === 0) {
+        if (Number(contributions[0]) === 0 || !isMounted) {
           return;
         }
+        const delayMsTime = 150;
 
-        const profiles = await Promise.all(
-          topContributors.map((contrib) =>
-            fetchProfileData(contrib, networkConfig.rpcUrl),
-          ),
+        const profiles = await fetchProfileDataWithDelay(
+          topContributors,
+          delayMsTime,
         );
-        const contributionsWithProfiles = topContributors
-          .filter((contributor) => contributor !== ZeroAddress)
-          .map((contributor, index) => ({
+
+        if (!isMounted || !profiles) return;
+
+        const contributionsWithProfiles = topContributors.map(
+          (contributor, index) => ({
             contributor,
             contribution: Number(contributions[index]),
             upName: profiles[index]?.upName || null,
             avatar: profiles[index]?.avatar || null,
           }));
 
-        setTopContributions(contributionsWithProfiles);
+        if (isMounted) setTopContributions(contributionsWithProfiles);
+
       } catch (error: any) {
-        toast({
-          title: `Failed to fetch leaderboard contributions: ${error.message}`,
-          status: "error",
-          position: "bottom-left",
-          duration: null,
-          isClosable: true,
-        });
+        if (isMounted) {
+          toast({
+            title: `Failed to fetch leaderboard contributions: ${error.message}`,
+            status: "error",
+            position: "bottom-left",
+            duration: null,
+            isClosable: true,
+          });
+        }
       } finally {
-        setIsLoading(false);
+        if (isMounted) setIsLoading(false);
       }
     };
+
     fetchContributions();
-  }, [refineEventCounter]); // NOTE: adding dependencies will cause duplicated calls
+
+    return () => {
+      isMounted = false;
+    };
+  }, [refineEventCounter]);
 
   const fetchProfileData = async (
     contributor: string,
     rpcUrl: string,
   ): Promise<{ upName: string | null; avatar: string | null } | null> => {
     try {
+      if (contributor === "0x0000000000000000000000000000000000000000") {
+        return { upName: null, avatar: null };
+      }
+
+      const existingContributor = topContributions.find(
+        (c) => c.contributor === contributor,
+      );
+      // avoid unnecessary api call when refreshing leaderboard
+      if (existingContributor) {
+        return {
+          upName: existingContributor.upName,
+          avatar: existingContributor.avatar,
+        };
+      }
+
       const profileData = await getProfileData(contributor, rpcUrl);
       let upName = null,
         avatar = null;
