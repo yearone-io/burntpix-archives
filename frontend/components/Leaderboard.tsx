@@ -20,8 +20,8 @@ const Leaderboard: React.FC = () => {
   const toast = useToast();
   const { networkConfig, provider, refineEventCounter } = walletContext;
   const [topContributions, setTopContributions] = useState<Contribution[]>([]);
-  const [loadingFirstFive, setLoadingFirstFive] = useState(true);
-  const [loadingSecondFive, setLoadingSecondFive] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
+  
 
   const truncateName = (name: string) => {
     if (name.length > 20) {
@@ -55,6 +55,7 @@ const Leaderboard: React.FC = () => {
     };
 
     const fetchContributions = async () => {
+      setIsLoading(true);
       try {
         const [topContributors, contributions] =
           await burntPixArchives.getTopTenContributors();
@@ -63,45 +64,23 @@ const Leaderboard: React.FC = () => {
         }
         const delayMsTime = 150;
 
-        const firstChunk = topContributors.slice(0, 5);
-        const secondChunk = topContributors.slice(5);
-
-        const firstChunkProfiles = await fetchProfileDataWithDelay(
-          firstChunk,
+        const profiles = await fetchProfileDataWithDelay(
+          topContributors,
           delayMsTime,
         );
 
-        if (!isMounted || !firstChunkProfiles) return;
+        if (!isMounted || !profiles) return;
 
-        const firstChunkContributionsWithProfiles = firstChunk
-          .filter((contributor) => contributor !== ZeroAddress)
-          .map((contributor, index) => ({
+        const contributionsWithProfiles = topContributors.map(
+          (contributor, index) => ({
             contributor,
             contribution: Number(contributions[index]),
-            upName: firstChunkProfiles[index]?.upName || null,
-            avatar: firstChunkProfiles[index]?.avatar || null,
-          }));
-        setTopContributions(firstChunkContributionsWithProfiles);
-        setLoadingFirstFive(false);
-        const secondChunkProfiles = await fetchProfileDataWithDelay(
-          secondChunk,
-          delayMsTime,
-        );
-        if (!isMounted || !secondChunkProfiles) return;
-        const secondChunkContributionsWithProfiles = secondChunk
-          .filter((contributor) => contributor !== ZeroAddress)
-          .map((contributor, index) => ({
-            contributor,
-            contribution: Number(contributions[index]),
-            upName: secondChunkProfiles[index]?.upName || null,
-            avatar: secondChunkProfiles[index]?.avatar || null,
+            upName: profiles[index]?.upName || null,
+            avatar: profiles[index]?.avatar || null,
           }));
 
-        setTopContributions([
-          ...firstChunkContributionsWithProfiles,
-          ...secondChunkContributionsWithProfiles,
-        ]);
-        setLoadingSecondFive(false);
+        if (isMounted) setTopContributions(contributionsWithProfiles);
+
       } catch (error: any) {
         if (isMounted) {
           toast({
@@ -112,6 +91,8 @@ const Leaderboard: React.FC = () => {
             isClosable: true,
           });
         }
+      } finally {
+        if (isMounted) setIsLoading(false);
       }
     };
 
@@ -206,27 +187,7 @@ const Leaderboard: React.FC = () => {
     );
   };
 
-  if (!topContributions.length && !loadingFirstFive && !loadingSecondFive) {
-    return (
-      <Flex
-        height={"120px"}
-        alignItems={"center"}
-        justifyContent={"center"}
-        w="100%"
-        px={7}
-        gap={3}
-      >
-        <Text fontSize={"lg"} lineHeight={"lg"} fontWeight={400}>
-          Leaderboard is empty
-        </Text>
-        <Text fontSize={"3xl"} lineHeight={"3xl"}>
-          🏆
-        </Text>
-      </Flex>
-    );
-  }
-
-  return (
+  return topContributions.length || isLoading ? (
     <Flex
       direction={{ base: "column", md: "row" }}
       wrap="wrap"
@@ -234,7 +195,7 @@ const Leaderboard: React.FC = () => {
       alignItems={"flex-start"}
       w="100%"
     >
-      {loadingFirstFive ? (
+      {isLoading ? (
         <>
           <Flex
             flexDir={"column"}
@@ -242,6 +203,15 @@ const Leaderboard: React.FC = () => {
             minWidth={{ base: "100%", md: "45%" }}
             gap={3}
             mr={"5%"}
+          >
+            {[...Array(5)].map((_, index) => (
+              <Skeleton key={index} height="30px" width="100%" />
+            ))}
+          </Flex>
+          <Flex
+            flexDir={"column"}
+            minWidth={{ base: "100%", md: "45%" }}
+            gap={3}
           >
             {[...Array(5)].map((_, index) => (
               <Skeleton key={index} height="30px" width="100%" />
@@ -258,22 +228,6 @@ const Leaderboard: React.FC = () => {
           >
             {topContributions.slice(0, 5).map(renderItem)}
           </Flex>
-        </>
-      )}
-      {loadingSecondFive ? (
-        <>
-          <Flex
-            flexDir={"column"}
-            minWidth={{ base: "100%", md: "45%" }}
-            gap={3}
-          >
-            {[...Array(5)].map((_, index) => (
-              <Skeleton key={index} height="30px" width="100%" />
-            ))}
-          </Flex>
-        </>
-      ) : (
-        <>
           {topContributions.slice(5, 10).length ? (
             <Flex
               flexDir={"column"}
@@ -287,6 +241,22 @@ const Leaderboard: React.FC = () => {
           ) : null}
         </>
       )}
+    </Flex>
+  ) : (
+    <Flex
+      height={"120px"}
+      alignItems={"center"}
+      justifyContent={"center"}
+      w="100%"
+      px={7}
+      gap={3}
+    >
+      <Text fontSize={"lg"} lineHeight={"lg"} fontWeight={400}>
+        Leaderboard is empty
+      </Text>
+      <Text fontSize={"3xl"} lineHeight={"3xl"}>
+        🏆
+      </Text>
     </Flex>
   );
 };
