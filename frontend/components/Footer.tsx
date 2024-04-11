@@ -13,6 +13,7 @@ import { inter } from "@/app/fonts";
 import { FaSquareGithub } from "react-icons/fa6";
 import { formatAddress } from "@/utils/tokenUtils";
 import { WalletContext } from "@/components/wallet/WalletContext";
+import { getNetworkConfig } from "@/constants/networks";
 
 const Footer: React.FC = () => {
   const displayMobileDesktop = useBreakpointValue({ base: "none", md: "flex" });
@@ -34,8 +35,10 @@ const Footer: React.FC = () => {
           <Box minWidth={"170"} mr="20px">
             <Select
               defaultValue={process.env.NEXT_PUBLIC_DEFAULT_NETWORK!}
-              onChange={(event) =>
-                (window.location.href = networkConfig.baseUrl)
+              onChange={event =>
+                (window.location.href = getNetworkConfig(
+                  event.target.value
+                ).baseUrl)
               }
             >
               <option value={"mainnet"}>LUKSO Mainnet</option>
