@@ -20,7 +20,7 @@ export const OverviewRow = ({
   winningIterations,
 }: IOverviewRowProps) => {
   const walletContext = useContext(WalletContext);
-  const { networkConfig, provider, refineEventCounter } = walletContext;
+  const { networkConfig, provider, userActionCounter } = walletContext;
   const toast = useToast();
   const burntPixArchives = BurntPixArchives__factory.connect(
     networkConfig.burntPixArchivesAddress,
@@ -69,7 +69,7 @@ export const OverviewRow = ({
 
   useEffect(() => {
     burntPicId && fetchCollectionStats();
-  }, [burntPicId, refineEventCounter]);
+  }, [burntPicId, userActionCounter]);
 
   return (
     <Grid

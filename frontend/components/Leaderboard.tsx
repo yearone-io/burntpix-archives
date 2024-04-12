@@ -28,7 +28,7 @@ interface Contribution {
 const Leaderboard: React.FC = () => {
   const walletContext = useContext(WalletContext);
   const toast = useToast();
-  const { networkConfig, provider, refineEventCounter } = walletContext;
+  const { networkConfig, provider, userActionCounter } = walletContext;
   const [topContributions, setTopContributions] = useState<Contribution[]>([]);
   const [contributorProfiles, setContributorProfiles] = useState<IProfiles>({});
   const [isLoading, setIsLoading] = useState(true);
@@ -111,7 +111,7 @@ const Leaderboard: React.FC = () => {
     };
 
     fetchContributions();
-  }, [refineEventCounter]); // NOTE: adding dependencies will cause duplicated calls
+  }, [userActionCounter]); // NOTE: adding dependencies will cause duplicated calls
 
   const avatarSize = { base: "18px", md: "24px" };
   const fontSizing = { base: "sm", md: "md", lg: "lg" };

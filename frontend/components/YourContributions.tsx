@@ -28,7 +28,7 @@ const YourContributions = ({
 }: IYourContributionsProps) => {
   const walletContext = useContext(WalletContext);
   const toast = useToast();
-  const { networkConfig, refineEventCounter } = walletContext;
+  const { networkConfig, userActionCounter } = walletContext;
   const [userArchives, setUserArchives] = useState<string[]>([]);
   const [userStats, setUserStats] = useState<StatsItem[]>([
     { label: "Iterations:", value: "--" },
@@ -77,7 +77,7 @@ const YourContributions = ({
 
   useEffect(() => {
     fetchUserStats(account as string);
-  }, [account, refineEventCounter]);
+  }, [account, userActionCounter]);
 
   const yourArchivesTitle = (
     <Flex
@@ -182,7 +182,7 @@ const YourContributions = ({
         });
       }
     },
-    [userArchives],
+    [userArchives, account],
   );
 
   const fetchArchivesCount: IFetchArchivesCount = useCallback(
@@ -199,7 +199,7 @@ const YourContributions = ({
         });
       }
     },
-    [userArchives],
+    [userArchives, account],
   );
 
   return (

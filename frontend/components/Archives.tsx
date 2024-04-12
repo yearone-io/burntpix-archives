@@ -67,8 +67,7 @@ const Archives: React.FC<ArchivesProps> = ({
   fetchArchives,
 }) => {
   const walletContext = useContext(WalletContext);
-  const { networkConfig, provider, refineEventCounter, account } =
-    walletContext;
+  const { networkConfig, provider, userActionCounter, account } = walletContext;
   const [archivesCount, setArchivesCount] = useState<number>();
   const [archives, setArchives] = useState<IArchive[]>();
   const [startIndex, setStartIndex] = useState(0);
@@ -111,7 +110,7 @@ const Archives: React.FC<ArchivesProps> = ({
 
   useEffect(() => {
     fetchArchivesCount(setArchivesCount);
-  }, [fetchArchivesCount, refineEventCounter]);
+  }, [fetchArchivesCount, userActionCounter]);
 
   useEffect(() => {
     slideAmount &&

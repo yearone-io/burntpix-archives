@@ -18,11 +18,12 @@ import Leaderboard from "@/components/Leaderboard";
 import { FaExternalLinkAlt } from "react-icons/fa";
 import { inter } from "@/app/fonts";
 import { BurntPixArchives } from "@/contracts";
-import { useCallback } from "react";
+import { useCallback, useContext } from "react";
 import YourContributions from "@/components/YourContributions";
 import { hexToText, numberToBytes32 } from "@/utils/hexUtils";
 import { getProfileBasicInfo } from "@/utils/universalProfile";
 import { Network } from "@/constants/networks";
+import { WalletContext } from "./wallet/WalletContext";
 
 interface IContributionsRowProps {
   readonly account: string | null;
@@ -35,7 +36,9 @@ export const ContributionsRow = ({
   burntPixArchives,
   networkConfig,
 }: IContributionsRowProps) => {
+  const walletContext = useContext(WalletContext);
   const toast = useToast();
+  const { userActionCounter } = walletContext;
   const archivesTitle = (
     <Flex
       color="#FE005B"
@@ -117,14 +120,17 @@ export const ContributionsRow = ({
         }
 
         setArchives((prevArchives) => {
-          let all = [
-            ...(Array.isArray(prevArchives) ? prevArchives : []),
-            ...newArchives,
-          ];
-          // unique by id
-          all = all.filter(
-            (v, i, a) => a.findIndex((t) => t.id === v.id) === i,
-          );
+          const all = [...(Array.isArray(prevArchives) ? prevArchives : [])];
+          for (const archive of newArchives) {
+            const oldIndex = all.findIndex((t) => t.id === archive.id);
+            if (oldIndex !== -1) {
+              all[oldIndex] = {
+                ...archive,
+              };
+            } else {
+              all.push(archive);
+            }
+          }
           return all;
         });
         setLastLoadedIndex(finalIndex);
@@ -138,9 +144,7 @@ export const ContributionsRow = ({
         });
       }
     },
-    [
-      /* dependencies */
-    ],
+    [userActionCounter],
   );
 
   const fetchArchivesCount: IFetchArchivesCount = useCallback(
@@ -158,7 +162,7 @@ export const ContributionsRow = ({
         });
       }
     },
-    [],
+    [userActionCounter],
   );
   return (
     <Grid w={"full"} templateColumns={{ base: "1fr", lg: "2fr 1fr" }}>

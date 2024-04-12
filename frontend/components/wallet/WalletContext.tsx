@@ -12,7 +12,7 @@ interface WalletContextType {
   disconnect: () => void;
   isLoadingAccount: boolean;
   connectedChainId: number | undefined;
-  refineEventCounter: number;
+  userActionCounter: number;
 }
 
 const networkConfig = getNetworkConfig(
@@ -40,7 +40,7 @@ const defaultImplementation: WalletContextType = {
     // Default disconnect implementation
   },
   connectedChainId: undefined,
-  refineEventCounter: 0,
+  userActionCounter: 0,
 };
 
 export const WalletContext = React.createContext<WalletContextType>(
