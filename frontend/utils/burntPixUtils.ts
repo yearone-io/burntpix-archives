@@ -19,7 +19,7 @@ export function getNextIterationsGoal(
   currentIterations: number,
 ) {
   const multiplier = 10000;
-  if (nextLevelIterations <= 1) return multiplier;
+  if (nextLevelIterations <= 1) return multiplier - currentIterations;
   let a = 1;
   let b = 1;
   for (let i = 2; i < nextLevelIterations; i++) {
