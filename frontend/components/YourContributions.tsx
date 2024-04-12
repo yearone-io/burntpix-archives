@@ -34,7 +34,7 @@ const YourContributions = ({
     { label: "Iterations:", value: "--" },
     { label: "Archive Unlocks:", value: "--" },
     { label: "Archive Mints:", value: "--" },
-    { label: "Iters Till Next Archive:", value: "--" },
+    { label: "Iters Till Next Unlock:", value: "--" },
   ]);
 
   const fetchUserStats = async (account: string) => {
@@ -60,7 +60,7 @@ const YourContributions = ({
         { label: "Archive Unlocks:", value: userArchives.length },
         { label: "Archive Mints:", value: userOwnedArchiveMints.length },
         {
-          label: "Iters Till Next Archive:",
+          label: "Iters Till Next Unlock:",
           value: userIterationsGoal.toLocaleString(),
         },
       ]);
