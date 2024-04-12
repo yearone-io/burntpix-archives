@@ -18,7 +18,7 @@ export function getNextIterationsGoal(
   nextLevelIterations: number,
   currentIterations: number,
 ) {
-  const multiplier = 1000;
+  const multiplier = 10000;
   if (nextLevelIterations <= 1) return multiplier;
   let a = 1;
   let b = 1;
