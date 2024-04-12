@@ -14,7 +14,8 @@ const EditorsNote = ({ winningIterations }: { winningIterations: string }) => {
         <Text as="span" fontWeight={900} letterSpacing={1.5}>
           Editor’s Note:
         </Text>{" "}
-        The Burnt Pix Archives is project built on top of the original{" "}
+        is a fully onchain collaborative NFT art project built on top of the
+        original {" "}
         <Link
           href="https://burntpix.com"
           textDecoration="underline"
@@ -33,19 +34,21 @@ const EditorsNote = ({ winningIterations }: { winningIterations: string }) => {
         . In the spirit of the original this project is merely an artistic
         showcase of its creators’ programming prowess. Feel free to become part
         of the collection, but look at it as art, not as something to speculate
-        on. There will be no updates, no fixes, no community, no nothing. The
-        Burnt Pix Archives are provided as is.
+        on. no updates, no fixes, no core team or community, no promises. The
+        Burnt Pix Archives are provided as is. Hope you enjoy the outcome as
+        much as we’ve enjoyed building it. We burn together, we rise together!
       </Text>
       <Text fontSize="sm" fontWeight={400} lineHeight="15px" marginBottom="2">
-        The core idea behind Burnt Pix Archives is to encourage the Lukso
-        community to work together and refine the same Burnt Pix NFT.
-        Conceptually we do this by rewarding the refiners of the NFT with the
-        ability to mint lower resolution LSP8 "archives" of the same original at
-        various stages in its evolution as the refiners unlock new levels
-        through their contributions. The amount of possible minted archives is
-        limited to ten thousand. The refiner that first contributes{" "}
-        {winningIterations} iterations to the archive unlocks the original NFT
-        for their use.
+        The core idea behind the Archives is to encourage the LUKSO community to
+        refine the same Burnt Pix NFT together. Conceptually we do this by
+        rewarding the refiners of the NFT with the ability to mint lower
+        resolution LSP8 "archives" of the original at various stages in the
+        original’s evolution. The refiners unlock new archive levels of
+        increasing difficulty through their contributions. The amount
+        of possible minted archives, aka Burnt Pix Archives’ NFT max supply, is
+        limited to one thousand. Additionally, the refiner that first
+        contributes {winningIterations} iterations to the archive unlocks the
+        original NFT for their use.
       </Text>
     </Box>
   );

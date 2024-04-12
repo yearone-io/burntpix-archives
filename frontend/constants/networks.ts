@@ -24,7 +24,7 @@ const NETWORKS = {
     marketplaceCollectionsURL: "https://universal.page/collections",
     burntPixCollectionAddress: "0x3983151E0442906000DAb83c8b1cF3f2D2535F82",
     marketplaceProfilesURL: "https://universal.page/profiles",
-    burntPixArchivesAddress: "0x4b8cCCF15514e136beD7d07365D8FA48353e7947", //TODO update this
+    burntPixArchivesAddress: "0xe25Dd0db1964Ae3D36a0C2725AFa8454680cD0d4", //TODO update this
   },
   testnet: {
     domain: "https://testnet--burntpix-archives.netlify.app",
