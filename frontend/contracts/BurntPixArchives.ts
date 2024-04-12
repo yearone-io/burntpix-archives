@@ -53,6 +53,7 @@ export interface BurntPixArchivesInterface extends Interface {
       | "isOriginalUnclaimed"
       | "mintArchive(bytes32,address)"
       | "mintArchive(bytes32)"
+      | "multiplier"
       | "owner"
       | "refineToArchive(uint256)"
       | "refineToArchive(uint256,address)"
@@ -188,6 +189,10 @@ export interface BurntPixArchivesInterface extends Interface {
   encodeFunctionData(
     functionFragment: "mintArchive(bytes32)",
     values: [BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "multiplier",
+    values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
@@ -355,6 +360,7 @@ export interface BurntPixArchivesInterface extends Interface {
     functionFragment: "mintArchive(bytes32)",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "multiplier", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "refineToArchive(uint256)",
@@ -719,6 +725,8 @@ export interface BurntPixArchives extends BaseContract {
     "nonpayable"
   >;
 
+  multiplier: TypedContractMethod<[], [bigint], "view">;
+
   owner: TypedContractMethod<[], [string], "view">;
 
   "refineToArchive(uint256)": TypedContractMethod<
@@ -945,6 +953,9 @@ export interface BurntPixArchives extends BaseContract {
   getFunction(
     nameOrSignature: "mintArchive(bytes32)"
   ): TypedContractMethod<[archiveId: BytesLike], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "multiplier"
+  ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
     nameOrSignature: "owner"
   ): TypedContractMethod<[], [string], "view">;

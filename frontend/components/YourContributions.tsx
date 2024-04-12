@@ -28,13 +28,13 @@ const YourContributions = ({
 }: IYourContributionsProps) => {
   const walletContext = useContext(WalletContext);
   const toast = useToast();
-  const { networkConfig, refineEventCounter } = walletContext;
+  const { networkConfig, userActionCounter } = walletContext;
   const [userArchives, setUserArchives] = useState<string[]>([]);
   const [userStats, setUserStats] = useState<StatsItem[]>([
     { label: "Iterations:", value: "--" },
     { label: "Archive Unlocks:", value: "--" },
     { label: "Archive Mints:", value: "--" },
-    { label: "Iters Till Next Archive:", value: "--" },
+    { label: "Iters Till Next Unlock:", value: "--" },
   ]);
 
   const fetchUserStats = async (account: string) => {
@@ -60,7 +60,7 @@ const YourContributions = ({
         { label: "Archive Unlocks:", value: userArchives.length },
         { label: "Archive Mints:", value: userOwnedArchiveMints.length },
         {
-          label: "Iters Till Next Archive:",
+          label: "Iters Till Next Unlock:",
           value: userIterationsGoal.toLocaleString(),
         },
       ]);
@@ -77,7 +77,7 @@ const YourContributions = ({
 
   useEffect(() => {
     fetchUserStats(account as string);
-  }, [account, refineEventCounter]);
+  }, [account, userActionCounter]);
 
   const yourArchivesTitle = (
     <Flex
@@ -161,14 +161,17 @@ const YourContributions = ({
         }
 
         setArchives((prevArchives) => {
-          let all = [
-            ...(Array.isArray(prevArchives) ? prevArchives : []),
-            ...newArchives,
-          ];
-          // unique by id
-          all = all.filter(
-            (v, i, a) => a.findIndex((t) => t.id === v.id) === i,
-          );
+          const all = [...(Array.isArray(prevArchives) ? prevArchives : [])];
+          for (const archive of newArchives) {
+            const oldIndex = all.findIndex((t) => t.id === archive.id);
+            if (oldIndex !== -1) {
+              all[oldIndex] = {
+                ...archive,
+              };
+            } else {
+              all.push(archive);
+            }
+          }
           return all;
         });
         setLastLoadedIndex(finalIndex);
@@ -182,7 +185,7 @@ const YourContributions = ({
         });
       }
     },
-    [userArchives],
+    [userArchives, account],
   );
 
   const fetchArchivesCount: IFetchArchivesCount = useCallback(
@@ -199,7 +202,7 @@ const YourContributions = ({
         });
       }
     },
-    [userArchives],
+    [userArchives, account],
   );
 
   return (

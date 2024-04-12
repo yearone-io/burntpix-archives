@@ -7,5 +7,6 @@ export interface Network {
   ARCHIVE_HELPERS: string;
   BURNTPIC_ID: string;
   MAX_SUPPLY: number;
+  MULTIPLIER: number;
   WINNER_ITERATIONS: number;
 }

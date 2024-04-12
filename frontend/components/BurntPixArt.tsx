@@ -22,7 +22,7 @@ export default function BurntPixArt({ burntPicId }: IOriginalArtProps) {
   const [burntPix, setBurntPix] = useState<string | undefined>();
   const walletContext = useContext(WalletContext);
   const toast = useToast();
-  const { networkConfig, provider, refineEventCounter } = walletContext;
+  const { networkConfig, provider, userActionCounter } = walletContext;
 
   useEffect(() => {
     const fetchBurntPix = async () => {
@@ -46,7 +46,7 @@ export default function BurntPixArt({ burntPicId }: IOriginalArtProps) {
       }
     };
     fetchBurntPix();
-  }, [burntPicId, refineEventCounter]);
+  }, [burntPicId, userActionCounter]);
 
   return (
     <Flex
