@@ -161,14 +161,17 @@ const YourContributions = ({
         }
 
         setArchives((prevArchives) => {
-          let all = [
-            ...(Array.isArray(prevArchives) ? prevArchives : []),
-            ...newArchives,
-          ];
-          // unique by id
-          all = all.filter(
-            (v, i, a) => a.findIndex((t) => t.id === v.id) === i,
-          );
+          const all = [...(Array.isArray(prevArchives) ? prevArchives : [])];
+          for (const archive of newArchives) {
+            const oldIndex = all.findIndex((t) => t.id === archive.id);
+            if (oldIndex !== -1) {
+              all[oldIndex] = {
+                ...archive,
+              };
+            } else {
+              all.push(archive);
+            }
+          }
           return all;
         });
         setLastLoadedIndex(finalIndex);

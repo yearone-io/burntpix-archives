@@ -45,8 +45,8 @@ export const OverviewRow = ({
         ]);
 
       setCollectionStats([
-        { label: "Iterations:", value: iterations.toString() },
-        { label: "Contributors:", value: contributors.toString() },
+        { label: "Iterations:", value: iterations.toLocaleString() },
+        { label: "Contributors:", value: contributors.toLocaleString() },
         {
           label: "Archive Mints:",
           value: `${new Intl.NumberFormat("en-US").format(Number(totalSupply))} / ${new Intl.NumberFormat("en-US").format(tokenSupplyCap)}`,
