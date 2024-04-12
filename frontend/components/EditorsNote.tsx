@@ -35,8 +35,7 @@ const EditorsNote = ({ winningIterations }: { winningIterations: string }) => {
         showcase of its creators’ programming prowess. Feel free to become part
         of the collection, but look at it as art, not as something to speculate
         on. no updates, no fixes, no core team or community, no promises. The
-        Burnt Pix Archives are provided as is. Hope you enjoy the outcome as
-        much as we’ve enjoyed building it. We burn together, we rise together!
+        Burnt Pix Archives are provided as is.
       </Text>
       <Text fontSize="sm" fontWeight={400} lineHeight="15px" marginBottom="2">
         The core idea behind the Archives is to encourage the LUKSO community to
@@ -48,7 +47,8 @@ const EditorsNote = ({ winningIterations }: { winningIterations: string }) => {
         possible minted archives, aka Burnt Pix Archives’ NFT max supply, is
         limited to one thousand. Additionally, the refiner that first
         contributes {winningIterations} iterations to the archive unlocks the
-        original NFT for their use.
+        original NFT for their use. Hope you enjoy the outcome as much as we’ve
+        enjoyed building it. We burn together, we rise together!
       </Text>
     </Box>
   );
