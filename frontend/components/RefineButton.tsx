@@ -88,7 +88,7 @@ const RefineButton: React.FC = () => {
         title: message,
         status: "error",
         position: "bottom-left",
-        duration: 5000,
+        duration: null,
         isClosable: true,
       });
     }
