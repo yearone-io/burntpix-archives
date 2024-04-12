@@ -13,6 +13,7 @@ interface WalletContextType {
   isLoadingAccount: boolean;
   connectedChainId: number | undefined;
   userActionCounter: number;
+  setUserActionCounter: React.Dispatch<React.SetStateAction<number>>;
 }
 
 const networkConfig = getNetworkConfig(
@@ -41,6 +42,9 @@ const defaultImplementation: WalletContextType = {
   },
   connectedChainId: undefined,
   userActionCounter: 0,
+  setUserActionCounter: () => {
+    // Default setUserActionCounter implementation
+  },
 };
 
 export const WalletContext = React.createContext<WalletContextType>(

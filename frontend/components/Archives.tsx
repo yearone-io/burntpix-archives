@@ -67,7 +67,13 @@ const Archives: React.FC<ArchivesProps> = ({
   fetchArchives,
 }) => {
   const walletContext = useContext(WalletContext);
-  const { networkConfig, provider, userActionCounter, account } = walletContext;
+  const {
+    networkConfig,
+    provider,
+    userActionCounter,
+    setUserActionCounter,
+    account,
+  } = walletContext;
   const [archivesCount, setArchivesCount] = useState<number>();
   const [archives, setArchives] = useState<IArchive[]>();
   const [startIndex, setStartIndex] = useState(0);
@@ -149,6 +155,9 @@ const Archives: React.FC<ArchivesProps> = ({
         (archive) => archive.id === archiveId,
       );
       archives[archiveIndex as number].isMinted = true;
+      setUserActionCounter((prevCounter) => {
+        return prevCounter + 1;
+      });
     } catch (error: any) {
       setIsMinting("");
       let message = error.message;

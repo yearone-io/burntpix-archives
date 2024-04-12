@@ -198,12 +198,6 @@ export const WalletProvider: React.FC<Props> = ({ children }) => {
           return prevCounter + 1;
         });
       });
-      contract.on("Transfer", (sender, value) => {
-        console.log("TRANSFER EVENT", sender, value);
-        setUserActionCounter((prevCounter) => {
-          return prevCounter + 1;
-        });
-      });
     } catch (error) {
       console.error(
         "Error listening to RefineToArchive or Transfer event",
@@ -225,6 +219,7 @@ export const WalletProvider: React.FC<Props> = ({ children }) => {
         networkConfig,
         connectedChainId,
         userActionCounter,
+        setUserActionCounter,
       }}
     >
       {children}
