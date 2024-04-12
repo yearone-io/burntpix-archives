@@ -44,8 +44,8 @@ const EditorsNote = ({ winningIterations }: { winningIterations: string }) => {
         rewarding the refiners of the NFT with the ability to mint lower
         resolution LSP8 "archives" of the original at various stages in the
         original’s evolution. The refiners unlock new archive levels of
-        increasing difficulty through their contributions. The amount
-        of possible minted archives, aka Burnt Pix Archives’ NFT max supply, is
+        increasing difficulty through their contributions. The amount of
+        possible minted archives, aka Burnt Pix Archives’ NFT max supply, is
         limited to one thousand. Additionally, the refiner that first
         contributes {winningIterations} iterations to the archive unlocks the
         original NFT for their use.
