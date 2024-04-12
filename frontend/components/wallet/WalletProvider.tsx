@@ -37,7 +37,7 @@ export const WalletProvider: React.FC<Props> = ({ children }) => {
     DEFAULT_PROVIDER,
   );
 
-  const [refineEventCounter, setRefineEventCounter] = useState(0);
+  const [userActionCounter, setUserActionCounter] = useState(0);
   const [account, setAccount] = useState<string | null>(null);
   const [mainUPController, setMainUPController] = useState<string>();
   const [isLoadingAccount, setIsLoadingAccount] = useState<boolean>(true);
@@ -191,15 +191,18 @@ export const WalletProvider: React.FC<Props> = ({ children }) => {
     };
 
     try {
-      console.log("LISTENING TO REFINE TO ARCHIVE EVENT");
+      console.log("LISTENING TO REFINE TO ARCHIVE AND TRANSFER EVENTS");
       contract.on("RefineToArchive", (sender, value) => {
         console.log("REFINE TO ARCHIVE EVENT", sender, value);
-        setRefineEventCounter((prevCounter) => {
+        setUserActionCounter((prevCounter) => {
           return prevCounter + 1;
         });
       });
     } catch (error) {
-      console.error("Error listening to RefineToArchive event", error);
+      console.error(
+        "Error listening to RefineToArchive or Transfer event",
+        error,
+      );
     }
   };
 
@@ -215,7 +218,8 @@ export const WalletProvider: React.FC<Props> = ({ children }) => {
         isLoadingAccount,
         networkConfig,
         connectedChainId,
-        refineEventCounter,
+        userActionCounter,
+        setUserActionCounter,
       }}
     >
       {children}

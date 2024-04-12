@@ -35,9 +35,9 @@ const Footer: React.FC = () => {
           <Box minWidth={"170"} mr="20px">
             <Select
               defaultValue={process.env.NEXT_PUBLIC_DEFAULT_NETWORK!}
-              onChange={event =>
+              onChange={(event) =>
                 (window.location.href = getNetworkConfig(
-                  event.target.value
+                  event.target.value,
                 ).baseUrl)
               }
             >

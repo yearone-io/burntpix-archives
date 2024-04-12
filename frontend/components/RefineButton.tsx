@@ -97,84 +97,99 @@ const RefineButton: React.FC = () => {
   return (
     <Box>
       {account ? (
-        <Flex align="center" justify="right">
-          <Button
-            bg={defaultRed}
-            color="white"
-            _hover={{ bg: defaultRed }}
-            borderRadius={10}
-            h="30px"
-            w="fit-content"
-            fontSize="md"
-            fontWeight={700}
-            onClick={refine}
-            fontFamily={inter.style.fontFamily}
-            loadingText={"REFINING..."}
-            isLoading={isRefining}
-          >
-            REFINE TO ARCHIVE
-          </Button>
-          <Popover placement="top">
-            <PopoverTrigger>
-              <Button
-                size="sm"
-                variant="ghost"
-                p={0}
-                ml={2}
-                isLoading={isRefining}
-              >
-                <Icon as={MdSettings} boxSize="24px" color={defaultRed} />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent p="10px">
-              <PopoverArrow />
-              <PopoverCloseButton />
-              <PopoverBody>
-                <Text
-                  mb="4"
-                  fontWeight="bold"
-                  fontFamily={inter.style.fontFamily}
+        <Flex
+          flexDirection={"column"}
+          alignItems="flex-end"
+          justifyContent="center"
+          w="100%"
+        >
+          <Flex alignItems="center" justifyContent={"center"}>
+            <Button
+              bg={defaultRed}
+              color="white"
+              _hover={{ bg: defaultRed }}
+              borderRadius={10}
+              h="30px"
+              w="fit-content"
+              fontSize="md"
+              fontWeight={700}
+              onClick={refine}
+              fontFamily={inter.style.fontFamily}
+              loadingText={"REFINING..."}
+              isLoading={isRefining}
+            >
+              REFINE TO ARCHIVE
+            </Button>
+            <Popover placement="top">
+              <PopoverTrigger>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  p={0}
+                  ml={2}
+                  isLoading={isRefining}
                 >
-                  Adjust Iterations:
-                </Text>
-                <Flex flexDir="column">
-                  <NumberInput
+                  <Icon as={MdSettings} boxSize="24px" color={defaultRed} />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent p="10px">
+                <PopoverArrow />
+                <PopoverCloseButton />
+                <PopoverBody>
+                  <Text
                     mb="4"
-                    defaultValue={defaultIterations}
-                    min={1}
-                    max={maxIterations}
-                    maxW="100px"
-                    mr="2rem"
-                    value={selectedIterations}
-                    onChange={(value: string) => {
-                      setSelectedIterations(Number(value));
-                    }}
+                    fontWeight="bold"
+                    fontFamily={inter.style.fontFamily}
                   >
-                    <NumberInputField />
-                    <NumberInputStepper>
-                      <NumberIncrementStepper />
-                      <NumberDecrementStepper />
-                    </NumberInputStepper>
-                  </NumberInput>
-                  <Slider
-                    flex="1"
-                    defaultValue={defaultIterations}
-                    min={1}
-                    max={maxIterations}
-                    step={1}
-                    focusThumbOnChange={false}
-                    value={selectedIterations}
-                    onChange={setSelectedIterations}
-                  >
-                    <SliderTrack bg="gray.200">
-                      <SliderFilledTrack bg={defaultRed} />
-                    </SliderTrack>
-                    <SliderThumb boxSize="15px" bg={defaultRed} />
-                  </Slider>
-                </Flex>
-              </PopoverBody>
-            </PopoverContent>
-          </Popover>
+                    Adjust Iterations:
+                  </Text>
+                  <Flex flexDir="column">
+                    <NumberInput
+                      mb="4"
+                      defaultValue={defaultIterations}
+                      min={1}
+                      max={maxIterations}
+                      maxW="100px"
+                      mr="2rem"
+                      value={selectedIterations}
+                      onChange={(value: string) => {
+                        setSelectedIterations(Number(value));
+                      }}
+                    >
+                      <NumberInputField />
+                      <NumberInputStepper>
+                        <NumberIncrementStepper />
+                        <NumberDecrementStepper />
+                      </NumberInputStepper>
+                    </NumberInput>
+                    <Slider
+                      flex="1"
+                      defaultValue={defaultIterations}
+                      min={1}
+                      max={maxIterations}
+                      step={1}
+                      focusThumbOnChange={false}
+                      value={selectedIterations}
+                      onChange={setSelectedIterations}
+                    >
+                      <SliderTrack bg="gray.200">
+                        <SliderFilledTrack bg={defaultRed} />
+                      </SliderTrack>
+                      <SliderThumb boxSize="15px" bg={defaultRed} />
+                    </Slider>
+                  </Flex>
+                </PopoverBody>
+              </PopoverContent>
+            </Popover>
+          </Flex>
+          <Text
+            fontSize="sm"
+            fontWeight={500}
+            color={defaultRed}
+            fontFamily={inter.style.fontFamily}
+          >
+            {`+ ${selectedIterations} iterations`}
+          </Text>
         </Flex>
       ) : (
         <Flex align="center" justify="right">

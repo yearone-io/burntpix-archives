@@ -20,7 +20,7 @@ export const OverviewRow = ({
   winningIterations,
 }: IOverviewRowProps) => {
   const walletContext = useContext(WalletContext);
-  const { networkConfig, provider, refineEventCounter } = walletContext;
+  const { networkConfig, provider, userActionCounter } = walletContext;
   const toast = useToast();
   const burntPixArchives = BurntPixArchives__factory.connect(
     networkConfig.burntPixArchivesAddress,
@@ -45,8 +45,8 @@ export const OverviewRow = ({
         ]);
 
       setCollectionStats([
-        { label: "Iterations:", value: iterations.toString() },
-        { label: "Contributors:", value: contributors.toString() },
+        { label: "Iterations:", value: iterations.toLocaleString() },
+        { label: "Contributors:", value: contributors.toLocaleString() },
         {
           label: "Archive Mints:",
           value: `${new Intl.NumberFormat("en-US").format(Number(totalSupply))} / ${new Intl.NumberFormat("en-US").format(tokenSupplyCap)}`,
@@ -69,7 +69,7 @@ export const OverviewRow = ({
 
   useEffect(() => {
     burntPicId && fetchCollectionStats();
-  }, [burntPicId, refineEventCounter]);
+  }, [burntPicId, userActionCounter]);
 
   return (
     <Grid

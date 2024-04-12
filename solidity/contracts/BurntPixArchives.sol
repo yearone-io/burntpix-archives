@@ -45,7 +45,10 @@ interface IArchiveHelpers {
         address burntPicFractal,
         uint256 highestLevel
     ) external pure returns (bytes memory);
-    function fibonacciIterations(uint256 n) external pure returns (uint256);
+    function fibonacciIterations(
+        uint256 n,
+        uint256 multiplier
+    ) external pure returns (uint256);
     function getAlteredStringImage(
         bytes memory image
     ) external pure returns (string memory);
@@ -70,6 +73,7 @@ contract BurntPixArchives is LSP8CappedSupply {
     address public immutable archiveHelpers;
     bytes32 public immutable burntPicId;
     uint256 public immutable winnerIters;
+    uint256 public immutable multiplier;
     address[] public contributors;
     uint256 public archiveCount;
     uint256 public currentHighestLevel = 1;
@@ -85,13 +89,14 @@ contract BurntPixArchives is LSP8CappedSupply {
         address _royaltyRecipient,
         bytes32 _burntPicId,
         uint256 _maxSupply,
+        uint256 _multiplier,
         uint256 _winnerIters
     )
         LSP8CappedSupply(_maxSupply)
         LSP8IdentifiableDigitalAsset(
             "Burnt Pix Archives: Season 1",
             "BURNT1",
-            msg.sender,
+            _creator,
             _LSP4_TOKEN_TYPE_COLLECTION,
             _LSP8_TOKENID_FORMAT_NUMBER
         )
@@ -100,6 +105,7 @@ contract BurntPixArchives is LSP8CappedSupply {
         address registry = IFractal(fractal).registry();
         archiveHelpers = _archiveHelpers;
         burntPicId = _burntPicId;
+        multiplier = _multiplier;
         winnerIters = _winnerIters;
         fractalClone = IArchiveHelpers(_archiveHelpers).createFractalClone(
             address(this),
@@ -184,8 +190,10 @@ contract BurntPixArchives is LSP8CappedSupply {
         if (
             contributions[contributor].iterations >=
             IArchiveHelpers(archiveHelpers).fibonacciIterations(
-                contributions[contributor].archiveIds.length + 1
-            )
+                contributions[contributor].archiveIds.length + 1,
+                multiplier
+            ) &&
+            totalSupply() < tokenSupplyCap()
         ) {
             bytes32 archiveId = bytes32(++archiveCount);
             contributions[contributor].archiveIds.push(archiveId);

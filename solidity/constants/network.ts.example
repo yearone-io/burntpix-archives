@@ -10,6 +10,7 @@ const NETWORKS = {
       ARCHIVE_HELPERS: "",
       BURNTPIC_ID: "",
       MAX_SUPPLY: 10_000,
+      MULTIPLIER: 10_000,
       WINNER_ITERATIONS: 69_420_000
   },
   luksoTestnet: {
@@ -21,6 +22,7 @@ const NETWORKS = {
       ARCHIVE_HELPERS: "0x912fe50c73F0D28Ca40B9202d704c3057831D2fC",
       BURNTPIC_ID: "",
       MAX_SUPPLY: 300,
+      MULTIPLIER: 10_000,
       WINNER_ITERATIONS: 69_420
   },
   luksoDevnet: {
@@ -32,6 +34,7 @@ const NETWORKS = {
       ARCHIVE_HELPERS: "",
       BURNTPIC_ID: "",
       MAX_SUPPLY: 20,
+      MULTIPLIER: 10_000,
       WINNER_ITERATIONS: 6_900
   },
 } as {
