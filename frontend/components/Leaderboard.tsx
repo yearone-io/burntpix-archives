@@ -7,6 +7,7 @@ import {
   useToast,
   Grid,
   GridItem,
+  Link,
 } from "@chakra-ui/react";
 import { inter } from "@/app/fonts"; // Make sure this import path is correct
 import { BurntPixArchives__factory } from "@/contracts";
@@ -135,7 +136,14 @@ const Leaderboard: React.FC = () => {
           >
             {index + 1}.
           </Text>
-          <Flex alignItems={"center"} gap={2}>
+          <Flex
+            as={Link}
+            isExternal={true}
+            href={`${networkConfig.marketplaceProfilesURL}/${item.contributor}`}
+            color={"black"}
+            alignItems={"center"}
+            gap={2}
+          >
             {item.avatar !== null && (
               <Avatar
                 key={index}
