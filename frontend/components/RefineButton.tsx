@@ -34,7 +34,7 @@ const RefineButton: React.FC = () => {
   const defaultIterations = 100;
   const [selectedIterations, setSelectedIterations] =
     useState(defaultIterations);
-  const [iterationsWarning, setIterationsWarning] = useState();
+  const [iterationsWarning, setIterationsWarning] = useState<string>();
   const [isRefining, setIsRefining] = useState(false);
   const toast = useToast();
   const maxIterations = 10000;
