@@ -38,7 +38,7 @@ const RefineButton: React.FC = () => {
   const defaultIterations = 100;
   const [selectedIterations, setSelectedIterations] =
     useState(defaultIterations);
-  const [iterationsWarning, setIterationsWarning] = useState<boolean>(false);
+  const [estimateGasFailed, setEstimateGasFailed] = useState<boolean>(false);
   const [isRefining, setIsRefining] = useState(false);
   const toast = useToast();
   const maxIterations = 10000;
@@ -62,9 +62,9 @@ const RefineButton: React.FC = () => {
         await burntPixArchives
           .connect(await provider.getSigner())
           ["refineToArchive(uint256)"].estimateGas(selectedIterations);
-        setIterationsWarning(false);
+        setEstimateGasFailed(false);
       } catch (e) {
-        setIterationsWarning(true);
+        setEstimateGasFailed(true);
       }
     };
     verifyGasEstimate();
@@ -193,20 +193,6 @@ const RefineButton: React.FC = () => {
                       </SliderTrack>
                       <SliderThumb boxSize="15px" bg={defaultRed} />
                     </Slider>
-                    {iterationsWarning && (
-                      <Alert
-                        status="error"
-                        display={iterationsWarning ? "block" : "none"}
-                      >
-                        <AlertIcon />
-                        <AlertTitle>
-                          Your transaction may get rejected
-                        </AlertTitle>
-                        <AlertDescription>
-                          Try reducing the number of iterations
-                        </AlertDescription>
-                      </Alert>
-                    )}
                   </Flex>
                 </PopoverBody>
               </PopoverContent>
@@ -220,6 +206,15 @@ const RefineButton: React.FC = () => {
           >
             {`+ ${selectedIterations} iterations`}
           </Text>
+          {estimateGasFailed && (
+            <Alert status="error">
+              <AlertIcon />
+              <AlertTitle>Your transaction may get rejected!</AlertTitle>
+              <AlertDescription>
+                Try reducing the number of iterations to lower gas costs.
+              </AlertDescription>
+            </Alert>
+          )}
         </Flex>
       ) : (
         <Flex align="center" justify="right">
