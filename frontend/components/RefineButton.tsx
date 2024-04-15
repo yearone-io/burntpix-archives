@@ -34,6 +34,7 @@ const RefineButton: React.FC = () => {
   const defaultIterations = 100;
   const [selectedIterations, setSelectedIterations] =
     useState(defaultIterations);
+  const [iterationsWarning, setIterationsWarning] = useState();
   const [isRefining, setIsRefining] = useState(false);
   const toast = useToast();
   const maxIterations = 10000;
@@ -52,6 +53,15 @@ const RefineButton: React.FC = () => {
 
   useEffect(() => {
     localStorage.setItem("selectedIterations", selectedIterations.toString());
+    const verifyGasEstimate = async () => {
+      try {
+        await burntPixArchives["refineToArchive(uint256)"].estimateGas(selectedIterations);
+        setIterationsWarning(undefined);
+      } catch (e) {
+        setIterationsWarning("Gas estimate failed. Try with a lower number of iterations.");
+      }
+    }
+    verifyGasEstimate();
   }, [selectedIterations]);
 
   const refine = async () => {
@@ -177,6 +187,7 @@ const RefineButton: React.FC = () => {
                       </SliderTrack>
                       <SliderThumb boxSize="15px" bg={defaultRed} />
                     </Slider>
+                    <Text>{iterationsWarning ? iterationsWarning : ""}</Text>
                   </Flex>
                 </PopoverBody>
               </PopoverContent>
