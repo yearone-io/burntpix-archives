@@ -21,6 +21,10 @@ import {
   NumberIncrementStepper,
   NumberDecrementStepper,
   Text,
+  AlertIcon,
+  Alert,
+  AlertTitle,
+  AlertDescription,
 } from "@chakra-ui/react";
 import { MdSettings } from "react-icons/md";
 import { WalletContext } from "@/components/wallet/WalletContext";
@@ -34,7 +38,7 @@ const RefineButton: React.FC = () => {
   const defaultIterations = 100;
   const [selectedIterations, setSelectedIterations] =
     useState(defaultIterations);
-  const [iterationsWarning, setIterationsWarning] = useState<string>();
+  const [iterationsWarning, setIterationsWarning] = useState<boolean>(false);
   const [isRefining, setIsRefining] = useState(false);
   const toast = useToast();
   const maxIterations = 10000;
@@ -55,12 +59,14 @@ const RefineButton: React.FC = () => {
     localStorage.setItem("selectedIterations", selectedIterations.toString());
     const verifyGasEstimate = async () => {
       try {
-        await burntPixArchives["refineToArchive(uint256)"].estimateGas(selectedIterations);
-        setIterationsWarning(undefined);
+        await burntPixArchives
+          .connect(await provider.getSigner())
+          ["refineToArchive(uint256)"].estimateGas(selectedIterations);
+        setIterationsWarning(false);
       } catch (e) {
-        setIterationsWarning("Gas estimate failed. Try with a lower number of iterations.");
+        setIterationsWarning(true);
       }
-    }
+    };
     verifyGasEstimate();
   }, [selectedIterations]);
 
@@ -187,7 +193,20 @@ const RefineButton: React.FC = () => {
                       </SliderTrack>
                       <SliderThumb boxSize="15px" bg={defaultRed} />
                     </Slider>
-                    <Text>{iterationsWarning ? iterationsWarning : ""}</Text>
+                    {iterationsWarning && (
+                      <Alert
+                        status="error"
+                        display={iterationsWarning ? "block" : "none"}
+                      >
+                        <AlertIcon />
+                        <AlertTitle>
+                          Your transaction may get rejected
+                        </AlertTitle>
+                        <AlertDescription>
+                          Try reducing the number of iterations
+                        </AlertDescription>
+                      </Alert>
+                    )}
                   </Flex>
                 </PopoverBody>
               </PopoverContent>
