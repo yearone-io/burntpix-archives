@@ -226,6 +226,13 @@ export const WalletProvider: React.FC<Props> = ({ children }) => {
       const chainId = Number(await web3.eth.getChainId());
       if (chainId !== networkConfig.chainId) {
         disconnect();
+        toast({
+          title: "Network changed, please connect again.",
+          status: "warning",
+          position: "bottom-left",
+          duration: 5000,
+          isClosable: true,
+        });
       }
     }
   }
