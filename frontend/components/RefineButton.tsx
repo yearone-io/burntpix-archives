@@ -1,30 +1,27 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Box,
   Button,
   Flex,
+  HStack,
   Icon,
-  useToast,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  PopoverArrow,
-  PopoverCloseButton,
-  PopoverBody,
-  Slider,
-  SliderTrack,
-  SliderFilledTrack,
-  SliderThumb,
+  NumberDecrementStepper,
+  NumberIncrementStepper,
   NumberInput,
   NumberInputField,
   NumberInputStepper,
-  NumberIncrementStepper,
-  NumberDecrementStepper,
+  Popover,
+  PopoverArrow,
+  PopoverBody,
+  PopoverCloseButton,
+  PopoverContent,
+  PopoverTrigger,
+  Slider,
+  SliderFilledTrack,
+  SliderThumb,
+  SliderTrack,
   Text,
-  AlertIcon,
-  Alert,
-  AlertTitle,
-  AlertDescription,
+  useToast,
 } from "@chakra-ui/react";
 import { MdSettings } from "react-icons/md";
 import { WalletContext } from "@/components/wallet/WalletContext";
@@ -133,8 +130,9 @@ const RefineButton: React.FC = () => {
               fontFamily={inter.style.fontFamily}
               loadingText={"REFINING..."}
               isLoading={isRefining}
+              isDisabled={estimateGasFailed}
             >
-              REFINE TO ARCHIVE
+              {estimateGasFailed ? "REFINE WILL FAIL" : "REFINE TO ARCHIVE"}
             </Button>
             <Popover placement="top">
               <PopoverTrigger>
@@ -198,23 +196,21 @@ const RefineButton: React.FC = () => {
               </PopoverContent>
             </Popover>
           </Flex>
-          <Text
-            fontSize="sm"
-            fontWeight={500}
-            color={defaultRed}
-            fontFamily={inter.style.fontFamily}
-          >
-            {`+ ${selectedIterations} iterations`}
-          </Text>
-          {estimateGasFailed && (
-            <Alert status="error">
-              <AlertIcon />
-              <AlertTitle>Your transaction may get rejected!</AlertTitle>
-              <AlertDescription>
-                Try reducing the number of iterations to lower gas costs.
-              </AlertDescription>
-            </Alert>
-          )}
+          <HStack>
+            {estimateGasFailed && (
+              <Text color={defaultRed} fontWeight="bold">
+                Please reduce iterations amount!
+              </Text>
+            )}
+            <Text
+              fontSize="sm"
+              fontWeight={500}
+              color={defaultRed}
+              fontFamily={inter.style.fontFamily}
+            >
+              {`+ ${selectedIterations} iterations`}
+            </Text>
+          </HStack>
         </Flex>
       ) : (
         <Flex align="center" justify="right">
