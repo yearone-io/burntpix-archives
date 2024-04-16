@@ -1,11 +1,12 @@
 import React from "react";
 import { getNetworkConfig, Network } from "@/constants/networks";
-import { ethers } from "ethers";
+import { ethers, JsonRpcSigner } from "ethers";
 import { JsonRpcProvider, BrowserProvider } from "ethers";
 
 interface WalletContextType {
   networkConfig: Network;
   provider: JsonRpcProvider | BrowserProvider;
+  signer: JsonRpcSigner | undefined;
   account: string | null;
   mainUPController: string | undefined;
   connect: () => Promise<void>;

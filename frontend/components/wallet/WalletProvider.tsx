@@ -37,6 +37,8 @@ export const WalletProvider: React.FC<Props> = ({ children }) => {
     DEFAULT_PROVIDER,
   );
 
+  const [signer, setSigner] = useState<JsonRpcProvider>();
+
   const [userActionCounter, setUserActionCounter] = useState(0);
   const [account, setAccount] = useState<string | null>(null);
   const [mainUPController, setMainUPController] = useState<string>();
@@ -71,6 +73,14 @@ export const WalletProvider: React.FC<Props> = ({ children }) => {
   useEffect(() => {
     const initProvider = getProvider(networkConfig);
     setProvider(initProvider);
+    initProvider
+      .getSigner()
+      .then((signer) => {
+        setSigner(signer);
+      })
+      .catch((error) => {
+        console.log("error getting signer", error);
+      });
   }, [connectedChainId, mainUPController]);
 
   // Effect hook to check for an existing connected account in localStorage when the component mounts.
@@ -211,6 +221,7 @@ export const WalletProvider: React.FC<Props> = ({ children }) => {
     <WalletContext.Provider
       value={{
         provider,
+        signer,
         account,
         mainUPController,
         connect,

@@ -20,6 +20,7 @@ import {
   SliderFilledTrack,
   SliderThumb,
   SliderTrack,
+  Spinner,
   Text,
   useToast,
 } from "@chakra-ui/react";
@@ -31,7 +32,7 @@ import { inter } from "@/app/fonts";
 
 const RefineButton: React.FC = () => {
   const walletContext = useContext(WalletContext);
-  const { account, provider, networkConfig } = walletContext;
+  const { account, provider, networkConfig, signer } = walletContext;
   const defaultIterations = 100;
   const [selectedIterations, setSelectedIterations] =
     useState(defaultIterations);
@@ -59,24 +60,39 @@ const RefineButton: React.FC = () => {
     localStorage.setItem("selectedIterations", selectedIterations.toString());
     const verifyGasEstimate = async () => {
       try {
+        setRefineGasEstimate(undefined);
         const gasLimit = await burntPixArchives
-          .connect(await provider.getSigner())
+          .connect(signer)
           ["refineToArchive(uint256)"].estimateGas(selectedIterations);
-        const adjustedGasLimit = (gasLimit * BigInt(110)) / BigInt(100); //add 10% buffer
+        const adjustedGasLimit = gasLimit + gasLimit / 10n; //add 10% buffer
         console.log("adjustedGasLimit", adjustedGasLimit);
         if (adjustedGasLimit > BigInt(maxGasLimit)) {
-          console.log("reached limited", adjustedGasLimit);
-          throw new Error("Exceeded max limit");
-        }
-        setRefineGasEstimate(adjustedGasLimit);
-      } catch (e: any) {
-        if (e.action === "estimateGas") {
           setRefineGasEstimate(null);
+        } else {
+          setRefineGasEstimate(adjustedGasLimit);
+        }
+      } catch (error: any) {
+        if (error.action === "estimateGas") {
+          setRefineGasEstimate(null);
+        } else {
+          let message = error.message;
+          if (error.info?.error?.message) {
+            message = error.info.error.message;
+          }
+          toast({
+            title: message,
+            status: "error",
+            position: "bottom-left",
+            duration: null,
+            isClosable: true,
+          });
         }
       }
     };
-    verifyGasEstimate();
-  }, [selectedIterations]);
+    if (signer) {
+      verifyGasEstimate();
+    }
+  }, [selectedIterations, signer]);
 
   const refine = async () => {
     setIsRefining(true);
@@ -143,7 +159,7 @@ const RefineButton: React.FC = () => {
               fontFamily={inter.style.fontFamily}
               loadingText={"REFINING..."}
               isLoading={isRefining}
-              isDisabled={refineGasEstimate === null}
+              isDisabled={!refineGasEstimate}
             >
               {refineGasEstimate === null
                 ? "REFINE WILL FAIL"
@@ -213,18 +229,36 @@ const RefineButton: React.FC = () => {
           </Flex>
           <HStack>
             {refineGasEstimate === null && (
-              <Text color={defaultRed} fontWeight="bold">
+              <Text
+                fontSize="sm"
+                fontWeight={"bold"}
+                color={defaultRed}
+                fontFamily={inter.style.fontFamily}
+              >
                 Please reduce iterations amount!
               </Text>
             )}
-            <Text
-              fontSize="sm"
-              fontWeight={500}
-              color={defaultRed}
-              fontFamily={inter.style.fontFamily}
-            >
-              {`+ ${selectedIterations} iterations`}
-            </Text>
+            {refineGasEstimate === undefined && (
+              <Text
+                fontSize="sm"
+                fontWeight={"bold"}
+                color={defaultRed}
+                fontFamily={inter.style.fontFamily}
+              >
+                <Spinner mr={2} size={"xs"} color={defaultRed} />
+                Calculating cost
+              </Text>
+            )}
+            {refineGasEstimate && (
+              <Text
+                fontSize="sm"
+                fontWeight={500}
+                color={defaultRed}
+                fontFamily={inter.style.fontFamily}
+              >
+                {`+ ${selectedIterations} iterations`}
+              </Text>
+            )}
           </HStack>
         </Flex>
       ) : (
