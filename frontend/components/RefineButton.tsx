@@ -1,26 +1,28 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Box,
   Button,
   Flex,
+  HStack,
   Icon,
-  useToast,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  PopoverArrow,
-  PopoverCloseButton,
-  PopoverBody,
-  Slider,
-  SliderTrack,
-  SliderFilledTrack,
-  SliderThumb,
+  NumberDecrementStepper,
+  NumberIncrementStepper,
   NumberInput,
   NumberInputField,
   NumberInputStepper,
-  NumberIncrementStepper,
-  NumberDecrementStepper,
+  Popover,
+  PopoverArrow,
+  PopoverBody,
+  PopoverCloseButton,
+  PopoverContent,
+  PopoverTrigger,
+  Slider,
+  SliderFilledTrack,
+  SliderThumb,
+  SliderTrack,
+  Spinner,
   Text,
+  useToast,
 } from "@chakra-ui/react";
 import { MdSettings } from "react-icons/md";
 import { WalletContext } from "@/components/wallet/WalletContext";
@@ -30,18 +32,34 @@ import { inter } from "@/app/fonts";
 
 const RefineButton: React.FC = () => {
   const walletContext = useContext(WalletContext);
-  const { account, provider, networkConfig } = walletContext;
+  const { account, provider, networkConfig, signer } = walletContext;
   const defaultIterations = 100;
   const [selectedIterations, setSelectedIterations] =
     useState(defaultIterations);
+  const [selectedIterationsDebounce, setSelectedIterationsDebounce] =
+    useState(selectedIterations);
+  const [refineGasEstimate, setRefineGasEstimate] = useState<
+    bigint | undefined | null
+  >();
   const [isRefining, setIsRefining] = useState(false);
   const toast = useToast();
   const maxIterations = 10000;
   const defaultRed = "#FE005B";
+  const maxGasLimit = 42000000;
   const burntPixArchives = BurntPixArchives__factory.connect(
     networkConfig.burntPixArchivesAddress,
     provider,
   );
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setSelectedIterationsDebounce(selectedIterations);
+    }, 750); // 750ms debounce delay
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [selectedIterations]);
 
   useEffect(() => {
     const savedIterations = localStorage.getItem("selectedIterations");
@@ -52,16 +70,50 @@ const RefineButton: React.FC = () => {
 
   useEffect(() => {
     localStorage.setItem("selectedIterations", selectedIterations.toString());
-  }, [selectedIterations]);
+    const verifyGasEstimate = async () => {
+      try {
+        setRefineGasEstimate(undefined);
+        const gasLimit = await burntPixArchives
+          .connect(signer)
+          ["refineToArchive(uint256)"].estimateGas(selectedIterations);
+        const adjustedGasLimit = (gasLimit * BigInt(110)) / BigInt(100); //add 10% buffer
+        if (adjustedGasLimit > BigInt(maxGasLimit)) {
+          setRefineGasEstimate(null);
+        } else {
+          setRefineGasEstimate(adjustedGasLimit);
+        }
+      } catch (error: any) {
+        if (error.action === "estimateGas") {
+          setRefineGasEstimate(null);
+        } else {
+          let message = error.message;
+          if (error.info?.error?.message) {
+            message = error.info.error.message;
+          }
+          toast({
+            title: message,
+            status: "error",
+            position: "bottom-left",
+            duration: null,
+            isClosable: true,
+          });
+        }
+      }
+    };
+    if (signer) {
+      verifyGasEstimate();
+    }
+  }, [selectedIterationsDebounce, signer]);
 
   const refine = async () => {
     setIsRefining(true);
     try {
-      console.log("Refining with iterations: ", selectedIterations);
       const signer = await provider.getSigner();
       await burntPixArchives
         .connect(signer)
-        ["refineToArchive(uint256)"](selectedIterations);
+        ["refineToArchive(uint256)"](selectedIterations, {
+          gasLimit: refineGasEstimate,
+        });
       setIsRefining(false);
       toast({
         title: "Refining successful!",
@@ -117,8 +169,11 @@ const RefineButton: React.FC = () => {
               fontFamily={inter.style.fontFamily}
               loadingText={"REFINING..."}
               isLoading={isRefining}
+              isDisabled={!refineGasEstimate}
             >
-              REFINE TO ARCHIVE
+              {refineGasEstimate === null
+                ? "REFINE WILL FAIL"
+                : "REFINE TO ARCHIVE"}
             </Button>
             <Popover placement="top">
               <PopoverTrigger>
@@ -182,14 +237,39 @@ const RefineButton: React.FC = () => {
               </PopoverContent>
             </Popover>
           </Flex>
-          <Text
-            fontSize="sm"
-            fontWeight={500}
-            color={defaultRed}
-            fontFamily={inter.style.fontFamily}
-          >
-            {`+ ${selectedIterations} iterations`}
-          </Text>
+          <HStack>
+            {refineGasEstimate === null && (
+              <Text
+                fontSize="sm"
+                fontWeight={"bold"}
+                color={defaultRed}
+                fontFamily={inter.style.fontFamily}
+              >
+                Please reduce iterations amount!
+              </Text>
+            )}
+            {refineGasEstimate === undefined && (
+              <Text
+                fontSize="sm"
+                fontWeight={"bold"}
+                color={defaultRed}
+                fontFamily={inter.style.fontFamily}
+              >
+                <Spinner mr={2} size={"xs"} color={defaultRed} />
+                Running refinement simulation
+              </Text>
+            )}
+            {refineGasEstimate !== null && refineGasEstimate !== undefined && (
+              <Text
+                fontSize="sm"
+                fontWeight={500}
+                color={defaultRed}
+                fontFamily={inter.style.fontFamily}
+              >
+                {`+ ${selectedIterations} iterations`}
+              </Text>
+            )}
+          </HStack>
         </Flex>
       ) : (
         <Flex align="center" justify="right">
