@@ -246,10 +246,10 @@ const RefineButton: React.FC = () => {
                 fontFamily={inter.style.fontFamily}
               >
                 <Spinner mr={2} size={"xs"} color={defaultRed} />
-                Calculating cost
+                Running refinement simulation
               </Text>
             )}
-            {refineGasEstimate && (
+            {refineGasEstimate !== null && refineGasEstimate !== undefined && (
               <Text
                 fontSize="sm"
                 fontWeight={500}
