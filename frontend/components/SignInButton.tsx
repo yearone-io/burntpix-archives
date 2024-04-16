@@ -43,6 +43,7 @@ const SignInButton: React.FC = () => {
     }
   };
 
+  const buttonText = connectedChainId !== networkConfig.chainId ? "Switch Network" : "Sign In";
   return (
     <Button
       onClick={onSignInClick}
@@ -64,7 +65,7 @@ const SignInButton: React.FC = () => {
           height={fontDimensions}
         />
         <Box fontSize={fontDimensions} lineHeight={fontDimensions}>
-          {isLoadingAccount ? "..." : "SIGN IN"}
+          {isLoadingAccount ? "..." : buttonText}
         </Box>
       </Flex>
     </Button>
