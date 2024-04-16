@@ -62,7 +62,7 @@ const RefineButton: React.FC = () => {
         const gasLimit = await burntPixArchives
           .connect(await provider.getSigner())
           ["refineToArchive(uint256)"].estimateGas(selectedIterations);
-        const adjustedGasLimit = gasLimit + gasLimit / BigInt(10); //add 10% buffer
+        const adjustedGasLimit = (gasLimit * BigInt(110)) / BigInt(100); //add 10% buffer
         console.log("adjustedGasLimit", adjustedGasLimit);
         if (adjustedGasLimit > BigInt(maxGasLimit)) {
           console.log("reached limited", adjustedGasLimit);
