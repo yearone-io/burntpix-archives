@@ -36,6 +36,8 @@ const RefineButton: React.FC = () => {
   const defaultIterations = 100;
   const [selectedIterations, setSelectedIterations] =
     useState(defaultIterations);
+  const [selectedIterationsDebounce, setSelectedIterationsDebounce] =
+    useState(selectedIterations);
   const [refineGasEstimate, setRefineGasEstimate] = useState<
     bigint | undefined | null
   >();
@@ -48,6 +50,16 @@ const RefineButton: React.FC = () => {
     networkConfig.burntPixArchivesAddress,
     provider,
   );
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setSelectedIterationsDebounce(selectedIterations);
+    }, 750); // 750ms debounce delay
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [selectedIterations]);
 
   useEffect(() => {
     const savedIterations = localStorage.getItem("selectedIterations");
@@ -65,7 +77,6 @@ const RefineButton: React.FC = () => {
           .connect(signer)
           ["refineToArchive(uint256)"].estimateGas(selectedIterations);
         const adjustedGasLimit = (gasLimit * BigInt(110)) / BigInt(100); //add 10% buffer
-        console.log("adjustedGasLimit", adjustedGasLimit);
         if (adjustedGasLimit > BigInt(maxGasLimit)) {
           setRefineGasEstimate(null);
         } else {
@@ -92,12 +103,11 @@ const RefineButton: React.FC = () => {
     if (signer) {
       verifyGasEstimate();
     }
-  }, [selectedIterations, signer]);
+  }, [selectedIterationsDebounce, signer]);
 
   const refine = async () => {
     setIsRefining(true);
     try {
-      console.log("Refining with iterations: ", selectedIterations);
       const signer = await provider.getSigner();
       await burntPixArchives
         .connect(signer)
