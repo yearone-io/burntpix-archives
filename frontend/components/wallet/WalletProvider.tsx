@@ -85,18 +85,26 @@ export const WalletProvider: React.FC<Props> = ({ children }) => {
 
   // Effect hook to check for an existing connected account in localStorage when the component mounts.
   useEffect(() => {
-    if (typeof window !== "undefined" && window.lukso) {
-      // Retrieve the account from localStorage if it exists.
-      const storedAccount = localStorage.getItem("connectedAccount");
-      const storedMainUPController = localStorage.getItem("mainUPController");
-      if (storedAccount) {
-        setAccount(storedAccount);
-      }
-      if (storedMainUPController) {
-        setMainUPController(storedMainUPController);
+    const fetchExistingAccount = async () => {
+      if (
+        typeof window !== "undefined" &&
+        window.lukso &&
+        Number(await new Web3(window.lukso).eth.getChainId()) ===
+          networkConfig.chainId
+      ) {
+        // Retrieve the account from localStorage if it exists.
+        const storedAccount = localStorage.getItem("connectedAccount");
+        const storedMainUPController = localStorage.getItem("mainUPController");
+        if (storedAccount) {
+          setAccount(storedAccount);
+        }
+        if (storedMainUPController) {
+          setMainUPController(storedMainUPController);
+        }
       }
       setIsLoadingAccount(false);
-    }
+    };
+    fetchExistingAccount();
   }, []);
 
   /**
@@ -119,7 +127,27 @@ export const WalletProvider: React.FC<Props> = ({ children }) => {
     if (typeof window !== "undefined" && window.lukso) {
       // Initialize a new Web3 instance using the LUKSO provider.
       const web3 = new Web3(window.lukso);
-      setConnectedChainId(Number(await web3.eth.getChainId()));
+      const chainId = Number(await web3.eth.getChainId());
+      if (chainId !== networkConfig.chainId) {
+        try {
+          await window.lukso.request({
+            method: "wallet_switchEthereumChain",
+            params: [
+              { chainId: "0x" + BigInt(networkConfig.chainId).toString(16) },
+            ],
+          });
+        } catch (error: any) {
+          toast({
+            title: `Error switching network. ${error.message}`,
+            status: "error",
+            position: "bottom-left",
+            duration: 5000,
+            isClosable: true,
+          });
+          return;
+        }
+      }
+      setConnectedChainId(chainId);
       let accounts: string[] = [];
       try {
         // Request accounts from the wallet.
@@ -216,6 +244,25 @@ export const WalletProvider: React.FC<Props> = ({ children }) => {
     }
   };
 
+  const disconnectIfNetworkChanged = async () => {
+    if (typeof window !== "undefined" && window.lukso) {
+      const web3 = new Web3(window.lukso);
+      const chainId = Number(await web3.eth.getChainId());
+      if (chainId !== networkConfig.chainId) {
+        disconnect();
+        toast({
+          title: "Network changed, please connect again.",
+          status: "warning",
+          position: "bottom-left",
+          duration: 5000,
+          isClosable: true,
+        });
+        return true;
+      }
+    }
+    return false;
+  };
+
   // Render the context provider, passing down the account state and control functions to children.
   return (
     <WalletContext.Provider
@@ -226,6 +273,7 @@ export const WalletProvider: React.FC<Props> = ({ children }) => {
         mainUPController,
         connect,
         disconnect,
+        disconnectIfNetworkChanged,
         isLoadingAccount,
         networkConfig,
         connectedChainId,

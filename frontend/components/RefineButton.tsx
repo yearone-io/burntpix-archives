@@ -32,7 +32,13 @@ import { inter } from "@/app/fonts";
 
 const RefineButton: React.FC = () => {
   const walletContext = useContext(WalletContext);
-  const { account, provider, networkConfig, signer } = walletContext;
+  const {
+    account,
+    provider,
+    networkConfig,
+    signer,
+    disconnectIfNetworkChanged,
+  } = walletContext;
   const defaultIterations = 100;
   const [selectedIterations, setSelectedIterations] =
     useState(defaultIterations);
@@ -71,6 +77,9 @@ const RefineButton: React.FC = () => {
   useEffect(() => {
     localStorage.setItem("selectedIterations", selectedIterations.toString());
     const verifyGasEstimate = async () => {
+      if (await disconnectIfNetworkChanged()) {
+        return;
+      }
       try {
         setRefineGasEstimate(undefined);
         const gasLimit = await burntPixArchives
@@ -106,6 +115,9 @@ const RefineButton: React.FC = () => {
   }, [selectedIterationsDebounce, signer]);
 
   const refine = async () => {
+    if (await disconnectIfNetworkChanged()) {
+      return;
+    }
     setIsRefining(true);
     try {
       const signer = await provider.getSigner();

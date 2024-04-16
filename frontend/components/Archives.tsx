@@ -73,6 +73,7 @@ const Archives: React.FC<ArchivesProps> = ({
     userActionCounter,
     setUserActionCounter,
     account,
+    disconnectIfNetworkChanged,
   } = walletContext;
   const [archivesCount, setArchivesCount] = useState<number>();
   const [archives, setArchives] = useState<IArchive[]>();
@@ -135,6 +136,9 @@ const Archives: React.FC<ArchivesProps> = ({
   };
 
   const mintArchive = async (archiveId: string) => {
+    if (await disconnectIfNetworkChanged()) {
+      return;
+    }
     try {
       setIsMinting(archiveId);
       console.log(`Minting archive: ${archiveId}`);
