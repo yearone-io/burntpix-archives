@@ -11,6 +11,7 @@ interface WalletContextType {
   mainUPController: string | undefined;
   connect: () => Promise<void>;
   disconnect: () => void;
+  checkNetworkChanged: () => void;
   isLoadingAccount: boolean;
   connectedChainId: number | undefined;
   userActionCounter: number;

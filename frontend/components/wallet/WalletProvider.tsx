@@ -220,6 +220,16 @@ export const WalletProvider: React.FC<Props> = ({ children }) => {
     }
   };
 
+  const disconnectIfNetworkChanged = async () => {
+    if (typeof window !== "undefined" && window.lukso) {
+      const web3 = new Web3(window.lukso);
+      const chainId = Number(await web3.eth.getChainId());
+      if (chainId !== networkConfig.chainId) {
+        disconnect();
+      }
+    }
+  }
+
   // Render the context provider, passing down the account state and control functions to children.
   return (
     <WalletContext.Provider
@@ -230,6 +240,7 @@ export const WalletProvider: React.FC<Props> = ({ children }) => {
         mainUPController,
         connect,
         disconnect,
+        checkNetworkChanged: disconnectIfNetworkChanged,
         isLoadingAccount,
         networkConfig,
         connectedChainId,
