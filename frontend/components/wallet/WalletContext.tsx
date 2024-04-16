@@ -43,6 +43,9 @@ const defaultImplementation: WalletContextType = {
   disconnect: () => {
     // Default disconnect implementation
   },
+  disconnectIfNetworkChanged: () => {
+    // Default disconnect implementation
+  },
   connectedChainId: undefined,
   userActionCounter: 0,
   setUserActionCounter: () => {
