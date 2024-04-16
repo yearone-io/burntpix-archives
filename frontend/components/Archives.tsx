@@ -73,7 +73,7 @@ const Archives: React.FC<ArchivesProps> = ({
     userActionCounter,
     setUserActionCounter,
     account,
-    checkNetworkChanged,
+    disconnectIfNetworkChanged,
   } = walletContext;
   const [archivesCount, setArchivesCount] = useState<number>();
   const [archives, setArchives] = useState<IArchive[]>();
@@ -259,7 +259,7 @@ const Archives: React.FC<ArchivesProps> = ({
               lineHeight="0.75rem"
               fontWeight={700}
               onClick={() => {
-                checkNetworkChanged();
+                disconnectIfNetworkChanged();
                 mintArchive(archive.id);
               }}
               fontFamily={inter.style.fontFamily}

@@ -240,7 +240,7 @@ export const WalletProvider: React.FC<Props> = ({ children }) => {
         mainUPController,
         connect,
         disconnect,
-        checkNetworkChanged: disconnectIfNetworkChanged,
+        disconnectIfNetworkChanged,
         isLoadingAccount,
         networkConfig,
         connectedChainId,
