@@ -1,14 +1,9 @@
 "use client";
 import "../app/globals.css";
 import { Box, Flex, Heading, Text, Image } from "@chakra-ui/react";
-import { New_Rocker } from "next/font/google";
 import WalletConnector from "@/components/wallet/WalletConnector";
-import { ptSerifNormal, interBold } from "@/app/fonts";
-
-const newRockerFont = New_Rocker({
-  weight: ["400"],
-  subsets: ["latin"],
-});
+import { ptSerifNormal, interBold, newRockerFont } from "@/app/fonts";
+import HowItWorks from "@/components/HowItWorks";
 
 interface IHeaderProps {
   winnerIterations: string;
@@ -36,7 +31,9 @@ export const Header = ({ winnerIterations }: IHeaderProps) => {
         }}
         width={"100%"}
       >
-        <Flex flex="1" justifyContent="flex-end"></Flex>
+        <Flex flex="1">
+          <HowItWorks />
+        </Flex>
         <Flex
           flex="2"
           direction="column"
