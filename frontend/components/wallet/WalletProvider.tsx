@@ -253,9 +253,11 @@ export const WalletProvider: React.FC<Props> = ({ children }) => {
           duration: 5000,
           isClosable: true,
         });
+        return true;
       }
     }
-  }
+    return false;
+  };
 
   // Render the context provider, passing down the account state and control functions to children.
   return (
