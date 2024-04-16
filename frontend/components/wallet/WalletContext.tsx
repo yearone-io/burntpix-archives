@@ -32,6 +32,7 @@ export const DEFAULT_PROVIDER = new ethers.JsonRpcProvider(
 const defaultImplementation: WalletContextType = {
   networkConfig: networkConfig,
   provider: DEFAULT_PROVIDER,
+  signer: undefined,
   account: null,
   mainUPController: undefined,
   isLoadingAccount: true,
