@@ -5,7 +5,7 @@ import Web3 from "web3";
 import { useToast } from "@chakra-ui/react";
 import { getNetworkConfig } from "@/constants/networks";
 import { getProvider } from "@/utils/provider";
-import { JsonRpcProvider, BrowserProvider } from "ethers";
+import { JsonRpcProvider, BrowserProvider, JsonRpcSigner } from "ethers";
 import { buildSIWEMessage } from "@/utils/universalProfile";
 import { ethers } from "ethers";
 import { BurntPixArchives__factory } from "@/contracts";
@@ -36,6 +36,8 @@ export const WalletProvider: React.FC<Props> = ({ children }) => {
   const [provider, setProvider] = useState<JsonRpcProvider | BrowserProvider>(
     DEFAULT_PROVIDER,
   );
+
+  const [signer, setSigner] = useState<JsonRpcSigner>();
 
   const [userActionCounter, setUserActionCounter] = useState(0);
   const [account, setAccount] = useState<string | null>(null);
@@ -71,6 +73,14 @@ export const WalletProvider: React.FC<Props> = ({ children }) => {
   useEffect(() => {
     const initProvider = getProvider(networkConfig);
     setProvider(initProvider);
+    initProvider
+      .getSigner()
+      .then((fetchedSigner) => {
+        setSigner(fetchedSigner);
+      })
+      .catch((error) => {
+        console.log("error getting signer", error);
+      });
   }, [connectedChainId, mainUPController]);
 
   // Effect hook to check for an existing connected account in localStorage when the component mounts.
@@ -211,6 +221,7 @@ export const WalletProvider: React.FC<Props> = ({ children }) => {
     <WalletContext.Provider
       value={{
         provider,
+        signer,
         account,
         mainUPController,
         connect,
