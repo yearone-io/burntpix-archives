@@ -35,11 +35,14 @@ const RefineButton: React.FC = () => {
   const defaultIterations = 100;
   const [selectedIterations, setSelectedIterations] =
     useState(defaultIterations);
-  const [estimateGasFailed, setEstimateGasFailed] = useState<boolean>(false);
+  const [refineGasEstimate, setRefineGasEstimate] = useState<
+    bigint | undefined | null
+  >();
   const [isRefining, setIsRefining] = useState(false);
   const toast = useToast();
   const maxIterations = 10000;
   const defaultRed = "#FE005B";
+  const maxGasLimit = 42000000;
   const burntPixArchives = BurntPixArchives__factory.connect(
     networkConfig.burntPixArchivesAddress,
     provider,
@@ -56,12 +59,20 @@ const RefineButton: React.FC = () => {
     localStorage.setItem("selectedIterations", selectedIterations.toString());
     const verifyGasEstimate = async () => {
       try {
-        await burntPixArchives
+        const gasLimit = await burntPixArchives
           .connect(await provider.getSigner())
           ["refineToArchive(uint256)"].estimateGas(selectedIterations);
-        setEstimateGasFailed(false);
-      } catch (e) {
-        setEstimateGasFailed(true);
+        const adjustedGasLimit = gasLimit + gasLimit / BigInt(10); //add 10% buffer
+        console.log("adjustedGasLimit", adjustedGasLimit);
+        if (adjustedGasLimit > BigInt(maxGasLimit)) {
+          console.log("reached limited", adjustedGasLimit);
+          throw new Error("Exceeded max limit");
+        }
+        setRefineGasEstimate(adjustedGasLimit);
+      } catch (e: any) {
+        if (e.action === "estimateGas") {
+          setRefineGasEstimate(null);
+        }
       }
     };
     verifyGasEstimate();
@@ -74,7 +85,9 @@ const RefineButton: React.FC = () => {
       const signer = await provider.getSigner();
       await burntPixArchives
         .connect(signer)
-        ["refineToArchive(uint256)"](selectedIterations);
+        ["refineToArchive(uint256)"](selectedIterations, {
+          gasLimit: refineGasEstimate,
+        });
       setIsRefining(false);
       toast({
         title: "Refining successful!",
@@ -130,9 +143,11 @@ const RefineButton: React.FC = () => {
               fontFamily={inter.style.fontFamily}
               loadingText={"REFINING..."}
               isLoading={isRefining}
-              isDisabled={estimateGasFailed}
+              isDisabled={refineGasEstimate === null}
             >
-              {estimateGasFailed ? "REFINE WILL FAIL" : "REFINE TO ARCHIVE"}
+              {refineGasEstimate === null
+                ? "REFINE WILL FAIL"
+                : "REFINE TO ARCHIVE"}
             </Button>
             <Popover placement="top">
               <PopoverTrigger>
@@ -197,7 +212,7 @@ const RefineButton: React.FC = () => {
             </Popover>
           </Flex>
           <HStack>
-            {estimateGasFailed && (
+            {refineGasEstimate === null && (
               <Text color={defaultRed} fontWeight="bold">
                 Please reduce iterations amount!
               </Text>
