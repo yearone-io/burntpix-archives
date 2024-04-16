@@ -11,6 +11,7 @@ interface WalletContextType {
   mainUPController: string | undefined;
   connect: () => Promise<void>;
   disconnect: () => void;
+  disconnectIfNetworkChanged: () => Promise<boolean>;
   isLoadingAccount: boolean;
   connectedChainId: number | undefined;
   userActionCounter: number;
@@ -41,6 +42,9 @@ const defaultImplementation: WalletContextType = {
   },
   disconnect: () => {
     // Default disconnect implementation
+  },
+  disconnectIfNetworkChanged: () => {
+    return Promise.resolve(false);
   },
   connectedChainId: undefined,
   userActionCounter: 0,
