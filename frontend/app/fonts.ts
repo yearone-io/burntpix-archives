@@ -1,4 +1,4 @@
-import { Inter, PT_Serif } from "next/font/google";
+import { Inter, New_Rocker, PT_Serif } from "next/font/google";
 
 export const inter = Inter({
   subsets: ["latin"],
@@ -19,4 +19,9 @@ export const ptSerifBold = PT_Serif({
 export const ptSerifNormal = PT_Serif({
   subsets: ["latin"],
   weight: "400",
+});
+
+export const newRockerFont = New_Rocker({
+  weight: ["400"],
+  subsets: ["latin"],
 });
