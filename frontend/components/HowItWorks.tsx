@@ -56,7 +56,7 @@ function HowItWorks() {
 
               <Flex
                 padding={8}
-                direction={["row", "column", "row", "row", "row", "row"]}
+                direction={["column", "column", "row", "row", "row", "row"]}
                 justifyContent="center"
                 borderColor={"lukso.pink"}
                 borderWidth={1}
@@ -82,7 +82,7 @@ function HowItWorks() {
 
               <Flex
                 padding={8}
-                direction={["row", "column", "row", "row", "row", "row"]}
+                direction={["column", "column", "row", "row", "row", "row"]}
                 justifyContent="center"
                 borderColor={"lukso.pink"}
                 borderWidth={1}
@@ -108,7 +108,7 @@ function HowItWorks() {
 
               <Flex
                 padding={8}
-                direction={["row", "column", "row", "row", "row", "row"]}
+                direction={["column", "column", "row", "row", "row", "row"]}
                 justifyContent="center"
                 borderColor={"lukso.pink"}
                 borderWidth={1}
@@ -133,7 +133,7 @@ function HowItWorks() {
 
               <Flex
                 padding={8}
-                direction={["row", "column", "row", "row", "row", "row"]}
+                direction={["column", "column", "row", "row", "row", "row"]}
                 justifyContent="center"
                 borderColor={"lukso.pink"}
                 borderWidth={1}
