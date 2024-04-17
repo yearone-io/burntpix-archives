@@ -1,13 +1,14 @@
 "use client";
 import styles from "../app/page.module.css";
 import "../app/globals.css";
-import { Flex, useToast } from "@chakra-ui/react";
+import { Flex, useDisclosure, useToast } from "@chakra-ui/react";
 import { BurntPixArchives__factory } from "@/contracts";
 import { useContext, useEffect, useState } from "react";
 import { WalletContext } from "@/components/wallet/WalletContext";
 import { Header } from "./Header";
 import { OverviewRow } from "./OverviewRow";
 import { ContributionsRow } from "./ContributionsRow";
+import HowItWorks from "@/components/HowItWorks";
 
 export default function Home() {
   const walletContext = useContext(WalletContext);
@@ -18,7 +19,6 @@ export default function Home() {
     provider,
   );
 
-  // immutables
   const [burntPicId, setBurntPicId] = useState<string>();
   const [winnerIterations, setWinnerIterations] = useState<string>("--");
 
