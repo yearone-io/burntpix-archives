@@ -26,13 +26,15 @@ export const Header = ({ winnerIterations }: IHeaderProps) => {
         }}
         justifyContent="center"
         alignItems={{
-          base: "flex-end",
+          base: "center",
           md: "flex-start",
         }}
         width={"100%"}
       >
-        <Flex flex="1">
-          <HowItWorks />
+        <Flex flex="1" alignItems="center" justifyContent="center">
+          <Box marginTop={{ base: 6, md: 0 }}>
+            <HowItWorks />
+          </Box>
         </Flex>
         <Flex
           flex="2"

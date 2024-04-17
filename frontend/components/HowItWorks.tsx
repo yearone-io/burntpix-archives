@@ -24,10 +24,14 @@ function HowItWorks() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
     <>
-      <Button p={12} backgroundColor={"lukso.pink"} onClick={onOpen}>
-        <VStack fontSize={24} fontWeight={900} color={"white"}>
-          <Text fontFamily={inter.style.fontFamily} fontWeight={900}>New here? Click me!</Text>
-          <Text fontFamily={newRockerFont.style.fontFamily} fontWeight={900}>Archiving 101 🔥🖼📂</Text>
+      <Button p={10} backgroundColor={"lukso.pink"} onClick={onOpen}>
+        <VStack fontSize={16} fontWeight={900} color={"white"}>
+          <Text fontFamily={inter.style.fontFamily} fontWeight={900}>
+            New here? Click me!
+          </Text>
+          <Text fontFamily={newRockerFont.style.fontFamily} fontWeight={900}>
+            Archiving 101 🔥🖼📂
+          </Text>
         </VStack>
       </Button>
       <Modal isOpen={isOpen} onClose={onClose}>
@@ -57,7 +61,7 @@ function HowItWorks() {
                 borderColor={"lukso.pink"}
                 borderWidth={1}
               >
-                <Image src="/images/step1.png" alt="Image 1" mb={"4"} />
+                <Image width={400} height={300} src="/images/step1.png" alt="refine burntpix" mb={"4"} />
                 <Box>
                   <Heading
                     size="md"
@@ -99,7 +103,7 @@ function HowItWorks() {
                     themselves NFTs.
                   </Text>
                 </Box>
-                <Image src="/images/step2.png" alt="Image 2" mt={"4"} />
+                <Image width={400} height={356} src="/images/step2.png" alt="unlock archive levels" mt={"4"} />
               </Flex>
 
               <Flex
@@ -109,7 +113,7 @@ function HowItWorks() {
                 borderColor={"lukso.pink"}
                 borderWidth={1}
               >
-                <Image src="/images/step3.png" alt="Image 3" mb={"4"} />
+                <Image width={400} height={290} src="/images/step3.png" alt="mint archives" mb={"4"} />
                 <Box>
                   <Heading
                     size="md"
@@ -150,7 +154,7 @@ function HowItWorks() {
                     within the vault.
                   </Text>
                 </Box>
-                <Image src="/images/step4.png" alt="Image 4" mt={"4"} />
+                <Image width={400} height={300} src="/images/step4.png" alt="win original nft" mt={"4"} />
               </Flex>
             </VStack>
           </ModalBody>
