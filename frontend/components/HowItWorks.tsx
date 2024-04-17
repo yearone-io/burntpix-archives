@@ -61,7 +61,13 @@ function HowItWorks() {
                 borderColor={"lukso.pink"}
                 borderWidth={1}
               >
-                <Image width={400} height={300} src="/images/step1.png" alt="refine burntpix" mb={"4"} />
+                <Image
+                  width={400}
+                  height={300}
+                  src="/images/step1.png"
+                  alt="refine burntpix"
+                  mb={"4"}
+                />
                 <Box>
                   <Heading
                     size="md"
@@ -103,7 +109,13 @@ function HowItWorks() {
                     themselves NFTs.
                   </Text>
                 </Box>
-                <Image width={400} height={356} src="/images/step2.png" alt="unlock archive levels" mt={"4"} />
+                <Image
+                  width={400}
+                  height={356}
+                  src="/images/step2.png"
+                  alt="unlock archive levels"
+                  mt={"4"}
+                />
               </Flex>
 
               <Flex
@@ -113,7 +125,13 @@ function HowItWorks() {
                 borderColor={"lukso.pink"}
                 borderWidth={1}
               >
-                <Image width={400} height={290} src="/images/step3.png" alt="mint archives" mb={"4"} />
+                <Image
+                  width={400}
+                  height={290}
+                  src="/images/step3.png"
+                  alt="mint archives"
+                  mb={"4"}
+                />
                 <Box>
                   <Heading
                     size="md"
@@ -154,13 +172,24 @@ function HowItWorks() {
                     within the vault.
                   </Text>
                 </Box>
-                <Image width={400} height={300} src="/images/step4.png" alt="win original nft" mt={"4"} />
+                <Image
+                  width={400}
+                  height={300}
+                  src="/images/step4.png"
+                  alt="win original nft"
+                  mt={"4"}
+                />
               </Flex>
             </VStack>
           </ModalBody>
 
           <ModalFooter>
-            <Button mr={3} onClick={onClose}>
+            <Button
+              border={"1px solid #000000"}
+              backgroundColor={"transparent"}
+              mr={3}
+              onClick={onClose}
+            >
               Close
             </Button>
           </ModalFooter>
