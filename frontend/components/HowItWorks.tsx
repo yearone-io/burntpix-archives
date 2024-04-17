@@ -30,22 +30,26 @@ function HowItWorks() {
             New here? Click me!
           </Text>
           <Text fontFamily={newRockerFont.style.fontFamily} fontWeight={900}>
-            Archiving 101 🔥🖼📂
+            Archiving 101 🔥 🖼 📂
           </Text>
         </VStack>
       </Button>
       <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent maxW={800}>
+        <ModalOverlay background={"var(--chakra-colors-whiteAlpha-900)"} />
+        <ModalContent
+          maxW={800}
+          borderRadius={10}
+          borderColor={"lukso.pink"}
+          borderWidth={2}
+        >
           <ModalCloseButton color={"white"} />
           <ModalBody p={0}>
-            <VStack
-              align="stretch"
-              borderColor={"lukso.pink"}
-              borderWidth={1}
-              spacing={0}
-            >
-              <Center height={48} backgroundColor={"lukso.pink"}>
+            <VStack align="stretch" borderTopRadius={10} spacing={0}>
+              <Center
+                height={48}
+                borderTopRadius={8}
+                backgroundColor={"lukso.pink"}
+              >
                 <Heading
                   textColor={"white"}
                   fontFamily={newRockerFont.style.fontFamily}
@@ -185,9 +189,12 @@ function HowItWorks() {
 
           <ModalFooter>
             <Button
-              border={"1px solid #000000"}
-              backgroundColor={"transparent"}
-              mr={3}
+              bg={"lukso.pink"}
+              color="white"
+              _hover={{ bg: "lukso.pink" }}
+              borderRadius={10}
+              fontWeight={700}
+              fontFamily={inter.style.fontFamily}
               onClick={onClose}
             >
               Close
