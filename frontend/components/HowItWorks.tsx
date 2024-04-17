@@ -73,13 +73,29 @@ function HowItWorks() {
                   mb={"4"}
                 />
                 <Box>
-                  <Heading
-                    size="md"
-                    textColor={"lukso.pink"}
-                    fontFamily={newRockerFont.style.fontFamily}
-                  >
-                    1. Refine BurntPix
-                  </Heading>
+                  <Flex gap={2} alignItems={"center"}>
+                    <Flex
+                      as={Heading}
+                      size="md"
+                      backgroundColor={"lukso.pink"}
+                      color={"white"}
+                      borderRadius={100}
+                      justifyContent={"center"}
+                      alignItems={"center"}
+                      fontFamily={newRockerFont.style.fontFamily}
+                      w={"40px"}
+                      h={"40px"}
+                    >
+                      1
+                    </Flex>
+                    <Heading
+                      size="md"
+                      textColor={"lukso.pink"}
+                      fontFamily={newRockerFont.style.fontFamily}
+                    >
+                      Refine BurntPix
+                    </Heading>
+                  </Flex>
                   <Text fontWeight={500} fontFamily={inter.style.fontFamily}>
                     A BurntPix NFT was locked in our vault for “archiving”. It
                     can continue to evolve if you refine it by contributing
@@ -98,13 +114,29 @@ function HowItWorks() {
                 borderWidth={1}
               >
                 <Box>
-                  <Heading
-                    size="md"
-                    textColor={"lukso.pink"}
-                    fontFamily={newRockerFont.style.fontFamily}
-                  >
-                    2. Unlock Archive Levels
-                  </Heading>
+                  <Flex gap={2} alignItems={"center"}>
+                    <Flex
+                      as={Heading}
+                      size="md"
+                      backgroundColor={"lukso.pink"}
+                      color={"white"}
+                      borderRadius={100}
+                      justifyContent={"center"}
+                      alignItems={"center"}
+                      fontFamily={newRockerFont.style.fontFamily}
+                      w={"40px"}
+                      h={"40px"}
+                    >
+                      2
+                    </Flex>
+                    <Heading
+                      size="md"
+                      textColor={"lukso.pink"}
+                      fontFamily={newRockerFont.style.fontFamily}
+                    >
+                      Unlock Archive Levels
+                    </Heading>
+                  </Flex>
                   <Text fontWeight={500} fontFamily={inter.style.fontFamily}>
                     Grow your refinement contributions to generate and unlock
                     new archives of the original BurntPix NFT. The archives are
@@ -137,13 +169,29 @@ function HowItWorks() {
                   mb={"4"}
                 />
                 <Box>
-                  <Heading
-                    size="md"
-                    textColor={"lukso.pink"}
-                    fontFamily={newRockerFont.style.fontFamily}
-                  >
-                    3. Mint Archives Level NFTs
-                  </Heading>
+                  <Flex gap={2} alignItems={"center"}>
+                    <Flex
+                      as={Heading}
+                      size="md"
+                      backgroundColor={"lukso.pink"}
+                      color={"white"}
+                      borderRadius={100}
+                      justifyContent={"center"}
+                      alignItems={"center"}
+                      fontFamily={newRockerFont.style.fontFamily}
+                      w={"40px"}
+                      h={"40px"}
+                    >
+                      3
+                    </Flex>
+                    <Heading
+                      size="md"
+                      textColor={"lukso.pink"}
+                      fontFamily={newRockerFont.style.fontFamily}
+                    >
+                      Mint Archives Level NFTs
+                    </Heading>
+                  </Flex>
                   <Text fontWeight={500} fontFamily={inter.style.fontFamily}>
                     Mint your Archive NFT at each level to see it in its full
                     color. Or save it for later. But keep in mind that although
@@ -161,13 +209,29 @@ function HowItWorks() {
                 borderWidth={1}
               >
                 <Box>
-                  <Heading
-                    size="md"
-                    textColor={"lukso.pink"}
-                    fontFamily={newRockerFont.style.fontFamily}
-                  >
-                    4. Win the Original BurntPix NFT
-                  </Heading>
+                  <Flex gap={2} alignItems={"center"}>
+                    <Flex
+                      as={Heading}
+                      size="md"
+                      backgroundColor={"lukso.pink"}
+                      color={"white"}
+                      borderRadius={100}
+                      justifyContent={"center"}
+                      alignItems={"center"}
+                      fontFamily={newRockerFont.style.fontFamily}
+                      w={"40px"}
+                      h={"40px"}
+                    >
+                      4
+                    </Flex>
+                    <Heading
+                      size="md"
+                      textColor={"lukso.pink"}
+                      fontFamily={newRockerFont.style.fontFamily}
+                    >
+                      Win the BurntPix NFT
+                    </Heading>
+                  </Flex>
                   <Text fontWeight={500} fontFamily={inter.style.fontFamily}>
                     Here for the Glory? Think you have the scripting prowess or
                     patience necessary to outrefine everyone around you? Prove
