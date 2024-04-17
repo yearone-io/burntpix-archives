@@ -62,12 +62,14 @@ function HowItWorks() {
                 padding={8}
                 direction={["column", "column", "row", "row", "row", "row"]}
                 justifyContent="center"
+                alignItems={"center"}
+                gap={2}
                 borderColor={"lukso.pink"}
                 borderWidth={1}
               >
                 <Image
-                  width={400}
-                  height={300}
+                  maxWidth={400}
+                  width={"100%"}
                   src="/images/step1.png"
                   alt="refine burntpix"
                   mb={"4"}
@@ -108,8 +110,17 @@ function HowItWorks() {
 
               <Flex
                 padding={8}
-                direction={["column", "column", "row", "row", "row", "row"]}
+                direction={[
+                  "column-reverse",
+                  "column-reverse",
+                  "row",
+                  "row",
+                  "row",
+                  "row",
+                ]}
                 justifyContent="center"
+                alignItems={"center"}
+                gap={2}
                 borderColor={"lukso.pink"}
                 borderWidth={1}
               >
@@ -146,8 +157,8 @@ function HowItWorks() {
                   </Text>
                 </Box>
                 <Image
-                  width={400}
-                  height={356}
+                  maxWidth={400}
+                  width={"100%"}
                   src="/images/step2.png"
                   alt="unlock archive levels"
                   mt={"4"}
@@ -158,12 +169,14 @@ function HowItWorks() {
                 padding={8}
                 direction={["column", "column", "row", "row", "row", "row"]}
                 justifyContent="center"
+                alignItems={"center"}
+                gap={2}
                 borderColor={"lukso.pink"}
                 borderWidth={1}
               >
                 <Image
-                  width={400}
-                  height={290}
+                  maxWidth={400}
+                  width={"100%"}
                   src="/images/step3.png"
                   alt="mint archives"
                   mb={"4"}
@@ -203,8 +216,17 @@ function HowItWorks() {
 
               <Flex
                 padding={8}
-                direction={["column", "column", "row", "row", "row", "row"]}
+                direction={[
+                  "column-reverse",
+                  "column-reverse",
+                  "row",
+                  "row",
+                  "row",
+                  "row",
+                ]}
                 justifyContent="center"
+                alignItems={"center"}
+                gap={2}
                 borderColor={"lukso.pink"}
                 borderWidth={1}
               >
@@ -241,8 +263,8 @@ function HowItWorks() {
                   </Text>
                 </Box>
                 <Image
-                  width={400}
-                  height={300}
+                  maxWidth={400}
+                  width={"100%"}
                   src="/images/step4.png"
                   alt="win original nft"
                   mt={"4"}
